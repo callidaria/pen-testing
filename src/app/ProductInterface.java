@@ -1,5 +1,5 @@
 package app;
 
-public interface InterfaceProduct {
+public interface ProductInterface {
 	public boolean renameProduct();
 }

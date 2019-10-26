@@ -2,10 +2,10 @@ package database;
 
 import java.sql.*;
 
-import app.InterfaceProduct;
+import app.ProductInterface;
 
-public interface database {
+public interface DatabaseInterface {
 	public boolean connect();
 	public ResultSet query();
-	public InterfaceProduct[] searchProduct();
+	public ProductInterface[] searchProduct();
 }

@@ -1,5 +1,5 @@
 package app;
 
-public interface InterfacePosition {
-
+public interface PositionInterface {
+	
 }
