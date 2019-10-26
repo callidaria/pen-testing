@@ -5,7 +5,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
+import app.Position;
+import app.PositionInterface;
 import app.ProductInterface;
 
 public class Database implements DatabaseInterface {
@@ -27,15 +30,43 @@ public class Database implements DatabaseInterface {
 	}
 
 	@Override
-	public ResultSet query() {
+	public ResultSet query(String query) {
 		// TODO Auto-generated method stub
-		return null;
+		ResultSet rset = null;
+		try(Statement stmt = this.conn.createStatement()){
+			
+	        String strSelect = query;
+	        System.out.println("The SQL statement is: " + strSelect + "\n"); // Echo For debugging
+
+	        rset = stmt.executeQuery(strSelect);
+			}
+			catch(SQLException ex){
+				ex.printStackTrace();
+			}
+        return rset;
 	}
 
 	@Override
-	public ProductInterface[] searchProduct() {
+	public ArrayList<Position> searchProduct() {
+		if(true) {
+			ResultSet result = this.query("select * from products");
+		}
+		
 		return null;
 	}
+	
+	public ArrayList<Position> ResultSetToPosition(ResultSet result) {
+		ArrayList<Position> positions;
+		while(result.next()) {
+				Position position = new Position();
+				position.setId = result.getInt("id");
+				position.setPosition = result.getInt("position");
+				position.setProductID = result.getInt("product_id");
+				positions.add(position);
+	        }
+		return positions;
+	}
+	
 	public String testQuery() {
 		String title="Keine";
 		try(Statement stmt = this.conn.createStatement()){
