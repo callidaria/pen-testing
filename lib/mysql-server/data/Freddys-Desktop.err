@@ -1,5 +1,0 @@
-2019-10-25T14:40:37.515886Z 0 [System] [MY-010116] [Server] D:\Projects\Java Projects\pen-testing\lib\mysql-server\bin\mysqld.exe (mysqld 8.0.18) starting as process 13496
-2019-10-25T14:40:39.483967Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
-2019-10-25T14:40:39.520321Z 0 [System] [MY-010931] [Server] D:\Projects\Java Projects\pen-testing\lib\mysql-server\bin\mysqld.exe: ready for connections. Version: '8.0.18'  socket: ''  port: 3306  MySQL Community Server - GPL.
-2019-10-25T14:40:39.625008Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060
-2019-10-25T14:41:42.258029Z 16 [Warning] [MY-013360] [Server] Plugin sha256_password reported: ''sha256_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
