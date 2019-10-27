@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/mysql-connector/mysql-connector-java-8.0.18.jar"/>
+	<classpathentry kind="lib" path="D:/Projects/Java Projects/pen-testing/lib/sqlite-jdbc-3.27.2.1.jar"/>
+	<classpathentry kind="lib" path="D:/Projects/Java Projects/pen-testing/lib/mysql-connector-java-8.0.18.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
