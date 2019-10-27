@@ -1,12 +1,5 @@
 ### WELCOME to PEN FACTORY
 
-sql root psw:
-password
+SQLite DB @ sqlite/pen_testing.db
 
-Weil sonst vergessen wir es!
-
-Versuch dein Glück:
-
-java -cp .;D:\Projects\Java Projects\pen-testing\lib\mysql-connector\mysql-connector-java-8.0.18.jar main
-
-Oder starte die App via Eclipse
+The variable for the DB path must be set in the Database Class Variable DBPATH
