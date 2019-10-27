@@ -46,7 +46,7 @@ public class Database implements DatabaseInterface {
 		try(Statement stmt = this.conn.createStatement()){
 			
 	        String strSelect = query;
-	        System.out.println("The SQL statement is: " + strSelect + "\n"); // Echo For debugging
+	        System.out.println("Query: " + strSelect + "\n"); // Echo For debugging
 
 	        rset = stmt.executeQuery(strSelect);
 			}
@@ -65,9 +65,29 @@ public class Database implements DatabaseInterface {
 		return null;
 	}
 	
+	public ArrayList<String> fetchStoredProducts(){
+		String title="Keine";
+		String strSelect = "select products.name as productName, inventory.position as inventoryPosition from products inner join inventory on products.product_id=inventory.product_id;";
+		try(Statement stmt = this.conn.createStatement()){
+	        ResultSet result = stmt.executeQuery(strSelect);
+	        System.out.println("The records selected are:");
+
+	        while(result.next()) {   // Move the cursor to the next row, return false if no more row
+	           String productName = result.getString("productName");
+	           String productPosition = result.getString("inventoryPosition");
+	           System.out.println("Name:"+productName+", Position: "+productPosition);
+	        }
+	        System.out.println(":end");
+			}
+			catch(SQLException ex){
+				ex.printStackTrace();
+			}
+			return null;
+	}
+	
 	public ArrayList<Position> ResultSetToPosition(ResultSet result) {
 		ArrayList<Position> positions;
-		while(result.next()) {
+		while(result.next() || result.isFirst()) {
 				Position position = new Position();
 				position.setId = result.getInt("id");
 				position.setPosition = result.getInt("position");
