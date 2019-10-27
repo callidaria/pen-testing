@@ -3,9 +3,9 @@ package database;
 import java.sql.*;
 import java.util.ArrayList;
 
-import app.Position;
-import app.PositionInterface;
-import app.ProductInterface;
+import src.Position;
+import src.interfaces.PositionInterface;
+import src.interfaces.ProductInterface;
 
 public interface DatabaseInterface {
 	public boolean connect();

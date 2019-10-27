@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import app.Position;
-import app.PositionInterface;
-import app.ProductInterface;
+import src.Position;
+import src.interfaces.PositionInterface;
+import src.interfaces.ProductInterface;
 
 public class Database implements DatabaseInterface {
 
