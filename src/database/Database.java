@@ -7,19 +7,29 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import app.Position;
-import app.PositionInterface;
-import app.ProductInterface;
+import src.Position;
+import src.interfaces.PositionInterface;
+import src.interfaces.ProductInterface;
 
 public class Database implements DatabaseInterface {
+	
+	String ROWID = "ROWID";
+	
+	String DBTYP = "sqlite";
+	
+	String DBPATH = "D:\\\\Projects\\\\Java Projects\\\\pen-testing\\\\sqlite\\\\db.pen_testing.db";
+	
+	String DBUSER = "root";
+	
+	String DBPASSWORD = "password";
 
 	Connection conn;
 	@Override
 	public boolean connect() {
 		try {
 			Connection conn = DriverManager.getConnection(
-		               "jdbc:mysql://localhost:3306/pen_testing?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
-		               "root", "password");
+		               "jdbc:"+this.DBTYP+":"+this.DBPATH,
+		               this.DBUSER, this.DBPASSWORD);
 				this.conn=conn;
 		         
 		      } catch(SQLException ex) {
