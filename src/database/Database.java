@@ -17,7 +17,7 @@ public class Database implements DatabaseInterface {
 	
 	String DBTYP = "sqlite";
 	
-	String DBPATH = "D:\\\\Projects\\\\Java Projects\\\\pen-testing\\\\sqlite\\\\db.pen_testing.db";
+	String DBPATH = "D:\\\\Projects\\\\Java Projects\\\\pen-testing\\\\sqlite\\\\pen_testing.db";
 	
 	String DBUSER = "root";
 	
