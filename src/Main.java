@@ -5,6 +5,6 @@ public class Main {
 		Database database= new Database();
 		//String WOW = database.testQuery();
 		//System.out.println(WOW);
-		database.fetchStoredProducts();
+		database.fetchStoredProducts(null);
 	}
 }

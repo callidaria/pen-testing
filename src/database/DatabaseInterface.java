@@ -3,12 +3,12 @@ package database;
 import java.sql.*;
 import java.util.ArrayList;
 
-import src.Position;
-import src.interfaces.PositionInterface;
-import src.interfaces.ProductInterface;
+
+import src.interfaces.StoredProductInterface;
 
 public interface DatabaseInterface {
-	public boolean connect();
-	public ResultSet query(String query);
-	public ArrayList<Position> searchProduct();
+	public Connection connect();
+	public ArrayList<StoredProductInterface>fetchStoredProducts(Object[] options);
+	public ArrayList<StoredProductInterface>searchStoredProducts(String productName);
+	public boolean addStoredProduct(StoredProductInterface storedProduct);
 }

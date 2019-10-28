@@ -7,68 +7,43 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import src.Position;
 import src.interfaces.PositionInterface;
 import src.interfaces.ProductInterface;
+import src.interfaces.StoredProductInterface;
 
 public class Database implements DatabaseInterface {
 	
-	String ROWID = "ROWID";
+	static final String ROWID = "ROWID";
 	
-	String DBTYP = "sqlite";
+	static final String DBTYP = "sqlite";
 	
-	String DBPATH = "D:\\\\Projects\\\\Java Projects\\\\pen-testing\\\\sqlite\\\\pen_testing.db";
+	static final String DBPATH = "sqlite\\\\pen_testing.db";
 	
-	String DBUSER = "root";
+	static final String DBUSER = "root";
 	
-	String DBPASSWORD = "password";
+	static final String DBPASSWORD = "password";
+	
+	final String DBCON = "jdbc:"+Database.DBTYP+":"+Database.DBPATH;
 
 	Connection conn;
 	@Override
-	public boolean connect() {
+	public Connection connect() {
+		Connection conn = null;
 		try {
-			Connection conn = DriverManager.getConnection(
-		               "jdbc:"+this.DBTYP+":"+this.DBPATH,
-		               this.DBUSER, this.DBPASSWORD);
-				this.conn=conn;
-		         
-		      } catch(SQLException ex) {
+			conn = DriverManager.getConnection(this.DBCON);
+		  } catch(SQLException ex) {
 		         ex.printStackTrace();
 	      }  // Step 5: Close conn and stmt - Done automatically by try-with-resources (JDK 7)
 		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public ResultSet query(String query) {
-		// TODO Auto-generated method stub
-		ResultSet rset = null;
-		try(Statement stmt = this.conn.createStatement()){
-			
-	        String strSelect = query;
-	        System.out.println("Query: " + strSelect + "\n"); // Echo For debugging
-
-	        rset = stmt.executeQuery(strSelect);
-			}
-			catch(SQLException ex){
-				ex.printStackTrace();
-			}
-        return rset;
-	}
-
-	@Override
-	public ArrayList<Position> searchProduct() {
-		if(true) {
-			ResultSet result = this.query("select * from products");
-		}
-		
-		return null;
+		return conn;
 	}
 	
-	public ArrayList<String> fetchStoredProducts(){
-		String title="Keine";
+	//StoredProducts start:
+
+	@Override
+	public ArrayList<StoredProductInterface> fetchStoredProducts(Object[] options){
 		String strSelect = "select products.name as productName, inventory.position as inventoryPosition from products inner join inventory on products.product_id=inventory.product_id;";
-		try(Statement stmt = this.conn.createStatement()){
+		try(Connection conn = connect();Statement stmt = conn.createStatement();){
 	        ResultSet result = stmt.executeQuery(strSelect);
 	        System.out.println("The records selected are:");
 
@@ -78,24 +53,28 @@ public class Database implements DatabaseInterface {
 	           System.out.println("Name:"+productName+", Position: "+productPosition);
 	        }
 	        System.out.println(":end");
-			}
-			catch(SQLException ex){
-				ex.printStackTrace();
-			}
-			return null;
+	        conn.close();
+		}
+		catch(SQLException ex){
+			ex.printStackTrace();
+		}
+		return null;
 	}
 	
-	public ArrayList<Position> ResultSetToPosition(ResultSet result) {
-		ArrayList<Position> positions;
-		while(result.next() || result.isFirst()) {
-				Position position = new Position();
-				position.setId = result.getInt("id");
-				position.setPosition = result.getInt("position");
-				position.setProductID = result.getInt("product_id");
-				positions.add(position);
-	        }
-		return positions;
+	@Override
+	public ArrayList<StoredProductInterface> searchStoredProducts(String productName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+
+	@Override
+	public boolean addStoredProduct(StoredProductInterface storedProduct) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+
 	
 	public String testQuery() {
 		String title="Keine";
@@ -122,8 +101,6 @@ public class Database implements DatabaseInterface {
 		
 	}
 	
-	public Database() {
-		this.connect();
-	}
+
 
 }
