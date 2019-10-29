@@ -1,4 +1,4 @@
-package src.interfaces;
+package logic.interfaces;
 
 public interface PositionInterface {
 	int getID();

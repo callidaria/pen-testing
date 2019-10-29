@@ -6,5 +6,6 @@ public class Main {
 		//String WOW = database.testQuery();
 		//System.out.println(WOW);
 		database.fetchStoredProducts(null);
+		database.searchStoredProducts("PenXL");
 	}
 }

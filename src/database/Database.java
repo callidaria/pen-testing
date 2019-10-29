@@ -7,11 +7,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import src.interfaces.PositionInterface;
-import src.interfaces.ProductInterface;
-import src.interfaces.StoredProductInterface;
+import logic.StoredProduct;
+import logic.interfaces.PositionInterface;
+import logic.interfaces.ProductInterface;
+import logic.interfaces.StoredProductInterface;
 
-public class Database implements DatabaseInterface {
+public class Database implements DatabaseInterface{
 	
 	static final String ROWID = "ROWID";
 	
@@ -39,12 +40,10 @@ public class Database implements DatabaseInterface {
 	}
 	
 	//StoredProducts start:
-
-	@Override
-	public ArrayList<StoredProductInterface> fetchStoredProducts(Object[] options){
-		String strSelect = "select products.name as productName, inventory.position as inventoryPosition from products inner join inventory on products.product_id=inventory.product_id;";
+	public ArrayList<StoredProductInterface>retrieveStoredProducts(String query){
+		System.out.println("Query:"+query);
 		try(Connection conn = connect();Statement stmt = conn.createStatement();){
-	        ResultSet result = stmt.executeQuery(strSelect);
+	        ResultSet result = stmt.executeQuery(query);
 	        System.out.println("The records selected are:");
 
 	        while(result.next()) {   // Move the cursor to the next row, return false if no more row
@@ -58,12 +57,19 @@ public class Database implements DatabaseInterface {
 		catch(SQLException ex){
 			ex.printStackTrace();
 		}
-		return null;
+		return null;		
+	}
+	@Override
+	public ArrayList<StoredProductInterface> fetchStoredProducts(Object[] options){
+		String query = "select products.name as productName, inventory.position as inventoryPosition from products inner join inventory on products.product_id=inventory.product_id;";
+		this.retrieveStoredProducts(query);
+		return null;		
 	}
 	
 	@Override
 	public ArrayList<StoredProductInterface> searchStoredProducts(String productName) {
-		// TODO Auto-generated method stub
+		String query = "select products.name as productName, inventory.position as inventoryPosition from products inner join inventory on products.product_id=inventory.product_id where products.name='"+productName+"';";
+		this.retrieveStoredProducts(query);
 		return null;
 	}
 

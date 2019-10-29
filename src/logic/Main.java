@@ -1,4 +1,4 @@
-package src;
+package logic;
 
 public class Main {
 
