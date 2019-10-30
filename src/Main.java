@@ -1,4 +1,4 @@
-import database.Database;
+import database.sqlite.Database;
 
 public class Main {
 	public static void main(String[] args) {
@@ -6,5 +6,6 @@ public class Main {
 		//String WOW = database.testQuery();
 		//System.out.println(WOW);
 		database.fetchStoredProducts(null);
+		database.searchStoredProducts("PenXL");
 	}
 }
