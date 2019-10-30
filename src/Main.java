@@ -1,4 +1,4 @@
-import database.Database;
+import database.sqlite.Database;
 
 public class Main {
 	public static void main(String[] args) {

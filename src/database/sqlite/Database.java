@@ -1,4 +1,4 @@
-package database;
+package database.sqlite;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,9 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import logic.StoredProduct;
-import logic.interfaces.PositionInterface;
-import logic.interfaces.ProductInterface;
+import database.DatabaseInterface;
 import logic.interfaces.StoredProductInterface;
 
 public class Database implements DatabaseInterface{
