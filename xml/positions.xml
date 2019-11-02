@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<positions xsi:noNamespaceSchemaLocation="positions.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <position ROWID="0">
+    <shelf_section>100</shelf_section>
+    <shelf_sid>100</shelf_sid>
+    <shelf_place>100</shelf_place>
+    <product_id>2549</product_id>
+    <count>-2265</count>
+  </position>
+</positions>
