@@ -1,10 +1,11 @@
 package models;
 
 public class Product {
-	int getID();
+	/*int getID();
 	String getName();
 	Category getCategory();
 	int getPrize();
 	int getWeight();
 	public boolean renameProduct();
+	*/
 }

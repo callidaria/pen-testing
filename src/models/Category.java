@@ -1,7 +1,7 @@
 package models;
 
 public class Category {
-	String getID();
+	/*String getID();
 	String getName();
-	String getDesc();
+	String getDesc();*/
 }

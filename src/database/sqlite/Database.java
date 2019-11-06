@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import database.DatabaseInterface;
-import models.StoredProduct;
+import logic.interfaces.StoredProductInterface;
 
 public class Database implements DatabaseInterface{
 	
@@ -25,7 +25,7 @@ public class Database implements DatabaseInterface{
 	final String DBCON = "jdbc:"+Database.DBTYP+":"+Database.DBPATH;
 
 	Connection conn;
-	@Override
+
 	public Connection connect() {
 		Connection conn = null;
 		try {
@@ -38,7 +38,7 @@ public class Database implements DatabaseInterface{
 	}
 	
 	//StoredProducts start:
-	public ArrayList<StoredProduct>retrieveStoredProducts(String query){
+	public ArrayList<StoredProductInterface>retrieveStoredProducts(String query){
 		System.out.println("Query:"+query);
 		try(Connection conn = connect();Statement stmt = conn.createStatement();){
 	        ResultSet result = stmt.executeQuery(query);
@@ -57,23 +57,22 @@ public class Database implements DatabaseInterface{
 		}
 		return null;		
 	}
-	@Override
-	public ArrayList<StoredProduct> fetchStoredProducts(Object[] options){
+
+	public ArrayList<StoredProductInterface> fetchStoredProducts(Object[] options){
 		String query = "select products.name as productName, inventory.position as inventoryPosition from products inner join inventory on products.product_id=inventory.product_id;";
 		this.retrieveStoredProducts(query);
 		return null;		
 	}
 	
-	@Override
-	public ArrayList<StoredProduct> searchStoredProducts(String productName) {
+	public ArrayList<StoredProductInterface> searchStoredProducts(String productName) {
 		String query = "select products.name as productName, inventory.position as inventoryPosition from products inner join inventory on products.product_id=inventory.product_id where products.name='"+productName+"';";
 		this.retrieveStoredProducts(query);
 		return null;
 	}
 
 
-	@Override
-	public boolean addStoredProduct(StoredProduct storedProduct) {
+
+	public boolean addStoredProduct(StoredProductInterface storedProduct) {
 		// TODO Auto-generated method stub
 		return false;
 	}

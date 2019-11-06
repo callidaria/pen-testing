@@ -1,7 +1,6 @@
 package database.xml;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
