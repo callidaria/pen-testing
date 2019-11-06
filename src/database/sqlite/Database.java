@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import database.DatabaseInterface;
-import logic.interfaces.StoredProductInterface;
+import models.StoredProduct;
 
 public class Database implements DatabaseInterface{
 	
@@ -38,7 +38,7 @@ public class Database implements DatabaseInterface{
 	}
 	
 	//StoredProducts start:
-	public ArrayList<StoredProductInterface>retrieveStoredProducts(String query){
+	public ArrayList<StoredProduct>retrieveStoredProducts(String query){
 		System.out.println("Query:"+query);
 		try(Connection conn = connect();Statement stmt = conn.createStatement();){
 	        ResultSet result = stmt.executeQuery(query);
@@ -58,14 +58,14 @@ public class Database implements DatabaseInterface{
 		return null;		
 	}
 	@Override
-	public ArrayList<StoredProductInterface> fetchStoredProducts(Object[] options){
+	public ArrayList<StoredProduct> fetchStoredProducts(Object[] options){
 		String query = "select products.name as productName, inventory.position as inventoryPosition from products inner join inventory on products.product_id=inventory.product_id;";
 		this.retrieveStoredProducts(query);
 		return null;		
 	}
 	
 	@Override
-	public ArrayList<StoredProductInterface> searchStoredProducts(String productName) {
+	public ArrayList<StoredProduct> searchStoredProducts(String productName) {
 		String query = "select products.name as productName, inventory.position as inventoryPosition from products inner join inventory on products.product_id=inventory.product_id where products.name='"+productName+"';";
 		this.retrieveStoredProducts(query);
 		return null;
@@ -73,7 +73,7 @@ public class Database implements DatabaseInterface{
 
 
 	@Override
-	public boolean addStoredProduct(StoredProductInterface storedProduct) {
+	public boolean addStoredProduct(StoredProduct storedProduct) {
 		// TODO Auto-generated method stub
 		return false;
 	}

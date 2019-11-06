@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 
 import database.DatabaseInterface;
-import logic.interfaces.StoredProductInterface;
+import models.StoredProduct;
 
 public class Database implements DatabaseInterface {
 
@@ -15,25 +15,25 @@ public class Database implements DatabaseInterface {
 	}
 
 	@Override
-	public ArrayList<StoredProductInterface> retrieveStoredProducts(String query) {
+	public ArrayList<StoredProduct> retrieveStoredProducts(String query) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ArrayList<StoredProductInterface> fetchStoredProducts(Object[] options) {
+	public ArrayList<StoredProduct> fetchStoredProducts(Object[] options) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ArrayList<StoredProductInterface> searchStoredProducts(String productName) {
+	public ArrayList<StoredProduct> searchStoredProducts(String productName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean addStoredProduct(StoredProductInterface storedProduct) {
+	public boolean addStoredProduct(StoredProduct storedProduct) {
 		// TODO Auto-generated method stub
 		return false;
 	}

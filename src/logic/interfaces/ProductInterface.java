@@ -1,9 +1,9 @@
-package models;
+package logic.interfaces;
 
-public class Product {
+public interface ProductInterface {
 	int getID();
 	String getName();
-	Category getCategory();
+	CategoryInterface getCategory();
 	int getPrize();
 	int getWeight();
 	public boolean renameProduct();

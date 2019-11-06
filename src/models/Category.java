@@ -1,7 +1,7 @@
-package logic.interfaces;
+package models;
 
-public interface CategoryInterface {
-	int getID();
+public class Category {
+	String getID();
 	String getName();
 	String getDesc();
 }
