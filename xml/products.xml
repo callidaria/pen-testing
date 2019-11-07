@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+a product has ~ 140 bytes
+-->
 <products xsi:noNamespaceSchemaLocation="products.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <product id="1">
     <name>Simple Pen</name>
