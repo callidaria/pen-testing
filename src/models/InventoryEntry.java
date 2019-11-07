@@ -2,7 +2,7 @@ package models;
 
 import logic.interfaces.PositionInterface;
 
-public class Position implements PositionInterface{
+public class InventoryEntry implements PositionInterface{
 	private int shelfSection;
 	private int shelfPlace;
 	private int productID;
@@ -46,7 +46,7 @@ public class Position implements PositionInterface{
 		this.productID = productID;
 	}
 	
-	public Position(int shelfSection, int shelfPlace, int productID) {
+	public InventoryEntry(int shelfSection, int shelfPlace, int productID) {
 		this.shelfSection=shelfSection;
 		this.shelfPlace=shelfPlace;
 		this.productID=productID;

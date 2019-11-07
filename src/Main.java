@@ -1,23 +1,32 @@
 import java.util.ArrayList;
 
 import database.xml.Database;
-import models.Position;
+import models.InventoryEntry;
+import models.Product;
 
 public class Main {
 	public static void main(String[] args) {
 		Database database= new Database();
 		//String WOW = database.testQuery();
 		//System.out.println(WOW);
-		ArrayList<Position> positions = database.fetchStoredProducts(null);
-		System.out.println("Objects in Array: "+positions.size());
-		for (int i=0;i<positions.size();i++) {
-			System.out.println("Position ("+i+"):");
-			System.out.println("\tproduct_id:"+positions.get(0).getProductID());
-			System.out.println("\tposition:"+positions.get(0).getID());
-			System.out.println("\tshelf_section:"+positions.get(0).getShelfSection());
-			System.out.println("\tshelf_place:"+positions.get(0).getShelfPlace());
+		ArrayList<InventoryEntry> inventoryEntry = database.retrieveInventoryEntry();
+		System.out.println("Objects in Array: "+inventoryEntry.size());
+		for (int i=0;i<inventoryEntry.size();i++) {
+			System.out.println("InventoryEntry ("+i+"):");
+			System.out.println("\tproduct_id:"+inventoryEntry.get(i).getProductID());
+			System.out.println("\tposition:"+inventoryEntry.get(i).getID());
+			System.out.println("\tshelf_section:"+inventoryEntry.get(i).getShelfSection());
+			System.out.println("\tshelf_place:"+inventoryEntry.get(i).getShelfPlace());
 		}
 		
+		ArrayList<Product> products = database.retrieveProducts();
+		
+		for (int i=0;i<products.size();i++) {
+			System.out.println("Product ("+i+"):");
+			System.out.println("\tid:"+products.get(i).getId());
+			System.out.println("\tname:"+products.get(i).getName());
+			System.out.println("\tcount:"+products.get(i).getCount());
+		}
 		
 		
 	}

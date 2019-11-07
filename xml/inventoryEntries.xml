@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<positions xsi:noNamespaceSchemaLocation="inventoryEntries.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <position section="100" place="100">
+    <product_id>1</product_id>
+  </position>
+  <position section="100" place="200">
+    <product_id>2</product_id>
+  </position>
+  <position section="100" place="300">
+    <product_id>3</product_id>
+  </position>
+</positions>

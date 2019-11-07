@@ -11,16 +11,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import database.DatabaseInterface;
-import models.Position;
+import models.InventoryEntry;
+import models.Product;
 
 public class Database implements DatabaseInterface {
 
-	public ArrayList<Position> retrieveStoredProducts(String query) {
-		ArrayList<Position> positions = new ArrayList<Position>();
-		File xmlFile = new File("xml/positions.xml");
+	final String DBPATH="xml/";
+	public ArrayList<InventoryEntry> retrieveInventoryEntry() {
+		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
+		File xmlFile = new File(this.DBPATH+"inventoryEntries.xml");
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		int shelfSection;
-		int shelfPlace;
 		//int count;
 		try {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -28,40 +28,62 @@ public class Database implements DatabaseInterface {
 			doc.getDocumentElement().normalize();
 			NodeList nList = doc.getElementsByTagName("position");
 			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-			System.out.println("Stored positions: "+nList.getLength());
+			System.out.println("Stored inventoryEntries: "+nList.getLength());
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
 				//System.out.println("Node ("+i+"):");
 				int productID = Integer.parseInt(node.getElementsByTagName("product_id").item(0).getTextContent());
-				shelfSection = Integer.parseInt(node.getElementsByTagName("shelf_section").item(0).getTextContent());
-				shelfPlace = Integer.parseInt(node.getElementsByTagName("shelf_place").item(0).getTextContent());
+				int shelfSection = Integer.parseInt(node.getAttributes().getNamedItem("section").getTextContent());
+				int shelfPlace = Integer.parseInt(node.getAttributes().getNamedItem("place").getTextContent());
 				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
 				//System.out.println("\tproduct_id:"+productID);
 				//System.out.println("\tposition:"+shelfSection+shelfPlace);
 				//System.out.println("\tcount:"+count);
 				
-				Position position = new Position(shelfSection,shelfPlace,productID);
-				positions.add(position);
+				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,productID);
+				inventoryEntries.add(position);
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}	
 		
-		return positions;
+		return inventoryEntries;
 	}
 	
 	
-	public ArrayList<Position> fetchStoredProducts(Object[] options) {
-		ArrayList<Position> list = new ArrayList<Position>();
-		if(options==null) {
-			list = this.retrieveStoredProducts(null);
+	public ArrayList<Product> retrieveProducts() {
+		ArrayList<Product> inventoryEntries = new ArrayList<Product>();
+		File xmlFile = new File(this.DBPATH+"products.xml");
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(xmlFile);
+			doc.getDocumentElement().normalize();
+			NodeList nList = doc.getElementsByTagName("product");
+			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			System.out.println("Stored inventoryEntries: "+nList.getLength());
+			for(int i = 0; i < nList.getLength();i++) {
+				Element node = (Element) nList.item(i);
+				//System.out.println("Node ("+i+"):");
+				int id = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
+				String name = node.getElementsByTagName("name").item(0).getTextContent();
+				int count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
+				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
+				/*
+				System.out.println("\tid:"+id);
+				System.out.println("\tname:"+name);
+				System.out.println("\tcount:"+count);
+				*/
+				Product position = new Product(id,name,count);
+				inventoryEntries.add(position);
+			}
 		}
-		else {
-			throw new RuntimeException();
-		}
-		// TODO Auto-generated method stub
-		return list;
+		catch(Exception e) {
+			e.printStackTrace();
+		}	
+		
+		return inventoryEntries;
 	}
 
 
