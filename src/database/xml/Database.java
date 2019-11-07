@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.soap.Node;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -15,12 +14,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import database.DatabaseInterface;
-import models.InventoryEntry;
-import models.Product;
+import model.InventoryEntry;
+import model.Product;
 
 public class Database implements DatabaseInterface {
 
-	final String DBPATH="xml/";
+	final String DBPATH="data/xml/";
 	public ArrayList<InventoryEntry> retrieveInventoryEntry() {
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
 		File inventoryEntriesFile = new File(this.DBPATH+"inventoryEntries.xml");

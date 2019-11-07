@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 import database.xml.Database;
-import models.InventoryEntry;
-import models.Product;
+import model.InventoryEntry;
+import model.Product;
 
 public class Main {
 	public static void main(String[] args) {

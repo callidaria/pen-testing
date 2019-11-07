@@ -1,6 +1,6 @@
-package models;
+package model;
 
-import logic.interfaces.PositionInterface;
+import model.interfaces.PositionInterface;
 
 public class InventoryEntry implements PositionInterface{
 	private int shelfSection;

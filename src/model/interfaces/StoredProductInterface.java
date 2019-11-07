@@ -1,4 +1,4 @@
-package logic.interfaces;
+package model.interfaces;
 
 public interface StoredProductInterface {
 	ProductInterface getProduct();

@@ -1,4 +1,4 @@
-package logic.interfaces;
+package model.interfaces;
 
 public interface CategoryInterface {
 	String getID();
