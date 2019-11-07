@@ -52,5 +52,12 @@ public class InventoryEntry implements PositionInterface{
 		this.productID=productID;
 	}
 	
+	public InventoryEntry(int shelfSection, int shelfPlace, int productID, Product product) {
+		this.shelfSection=shelfSection;
+		this.shelfPlace=shelfPlace;
+		this.productID=productID;
+		this.product=product;
+	}
+	
 	
 }
