@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="products">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="product">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="name" type="xs:string"/>
+                            <xs:element name="count" type="xs:integer"/>
+                            <xs:element name="weight" type="xs:integer"/>
+							<xs:element name="prize" type="xs:integer"/>
+							<xs:element name="category_id" type="xs:integer"/>
+                        </xs:sequence>
+						<xs:attribute name="id" type="xs:integer" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueProductID">
+			<xs:selector xpath="product" /> 
+			<xs:field xpath="@id" /> 
+		</xs:unique>
+    </xs:element>    
+</xs:schema> 
