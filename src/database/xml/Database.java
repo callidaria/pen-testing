@@ -19,11 +19,11 @@ import model.Product;
 
 public class Database implements DatabaseInterface {
 
-	final String DBPATH="data/xml/";
-	public ArrayList<InventoryEntry> retrieveInventoryEntry() {
+	static final String DBPATH="data/xml/";
+	public static ArrayList<InventoryEntry> retrieveInventoryEntries() {
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
-		File inventoryEntriesFile = new File(this.DBPATH+"inventoryEntries.xml");
-		File productsFile = new File(this.DBPATH+"products.xml");
+		File inventoryEntriesFile = new File(DBPATH+"inventoryEntries.xml");
+		File productsFile = new File(DBPATH+"products.xml");
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		//int count;
 		try {
@@ -68,9 +68,9 @@ public class Database implements DatabaseInterface {
 	}
 	
 	
-	public ArrayList<Product> retrieveProducts() {
+	public static ArrayList<Product> retrieveProducts() {
 		ArrayList<Product> inventoryEntries = new ArrayList<Product>();
-		File xmlFile = new File(this.DBPATH+"products.xml");
+		File xmlFile = new File(DBPATH+"products.xml");
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
