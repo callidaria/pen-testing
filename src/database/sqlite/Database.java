@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import database.DatabaseInterface;
-import logic.interfaces.StoredProductInterface;
+import model.interfaces.StoredProductInterface;
 
 public class Database implements DatabaseInterface{
 	
