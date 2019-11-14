@@ -1,8 +1,11 @@
 import java.util.ArrayList;
 
+import javax.swing.SwingUtilities;
+
 import database.xml.Database;
 import model.InventoryEntry;
 import model.Product;
+import view.TextAreaLogProgram;
 
 public class Main {
 	public static void main(String[] args) {
@@ -52,6 +55,14 @@ public class Main {
 				System.out.println("\tname:"+products.get(i).getName());
 				System.out.println("\tcount:"+products.get(i).getCount());
 			}
+			
+			
+			SwingUtilities.invokeLater(new Runnable() {
+	            @Override
+	            public void run() {
+	                new TextAreaLogProgram().setVisible(true);
+	            }
+	        });
 			
 		}
 	}
