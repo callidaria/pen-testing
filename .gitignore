@@ -1,7 +1,0 @@
-/bin/
-/lib/mysql-server/*
-#/lib/mysql-connector/*
-
-!/lib/mysql-server/README.md
-!/lib/mysql-connector/README.md
-#!/lib/mysql-server/data
