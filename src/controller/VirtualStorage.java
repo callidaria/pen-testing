@@ -7,18 +7,18 @@ import model.InventoryEntry;
 import model.Product;
 
 public class VirtualStorage {
-	ArrayList<InventoryEntry> ie;
+	ArrayList<InventoryEntry> invEntry;
 	ArrayList<Product> prod;
 	
 	public VirtualStorage() {
-		ie=Database.retrieveInventoryEntries();
+		invEntry=Database.retrieveInventoryEntries();
 		prod=Database.retrieveProducts();
 	}
 	
-	public InventoryEntry search_entry_pid(int id) {
-		for(int i=0;i<ie.size();i++) {
-			if (ie.get(i).getProductID()==id)
-				return ie.get(i);
+	public InventoryEntry getEntryByPID(int id) {
+		for(int i=0;i<invEntry.size();i++) {
+			if (invEntry.get(i).getProductID()==id)
+				return invEntry.get(i);
 		} return null;
 	}
 }

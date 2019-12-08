@@ -1,1 +1,4 @@
 /bin/
+/src/database/
+!/src/database/xml
+/src/Main.java
