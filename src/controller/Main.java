@@ -1,4 +1,4 @@
-package src;
+package controller;
 
 public class Main {
 

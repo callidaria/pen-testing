@@ -1,8 +1,7 @@
-package src.interfaces;
+package model.interfaces;
 
 public interface ProductInterface {
 	int getID();
-	int getNmb();
 	String getName();
 	CategoryInterface getCategory();
 	int getPrize();

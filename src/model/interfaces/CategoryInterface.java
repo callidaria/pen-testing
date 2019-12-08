@@ -1,7 +1,7 @@
-package src.interfaces;
+package model.interfaces;
 
 public interface CategoryInterface {
-	int getID();
+	String getID();
 	String getName();
 	String getDesc();
 }
