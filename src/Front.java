@@ -26,7 +26,7 @@ public class Front extends JFrame {
 	public Front()
 	{	
 		//GUI
-		setTitle("Bestandsübersicht");
+		setTitle("Bestandsï¿½bersicht");
 		setSize(400,220);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -63,7 +63,7 @@ public class Front extends JFrame {
 			    {new Integer(5), new Integer(5),
 				    	new Integer(5), "Blauer Stift", new Integer(500)},
 			    {new Integer(5), new Integer(5),
-					    	new Integer(5), "Grüner Stift", new Integer(3000)}
+					    	new Integer(5), "Grï¿½ner Stift", new Integer(3000)}
 		};
 		
 		JTable table = new JTable(data, columnNames);
@@ -75,7 +75,7 @@ public class Front extends JFrame {
 		//Menubar
 		JMenuBar menu = new JMenuBar();
 		JMenu datei = new JMenu("Datei");
-		JMenu submenu = new JMenu("Submenü");
+		JMenu submenu = new JMenu("Submenï¿½");
 		JMenuItem eins = new JMenuItem("Kategorie");
 		JMenuItem zwei = new JMenuItem("Punkt 2");
 		eins.addActionListener(new ActionListener() { 
@@ -92,7 +92,7 @@ public class Front extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(),"Hier könnte ihre Nachricht stehen","Überschrift", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(getContentPane(),"Hier kï¿½nnte ihre Nachricht stehen","ï¿½berschrift", JOptionPane.INFORMATION_MESSAGE);
 			}
 			
 		});
