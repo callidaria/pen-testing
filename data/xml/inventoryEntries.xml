@@ -1,23 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-a position has 75-80 bytes
--->
-<entries xsi:noNamespaceSchemaLocation="inventoryEntries.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <entry id="0" section="100" place="100">
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="inventoryEntries.xsd">
+  <entry id="0" place="100" section="100">
     <name>Simple Pen</name>
     <count>100000</count>
     <weight>12</weight>
     <prize>99</prize>
     <category_id>1</category_id>
   </entry>
-  <entry id="1" section="100" place="200">
+  <entry id="1" place="200" section="100">
     <name>Big Pen</name>
     <count>400</count>
     <weight>20</weight>
     <prize>199</prize>
     <category_id>1</category_id>
   </entry>
-  <entry id="2" section="100" place="300">
+  <entry id="1" place="300" section="100">
     <name>XL Pen</name>
     <count>400</count>
     <weight>20</weight>

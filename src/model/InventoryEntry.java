@@ -3,9 +3,14 @@ package model;
 import model.interfaces.PositionInterface;
 
 public class InventoryEntry implements PositionInterface{
+	/*to-do:
+	 * decide on UID (UniqueIDentifier);
+	 * give shelfSection & shelfPlace better names.
+	 * give getID better name.
+	 *
+	 */
 	private int shelfSection;
 	private int shelfPlace;
-	private int UID;
 	public Product product;
 	
 	public int getID() {
@@ -39,25 +44,26 @@ public class InventoryEntry implements PositionInterface{
 	}
 
 	public int getUID() {
-		return UID;
-	}
-
-	public void setUID(int UID) {
-		this.UID = UID;
+		return this.getID();
 	}
 	
-	public InventoryEntry(int shelfSection, int shelfPlace, int UID) {
+	public InventoryEntry(int shelfSection, int shelfPlace, Product product) {
 		this.shelfSection=shelfSection;
 		this.shelfPlace=shelfPlace;
-		this.UID=UID;
-	}
-	
-	public InventoryEntry(int shelfSection, int shelfPlace, int UID, Product product) {
-		this.shelfSection=shelfSection;
-		this.shelfPlace=shelfPlace;
-		this.UID=UID;
 		this.product=product;
 	}
 	
+	@Deprecated
+	public InventoryEntry(int shelfSection, int shelfPlace, int UID) {
+		this.shelfSection=shelfSection;
+		this.shelfPlace=shelfPlace;
+
+	}
 	
+	@Deprecated
+	public InventoryEntry(int shelfSection, int shelfPlace, int UID, Product product) {
+		this.shelfSection=shelfSection;
+		this.shelfPlace=shelfPlace;
+		this.product=product;
+	}
 }

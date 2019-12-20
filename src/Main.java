@@ -56,7 +56,6 @@ public class Main {
 				System.out.println("\tcount:"+products.get(i).getCount());
 			}
 			
-			Database.addInventoryEntry("NEW SPECIAL PEN");
 			
 			
 			SwingUtilities.invokeLater(new Runnable() {

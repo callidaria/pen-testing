@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+  
+    "definitions": {
+      "entry": {
+        "type": "object",
+        "properties": {
+          "section":           { "type": "number" },
+          "place":           { "type": "number" },
+          "name":          { "type": "string" },
+          "count":          { "type": "number" },
+          "weight":          { "type": "number" },
+          "prize":          { "type": "number" },
+          "category_id":          { "type": "number" }
+        },
+        "required": ["section", "place", "name","count","weight","prize","category_id"]
+      }
+    },
+  
+    "type": "object"
+}

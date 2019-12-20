@@ -1,21 +1,28 @@
 package database.xml;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.*;
-import javax.xml.stream.events.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import database.DatabaseInterface;
 import model.InventoryEntry;
@@ -53,7 +60,7 @@ public class Database implements DatabaseInterface {
 				//int productCategoryID = Integer.parseInt(subNode.getElementsByTagName("category_id").item(0).getTextContent());
 				
 				Product product = new Product(productID,productName,productCount);
-				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,productID,product);
+				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,product);
 				inventoryEntries.add(position);
 			}
 		}
@@ -85,13 +92,15 @@ public class Database implements DatabaseInterface {
 				int id = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
 				String name = node.getElementsByTagName("name").item(0).getTextContent();
 				int count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
+				int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
+				int prize = Integer.parseInt(node.getElementsByTagName("prize").item(0).getTextContent());
 				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
 				/*
 				System.out.println("\tid:"+id);
 				System.out.println("\tname:"+name);
 				System.out.println("\tcount:"+count);
 				*/
-				Product position = new Product(id,name,count);
+				Product position = new Product(name,count,weight,prize);
 				inventoryEntries.add(position);
 			}
 		}
@@ -102,76 +111,149 @@ public class Database implements DatabaseInterface {
 		return inventoryEntries;
 	}
 	
-	public void saveConfig() throws Exception {
-        // create an XMLOutputFactory
-        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        // create XMLEventWriter
-        XMLEventWriter eventWriter = outputFactory
-                .createXMLEventWriter(new FileOutputStream(DBPATH+"inventoryEntries.xml"));
-        // create an EventFactory
-        XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-        XMLEvent end = eventFactory.createDTD("\n");
-        // create and write Start Tag
-        StartDocument startDocument = eventFactory.createStartDocument();
-        eventWriter.add(startDocument);
-
-        // create config open tag
-        StartElement configStartElement = eventFactory.createStartElement("",
-                "", "config");
-        eventWriter.add(configStartElement);
-        eventWriter.add(end);
-        // Write the different nodes
-        createNode(eventWriter, "mode", "1");
-        createNode(eventWriter, "unit", "901");
-        createNode(eventWriter, "current", "0");
-        createNode(eventWriter, "interactive", "0");
-
-        eventWriter.add(eventFactory.createEndElement("", "", "config"));
-        eventWriter.add(end);
-        eventWriter.add(eventFactory.createEndDocument());
-        eventWriter.close();
-    }
-
-    private void createNode(XMLEventWriter eventWriter, String name,
-            String value) throws XMLStreamException {
-
-        XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-        XMLEvent end = eventFactory.createDTD("\n");
-        XMLEvent tab = eventFactory.createDTD("\t");
-        // create Start node
-        StartElement sElement = eventFactory.createStartElement("", "", name);
-        eventWriter.add(tab);
-        eventWriter.add(sElement);
-        // create Content
-        Characters characters = eventFactory.createCharacters(value);
-        eventWriter.add(characters);
-        // create End node
-        EndElement eElement = eventFactory.createEndElement("", "", name);
-        eventWriter.add(eElement);
-        eventWriter.add(end);
-
-    }
-	
-	public static Boolean addInventoryEntry(String name) {
-		File xmlFile = new File(DBPATH+"inventoryEntries.xml");
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	public static void addInventoryEntry(InventoryEntry newIE) throws TransformerException{
+		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database is now corrupted!");
 		try {
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(xmlFile);
-			doc.getDocumentElement().normalize();
-			NodeList roots=doc.getElementsByTagName("entries");
-			Node root=roots.item(0);
+			String filepath = DBPATH+"inventoryEntries.xml";
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(filepath);
+
+			// Get the root element
+			Node entries = doc.getFirstChild();
+
+			// Get the staff element , it may not working if tag has spaces, or
+			// whatever weird characters in front...it's better to use
+			// getElementsByTagName() to get it directly.
+			// Node staff = company.getFirstChild();
+
+			// Get the staff element by tag name directly
+			Element newEntry = doc.createElement("entry");
+			newEntry.setAttribute("id","-1");
+			newEntry.setAttribute("place",Integer.toString(newIE.getShelfPlace()));
+			newEntry.setAttribute("section",Integer.toString(newIE.getShelfSection()));
 			
-			Element newElement = doc.createElementNS("urn:exo:/path/to/xsd/in/jar", "ns3:element3");
-			dbFactory.createElement(newElement);
 			
-		}
-		catch (Exception e) {
-			// TODO: handle exception
-		}
-		System.out.println("New Element added");
-		return false;
+			Element newName = doc.createElement("name");
+			Element newCount = doc.createElement("count");
+			Element newWeight = doc.createElement("weight");
+			Element newPrize = doc.createElement("prize");
+			Element newCategoryId = doc.createElement("category_id");
+			
+			newName.appendChild(doc.createTextNode(newIE.product.getName()));
+			
+			newCount.appendChild(doc.createTextNode(Integer.toString(newIE.product.getCount())));
+		
+			newWeight.appendChild(doc.createTextNode(Integer.toString(newIE.product.getWeight())));
+			
+			newPrize.appendChild(doc.createTextNode(Integer.toString(newIE.product.getPrize())));
+			
+			newCategoryId.appendChild(doc.createTextNode(Integer.toString(newIE.product.getCategoryID())));
+						
+			
+			
+			newEntry.appendChild(newName);
+			newEntry.appendChild(newCount);
+			newEntry.appendChild(newWeight);
+			newEntry.appendChild(newPrize);
+			newEntry.appendChild(newCategoryId);
+			
+			entries.appendChild(newEntry);
+
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File(filepath));
+			transformer.transform(source, result);
+
+			System.out.println("Done");
+
+		   } catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		   } catch (TransformerException tfe) {
+			tfe.printStackTrace();
+		   } catch (IOException ioe) {
+			ioe.printStackTrace();
+		   } catch (SAXException sae) {
+			sae.printStackTrace();
+		   }
 	}
+	
+	/*
+	 * example for how to use transform factory
+	 * 
+	public static void saveToXML() {
+		try {
+			String filepath = DBPATH+"file.xml";
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(filepath);
+
+			// Get the root element
+			Node company = doc.getFirstChild();
+
+			// Get the staff element , it may not working if tag has spaces, or
+			// whatever weird characters in front...it's better to use
+			// getElementsByTagName() to get it directly.
+			// Node staff = company.getFirstChild();
+
+			// Get the staff element by tag name directly
+			Node staff = doc.getElementsByTagName("staff").item(0);
+			Element newEntry = doc.createElement("entry");
+
+			// update staff attribute
+			NamedNodeMap attr = staff.getAttributes();
+			Node nodeAttr = attr.getNamedItem("id");
+			nodeAttr.setTextContent("2");
+
+			// append a new node to staff
+
+			// loop the staff child node
+			NodeList list = staff.getChildNodes();
+
+			for (int i = 0; i < list.getLength(); i++) {
+				
+	                   Node node = list.item(i);
+
+			   // get the salary element, and update the value
+			   if ("salary".equals(node.getNodeName())) {
+				node.setTextContent("2000000");
+			   }
+
+	                   //remove firstname
+			   if ("firstname".equals(node.getNodeName())) {
+				staff.removeChild(node);
+			   }
+
+			}
+			Element newElement = doc.createElement("NewEl");
+			newElement.appendChild(doc.createTextNode("New"));
+			newEntry.appendChild(newElement);
+			company.appendChild(newEntry);
+
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File(filepath));
+			transformer.transform(source, result);
+
+			System.out.println("Done");
+
+		   } catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		   } catch (TransformerException tfe) {
+			tfe.printStackTrace();
+		   } catch (IOException ioe) {
+			ioe.printStackTrace();
+		   } catch (SAXException sae) {
+			sae.printStackTrace();
+		   }
+	}*/
 	
 	public static Boolean editInventoryEntry() {
 		

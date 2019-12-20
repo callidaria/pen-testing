@@ -15,9 +15,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
+import javax.xml.transform.TransformerException;
 
 import database.xml.Database;
 import model.InventoryEntry;
+import model.Product;
  
 public class TextAreaLogProgram extends JFrame {
     /**
@@ -27,6 +29,7 @@ public class TextAreaLogProgram extends JFrame {
      
     private JButton buttonStart = new JButton("Start");
     private JButton buttonClear = new JButton("Clear");
+    private JButton buttonAdd = new JButton("Add");
      
     private PrintStream standardOut;
      
@@ -56,6 +59,8 @@ public class TextAreaLogProgram extends JFrame {
          
         constraints.gridx = 1;
         add(buttonClear, constraints);
+        constraints.gridx = 2;
+        add(buttonAdd, constraints);
          
         constraints.gridx = 0;
         constraints.gridy = 1;
@@ -95,7 +100,25 @@ public class TextAreaLogProgram extends JFrame {
                 }
             }
         });
-         
+        
+        buttonAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                // clears the text area
+            	
+    			try {
+    				Product newProduct = new Product("Radiergummi",1,420,100);
+        			InventoryEntry newInventoryEntry = new InventoryEntry(100,100,newProduct);
+    				Database.addInventoryEntry(newInventoryEntry);
+    				standardOut.println("Product (Radiergummi) added");
+    			} catch (TransformerException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+            }
+        });
+        
+       
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(480, 320);
         setLocationRelativeTo(null);    // centers on screen

@@ -6,6 +6,7 @@ public class Product {
 	private int weight;
 	private int prize;
 	private int count;
+	private int categoryID;
 	public Category category;
 	
 	public int getId() {
@@ -23,6 +24,12 @@ public class Product {
 	public int getWeight() {
 		return weight;
 	}
+	public int getCategoryID() {
+		return categoryID;
+	}
+	public void setCategoryID(int categoryID) {
+		this.categoryID = categoryID;
+	}
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
@@ -39,9 +46,25 @@ public class Product {
 		this.count = count;
 	}
 	
+	@Deprecated
 	public Product(int id, String name, int count){
 		this.id=id;
 		this.name=name;
 		this.count=count;
+	}
+	
+	public Product(String name, int count, int weight, int prize){
+		this.name=name;
+		this.count=count;
+		this.weight=weight;
+		this.prize=prize;
+	}
+	
+	public Product(String name, int count, int weight, int prize, int categoryID){
+		this.name=name;
+		this.count=count;
+		this.weight=weight;
+		this.prize=prize;
+		//to-do: append category
 	}
 }
