@@ -2,14 +2,26 @@
 <!--
 a position has 75-80 bytes
 -->
-<positions xsi:noNamespaceSchemaLocation="inventoryEntries.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <position section="100" place="100">
-    <product_id>1</product_id>
-  </position>
-  <position section="100" place="200">
-    <product_id>2</product_id>
-  </position>
-  <position section="100" place="300">
-    <product_id>3</product_id>
-  </position>
-</positions>
+<entries xsi:noNamespaceSchemaLocation="inventoryEntries.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <entry id="0" section="100" place="100">
+    <name>Simple Pen</name>
+    <count>100000</count>
+    <weight>12</weight>
+    <prize>99</prize>
+    <category_id>1</category_id>
+  </entry>
+  <entry id="1" section="100" place="200">
+    <name>Big Pen</name>
+    <count>400</count>
+    <weight>20</weight>
+    <prize>199</prize>
+    <category_id>1</category_id>
+  </entry>
+  <entry id="2" section="100" place="300">
+    <name>XL Pen</name>
+    <count>400</count>
+    <weight>20</weight>
+    <prize>199</prize>
+    <category_id>1</category_id>
+  </entry>
+</entries>

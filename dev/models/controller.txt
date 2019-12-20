@@ -1,0 +1,10 @@
+controller:
+
+g/s InventoryEntry
+g/s Categories
+
+Methodes:
+getEntryByPlace()
+getEntryByName()
+searchEntries()
+filterEntries()

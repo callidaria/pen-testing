@@ -1,13 +1,18 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="positions">
+    <xs:element name="entries">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="position">
+                <xs:element name="entry">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="product_id" type="xs:integer"/>
+                            <xs:element name="name" type="xs:string"/>
+                            <xs:element name="count" type="xs:integer"/>
+                            <xs:element name="weight" type="xs:integer"/>
+							<xs:element name="prize" type="xs:integer"/>
+							<xs:element name="category_id" type="xs:integer"/>
                         </xs:sequence>
+                        <xs:attribute name="id" type="xs:integer" />
 						<xs:attribute name="section" type="xs:integer" />
 						<xs:attribute name="place" type="xs:integer" />
                     </xs:complexType>
@@ -15,9 +20,10 @@
             </xs:sequence>
         </xs:complexType>
         <xs:unique name="optionValuesMustBeUnique">
-			<xs:selector xpath="position" />
+			<xs:selector xpath="Entry" />
 			<xs:field xpath="@section" />
-			<xs:field xpath="@place" />
+            <xs:field xpath="@place" />
+            <xs:field xpath="@name" />
 		</xs:unique>
     </xs:element>
 

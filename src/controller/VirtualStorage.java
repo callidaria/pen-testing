@@ -17,7 +17,7 @@ public class VirtualStorage {
 	
 	public InventoryEntry getEntryByPID(int id) {
 		for(int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getProductID()==id)
+			if (invEntry.get(i).getUID()==id)
 				return invEntry.get(i);
 		} return null;
 	}

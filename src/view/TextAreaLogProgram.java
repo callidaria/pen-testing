@@ -112,7 +112,7 @@ public class TextAreaLogProgram extends JFrame {
     			System.out.println("Objects in Array: "+inventoryEntry.size());
     			for (int i=0;i<inventoryEntry.size();i++) {
     				System.out.println("InventoryEntry ("+i+"):");
-    				System.out.println("\tproduct_id:"+inventoryEntry.get(i).getProductID());
+    				System.out.println("\tproduct_id:"+inventoryEntry.get(i).getUID());
     				System.out.println("\t\tproduct_name:"+inventoryEntry.get(i).product.getName());
     				System.out.println("\t\tproduct_count:"+inventoryEntry.get(i).product.getCount());
     				System.out.println("\tposition:"+inventoryEntry.get(i).getID());

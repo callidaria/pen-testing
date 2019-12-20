@@ -5,7 +5,7 @@ import model.interfaces.PositionInterface;
 public class InventoryEntry implements PositionInterface{
 	private int shelfSection;
 	private int shelfPlace;
-	private int productID;
+	private int UID;
 	public Product product;
 	
 	public int getID() {
@@ -38,24 +38,24 @@ public class InventoryEntry implements PositionInterface{
 		this.product = product;
 	}
 
-	public int getProductID() {
-		return productID;
+	public int getUID() {
+		return UID;
 	}
 
-	public void setProductID(int productID) {
-		this.productID = productID;
+	public void setUID(int UID) {
+		this.UID = UID;
 	}
 	
-	public InventoryEntry(int shelfSection, int shelfPlace, int productID) {
+	public InventoryEntry(int shelfSection, int shelfPlace, int UID) {
 		this.shelfSection=shelfSection;
 		this.shelfPlace=shelfPlace;
-		this.productID=productID;
+		this.UID=UID;
 	}
 	
-	public InventoryEntry(int shelfSection, int shelfPlace, int productID, Product product) {
+	public InventoryEntry(int shelfSection, int shelfPlace, int UID, Product product) {
 		this.shelfSection=shelfSection;
 		this.shelfPlace=shelfPlace;
-		this.productID=productID;
+		this.UID=UID;
 		this.product=product;
 	}
 	
