@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
+import javax.xml.transform.TransformerException;
 
 import database.xml.Database;
 import model.InventoryEntry;
@@ -47,14 +48,15 @@ public class Main {
 				System.out.println("\tshelf_place:"+inventoryEntry.get(i).getShelfPlace());
 			}
 			
-			ArrayList<Product> products = Database.retrieveProducts();
-			
-			for (int i=0;i<products.size();i++) {
-				System.out.println("Product ("+i+"):");
-				System.out.println("\tid:"+products.get(i).getId());
-				System.out.println("\tname:"+products.get(i).getName());
-				System.out.println("\tcount:"+products.get(i).getCount());
+			Product pro = new Product("Simple Pen 2nd", 12, 12, 99);
+			InventoryEntry ie = new InventoryEntry(100,100,pro);
+			try {
+				Database.editInventoryEntry(ie.getUID(), ie);
+			} catch (TransformerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+
 			
 			
 			

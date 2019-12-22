@@ -66,4 +66,8 @@ public class InventoryEntry implements PositionInterface{
 		this.shelfPlace=shelfPlace;
 		this.product=product;
 	}
+	
+	public boolean validate() {
+		return true;
+	}
 }

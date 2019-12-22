@@ -183,6 +183,86 @@ public class Database implements DatabaseInterface {
 		   }
 	}
 	
+	public static InventoryEntry editInventoryEntry(int UID,InventoryEntry newIE) throws TransformerException{
+		System.out.println("WARNING METHODE: editInventoryEntry IS WORK IN PROGRESS!\nYour database is now corrupted!");
+		
+		try {
+			newIE.validate();
+			Database.nameExists(newIE.product.getName());
+			Database.uidExists(newIE.getUID());
+		} catch(Exception ex){
+			System.out.println(ex);
+		}
+		
+		try {
+			String filepath = DBPATH+"inventoryEntries.xml";
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(filepath);
+
+			Node entries = doc.getFirstChild();
+			NodeList entryList = entries.getChildNodes();
+			
+
+			for (int i = 0; i < entryList.getLength(); i++) {
+				
+               Node node = entryList.item(i);
+               //Element elNode = (Element) node;
+               NamedNodeMap attr = node.getAttributes();
+               
+
+			   // get the salary element, and update the value
+			   if ("entry".equals(node.getNodeName())) {
+				   int entryUID=Integer.parseInt(attr.getNamedItem("place").getTextContent()+attr.getNamedItem("section").getTextContent());
+				   
+				   if (entryUID == UID) {
+					   NodeList nodeChilds = node.getChildNodes();
+					   for (int n = 0; i < nodeChilds.getLength(); n++) {
+						   Node subNode = nodeChilds.item(n);
+						   if ("name".equals(subNode.getNodeName())) {
+							   System.out.println("Name"+subNode.getTextContent());
+							   subNode.setTextContent(newIE.product.getName());
+							   break;
+						   }
+					   }
+					   System.out.print("Found: "+entryUID+" (Name altered)");
+					   
+				   }
+			   }
+			}
+
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File(filepath));
+			transformer.transform(source, result);
+
+			System.out.println("Done");
+
+		   } catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		   } /*catch (TransformerException tfe) {
+			tfe.printStackTrace();
+		   } */catch (IOException ioe) {
+			ioe.printStackTrace();
+		   } catch (SAXException sae) {
+			sae.printStackTrace();
+		   }
+		return newIE;
+	}
+	
+	private static boolean nameExists(String name) {
+		return true;
+	}
+	
+	private static boolean uidExists(int uid) {
+		return true;
+	}
+	
 	/*
 	 * example for how to use transform factory
 	 * 
