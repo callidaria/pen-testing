@@ -70,4 +70,15 @@ public class InventoryEntry implements PositionInterface{
 	public boolean validate() {
 		return true;
 	}
+	
+
+	static public int[] uidToSectionPlace(int UID){
+		int[] sectionPlace= new int[2];
+		if((int) (Math.log10(UID) + 1)!=6){
+			return null;
+		}
+		sectionPlace[0]=100;
+		sectionPlace[1]=101;
+		return sectionPlace;
+	}
 }

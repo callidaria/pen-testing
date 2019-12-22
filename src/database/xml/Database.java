@@ -15,6 +15,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
@@ -31,6 +32,23 @@ import model.Product;
 public class Database implements DatabaseInterface {
 
 	static final String DBPATH="data/xml/";
+	
+	public static Document dbFactory(String file) throws SAXException, IOException {
+		File inventoryEntriesFile = new File(DBPATH+file);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder;
+		Document doc = null;
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(inventoryEntriesFile);
+			doc.getDocumentElement().normalize();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		
+		return doc;
+	}
+	
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries() {
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
 		File inventoryEntriesFile = new File(DBPATH+"inventoryEntries.xml");
@@ -184,16 +202,22 @@ public class Database implements DatabaseInterface {
 	}
 	
 	public static InventoryEntry editInventoryEntry(int UID,InventoryEntry newIE) throws TransformerException{
-		System.out.println("WARNING METHODE: editInventoryEntry IS WORK IN PROGRESS!\nYour database is now corrupted!");
+		System.out.println("WARNING METHODE: editInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
 		
-		try {
-			newIE.validate();
-			Database.nameExists(newIE.product.getName());
-			Database.uidExists(newIE.getUID());
-		} catch(Exception ex){
-			System.out.println(ex);
+		Boolean bool1=newIE.validate();
+		Boolean bool2=Database.nameExists(newIE.product.getName());
+		Boolean bool3;
+		
+		if (newIE.getUID()!=UID) {
+			bool3=Database.uidExists(newIE.getUID());
+		}
+		else {
+			bool3=false;
 		}
 		
+		if(bool1 && !bool2 && !bool3) {
+			
+		}
 		try {
 			String filepath = DBPATH+"inventoryEntries.xml";
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -260,7 +284,27 @@ public class Database implements DatabaseInterface {
 	}
 	
 	private static boolean uidExists(int uid) {
-		return true;
+		try {
+	        Document xmlDocument = Database.dbFactory("inventoryEntries.xml");
+	        XPath xPath = XPathFactory.newInstance().newXPath();
+	        Element subNode;
+	        int section=InventoryEntry.uidToSectionPlace(uid)[0];
+	        int place=InventoryEntry.uidToSectionPlace(uid)[1];
+			subNode = (Element) xPath.compile("/entries/entry[@section="+section+" and @place="+place+"]").evaluate(xmlDocument, XPathConstants.NODE);
+			if (subNode!=null) {
+				return true;
+			};
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	/*
