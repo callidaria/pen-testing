@@ -9,8 +9,8 @@ public class InventoryEntry implements PositionInterface{
 	 * give getID better name.
 	 *
 	 */
-	private int shelfSection;
-	private int shelfPlace;
+	private Integer shelfSection;
+	private Integer shelfPlace;
 	public Product product;
 	
 	public int getID() {
@@ -68,17 +68,56 @@ public class InventoryEntry implements PositionInterface{
 	}
 	
 	public boolean validate() {
+		if (this.shelfSection==null || this.shelfPlace==null || this.product.validate()==false) {
+			return false;
+		}
 		return true;
 	}
 	
 
 	static public int[] uidToSectionPlace(int UID){
+		/* Idee ist als Eingabe UID zubekommen und dann Section und Place auszugeben.
+		 * Java hat keinen sch�nen slice operator und auch nix geiles f�r length von int
+		 */
 		int[] sectionPlace= new int[2];
 		if((int) (Math.log10(UID) + 1)!=6){
 			return null;
 		}
-		sectionPlace[0]=100;
-		sectionPlace[1]=101;
+		String stringUID = Integer.toString(UID);
+		String section=stringUID.substring(0, 3);
+		String place=stringUID.substring(3, 6);
+		System.out.println("UID:"+UID+">"+section+"|"+place);
+		sectionPlace[0]=Integer.parseInt(section);
+		sectionPlace[1]=Integer.parseInt(place);
 		return sectionPlace;
 	}
+	public String toString() {
+		if(this.validate()) {
+			return "InventoryEntry ("+this.getUID()+"):"+
+					"\n\tShelfSection :"+this.getShelfSection()+
+					"\n\tShelfPlace :"+this.getShelfPlace()+
+					"\n\t\tproduct_name:"+this.product.getName()+
+					"\n\t\tproduct_count:"+this.product.getCount()+
+					"\n\t\tproduct_weight:"+this.product.getWeight()+"g"+
+					"\n\t\tproduct_prize:"+this.product.getPrize()+"c"+
+					"\n\tposition:"+this.getID()+
+					"\n\tvalide:"+this.validate();
+		}
+		if(this.product.validate()) {
+			return "InventoryEntry ():"+
+					"\n\t\tproduct_name:"+this.product.getName()+
+					"\n\t\tproduct_count:"+this.product.getCount()+
+					"\n\t\tproduct_weight:"+this.product.getWeight()+"g"+
+					"\n\t\tproduct_prize:"+this.product.getPrize()+"c"+
+					"\n\tvalide:"+this.validate();
+		}
+		if(this.getUID()!=0) {
+			return "InventoryEntry ("+this.getUID()+"):"+
+					"\n\tvalide:"+this.validate();
+		}
+		else {
+			return "This InventoryEntry is not valid.";
+		}
+		
+    }
 }

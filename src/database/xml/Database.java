@@ -64,7 +64,7 @@ public class Database implements DatabaseInterface {
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
 				//System.out.println("Node ("+i+"):");
-				int productID = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
+				//int productID = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
 				int shelfSection = Integer.parseInt(node.getAttributes().getNamedItem("section").getTextContent());
 				int shelfPlace = Integer.parseInt(node.getAttributes().getNamedItem("place").getTextContent());
 				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
@@ -72,12 +72,13 @@ public class Database implements DatabaseInterface {
 				//System.out.println("\tposition:"+shelfSection+shelfPlace);
 				//System.out.println("\tcount:"+count);
 				String productName = node.getElementsByTagName("name").item(0).getTextContent();
-				//int productWeight = Integer.parseInt(subNode.getElementsByTagName("weight").item(0).getTextContent());
-				//int productPrize = Integer.parseInt(subNode.getElementsByTagName("prize").item(0).getTextContent());
+				int productWeight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
+				int productPrize = Integer.parseInt(node.getElementsByTagName("prize").item(0).getTextContent());
 				int productCount = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
 				//int productCategoryID = Integer.parseInt(subNode.getElementsByTagName("category_id").item(0).getTextContent());
 				
-				Product product = new Product(productID,productName,productCount);
+				//Product product = new Product(productID,productName,productCount);
+				Product product = new Product(productName,productCount,productWeight,productPrize);
 				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,product);
 				inventoryEntries.add(position);
 			}
@@ -107,7 +108,7 @@ public class Database implements DatabaseInterface {
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
 				//System.out.println("Node ("+i+"):");
-				int id = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
+				//int id = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
 				String name = node.getElementsByTagName("name").item(0).getTextContent();
 				int count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
 				int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
@@ -129,8 +130,11 @@ public class Database implements DatabaseInterface {
 		return inventoryEntries;
 	}
 	
-	public static void addInventoryEntry(InventoryEntry newIE) throws TransformerException{
+	public static void addInventoryEntry(InventoryEntry newIE) throws Exception{
 		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database is now corrupted!");
+		if(newIE.validate()==false) {
+			throw new Exception("New InventoryEntry failed validation.");
+		}
 		try {
 			String filepath = DBPATH+"inventoryEntries.xml";
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -147,9 +151,9 @@ public class Database implements DatabaseInterface {
 
 			// Get the staff element by tag name directly
 			Element newEntry = doc.createElement("entry");
-			newEntry.setAttribute("id","-1");
-			newEntry.setAttribute("place",Integer.toString(newIE.getShelfPlace()));
+			
 			newEntry.setAttribute("section",Integer.toString(newIE.getShelfSection()));
+			newEntry.setAttribute("place",Integer.toString(newIE.getShelfPlace()));
 			
 			
 			Element newName = doc.createElement("name");
@@ -166,7 +170,7 @@ public class Database implements DatabaseInterface {
 			
 			newPrize.appendChild(doc.createTextNode(Integer.toString(newIE.product.getPrize())));
 			
-			newCategoryId.appendChild(doc.createTextNode(Integer.toString(newIE.product.getCategoryID())));
+			//newCategoryId.appendChild(doc.createTextNode(Integer.toString(newIE.product.getCategoryID())));
 						
 			
 			
@@ -201,23 +205,32 @@ public class Database implements DatabaseInterface {
 		   }
 	}
 	
-	public static InventoryEntry editInventoryEntry(int UID,InventoryEntry newIE) throws TransformerException{
+	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE) throws Exception{
+		return Database.replaceInventoryEntry(UID, newIE, false);
+	}
+	   /**
+	    * Edit a InventoryEntry
+	    * @param UID edit Entry with this UID
+	    * @see #setArea(String)
+	    * @see #setExchange(String)
+	    * @see #setExtension(String)
+	    * @throws Exception in case of invalid value
+	    */
+	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
 		System.out.println("WARNING METHODE: editInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
 		
-		Boolean bool1=newIE.validate();
-		Boolean bool2=Database.nameExists(newIE.product.getName());
-		Boolean bool3;
+		if(!newIE.validate()) {
+			throw new Exception("@editInventoryEntry newInventoryEntry failed validation.");
+		}
 		
+		if(!Database.uidExists(UID)) {
+			throw new Exception("@editInventoryEntry UID doesn't exisit.");
+		}
 		if (newIE.getUID()!=UID) {
-			bool3=Database.uidExists(newIE.getUID());
-		}
-		else {
-			bool3=false;
-		}
-		
-		if(bool1 && !bool2 && !bool3) {
-			
-		}
+			if(Database.uidExists(newIE.getUID())) {
+				throw new Exception("@editInventoryEntry newUID is taken.");
+			}
+		}		
 		try {
 			String filepath = DBPATH+"inventoryEntries.xml";
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -269,14 +282,15 @@ public class Database implements DatabaseInterface {
 
 		   } catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
-		   } /*catch (TransformerException tfe) {
+		   } catch (TransformerException tfe) {
 			tfe.printStackTrace();
-		   } */catch (IOException ioe) {
+		   } catch (IOException ioe) {
 			ioe.printStackTrace();
 		   } catch (SAXException sae) {
 			sae.printStackTrace();
 		   }
 		return newIE;
+		
 	}
 	
 	private static boolean nameExists(String name) {
@@ -288,8 +302,9 @@ public class Database implements DatabaseInterface {
 	        Document xmlDocument = Database.dbFactory("inventoryEntries.xml");
 	        XPath xPath = XPathFactory.newInstance().newXPath();
 	        Element subNode;
-	        int section=InventoryEntry.uidToSectionPlace(uid)[0];
-	        int place=InventoryEntry.uidToSectionPlace(uid)[1];
+	        int[] sectionPlace = InventoryEntry.uidToSectionPlace(uid);
+	        int section=sectionPlace[0];
+	        int place=sectionPlace[1];
 			subNode = (Element) xPath.compile("/entries/entry[@section="+section+" and @place="+place+"]").evaluate(xmlDocument, XPathConstants.NODE);
 			if (subNode!=null) {
 				return true;

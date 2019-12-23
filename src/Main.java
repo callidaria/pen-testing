@@ -12,7 +12,7 @@ public class Main {
 	public static void main(String[] args) {
 		
 		/* Beispiel ist eine Unterklasse von Main
-		 * wenn das jemand besser strukturieren möchte, gerne!
+		 * wenn das jemand besser strukturieren mï¿½chte, gerne!
 		 */
 		Main main = new Main();
 		Main.DatabaseExamples dbEx = main.new DatabaseExamples();
@@ -39,22 +39,26 @@ public class Main {
 			ArrayList<InventoryEntry> inventoryEntry = Database.retrieveInventoryEntries();
 			System.out.println("Objects in Array: "+inventoryEntry.size());
 			for (int i=0;i<inventoryEntry.size();i++) {
-				System.out.println("InventoryEntry ("+i+"):");
+				System.out.println(inventoryEntry.get(i));
+				/*System.out.println("InventoryEntry ("+i+"):");
 				System.out.println("\tUID :"+inventoryEntry.get(i).getUID());
 				System.out.println("\t\tproduct_name:"+inventoryEntry.get(i).product.getName());
 				System.out.println("\t\tproduct_count:"+inventoryEntry.get(i).product.getCount());
+				System.out.println("\t\tproduct_weight:"+inventoryEntry.get(i).product.getWeight()+"g");
+				System.out.println("\t\tproduct_prize:"+inventoryEntry.get(i).product.getPrize()+"c");
 				System.out.println("\tposition:"+inventoryEntry.get(i).getID());
 				System.out.println("\tshelf_section:"+inventoryEntry.get(i).getShelfSection());
-				System.out.println("\tshelf_place:"+inventoryEntry.get(i).getShelfPlace());
+				System.out.println("\tshelf_place:"+inventoryEntry.get(i).getShelfPlace());*/
 			}
 			
 			Product pro = new Product("Simple Pen 2nd", 12, 12, 99);
-			InventoryEntry ie = new InventoryEntry(100,100,pro);
+			InventoryEntry ie = new InventoryEntry(100,200,pro);
 			try {
-				Database.editInventoryEntry(ie.getUID(), ie);
-			} catch (TransformerException e) {
+				Database.replaceInventoryEntry(100100, ie);
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				System.out.println("Die gewÃ¤hlte UID ist belegt.");
 			}
 
 			

@@ -1,17 +1,20 @@
 package model;
 
 public class Product {
+	@Deprecated
 	private int id;
 	private String name;
-	private int weight;
-	private int prize;
-	private int count;
-	private int categoryID;
+	private Integer weight;
+	private Integer prize;
+	private Integer count;
+	private Integer categoryID;
 	public Category category;
 	
+	@Deprecated
 	public int getId() {
 		return id;
 	}
+	@Deprecated
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -66,5 +69,11 @@ public class Product {
 		this.weight=weight;
 		this.prize=prize;
 		//to-do: append category
+	}
+	public boolean validate() {
+		if (this.name==null || this.count==null || this.weight==null || this.prize==null /*|| this.categoryID==null*/) {
+			return false;
+		}
+		return true;
 	}
 }

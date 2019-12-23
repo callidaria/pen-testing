@@ -111,7 +111,7 @@ public class TextAreaLogProgram extends JFrame {
         			InventoryEntry newInventoryEntry = new InventoryEntry(100,100,newProduct);
     				Database.addInventoryEntry(newInventoryEntry);
     				standardOut.println("Product (Radiergummi) added");
-    			} catch (TransformerException e) {
+    			} catch (Exception e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
     			}
@@ -134,13 +134,7 @@ public class TextAreaLogProgram extends JFrame {
             	ArrayList<InventoryEntry> inventoryEntry = Database.retrieveInventoryEntries();
     			System.out.println("Objects in Array: "+inventoryEntry.size());
     			for (int i=0;i<inventoryEntry.size();i++) {
-    				System.out.println("InventoryEntry ("+i+"):");
-    				System.out.println("\tproduct_id:"+inventoryEntry.get(i).getUID());
-    				System.out.println("\t\tproduct_name:"+inventoryEntry.get(i).product.getName());
-    				System.out.println("\t\tproduct_count:"+inventoryEntry.get(i).product.getCount());
-    				System.out.println("\tposition:"+inventoryEntry.get(i).getID());
-    				System.out.println("\tshelf_section:"+inventoryEntry.get(i).getShelfSection());
-    				System.out.println("\tshelf_place:"+inventoryEntry.get(i).getShelfPlace());
+    				System.out.println(inventoryEntry.get(i));
     			}
             }
         });
