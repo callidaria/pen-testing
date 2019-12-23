@@ -135,6 +135,9 @@ public class Database implements DatabaseInterface {
 		if(newIE.validate()==false) {
 			throw new Exception("New InventoryEntry failed validation.");
 		}
+		if(Database.uidExists(newIE.getUID())){
+			throw new Exception("New InventoryEntry UID taken.");
+		}
 		try {
 			String filepath = DBPATH+"inventoryEntries.xml";
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -228,7 +231,12 @@ public class Database implements DatabaseInterface {
 		}
 		if (newIE.getUID()!=UID) {
 			if(Database.uidExists(newIE.getUID())) {
-				throw new Exception("@editInventoryEntry newUID is taken.");
+				if(force==true) {
+					throw new Exception("@editInventoryEntry newUID is taken.");
+				}
+				else {
+					System.out.println("@editInventoryEntry forced overwrite of "+newIE.getUID());
+				}
 			}
 		}		
 		try {

@@ -113,7 +113,7 @@ public class TextAreaLogProgram extends JFrame {
     				standardOut.println("Product (Radiergummi) added");
     			} catch (Exception e) {
     				// TODO Auto-generated catch block
-    				e.printStackTrace();
+    				System.out.println("Error: "+e.getMessage());
     			}
             }
         });
