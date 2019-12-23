@@ -51,14 +51,17 @@ public class Main {
 				System.out.println("\tshelf_place:"+inventoryEntry.get(i).getShelfPlace());*/
 			}
 			
-			Product pro = new Product("Simple Pen 2nd", 12, 12, 99);
-			InventoryEntry ie = new InventoryEntry(100,200,pro);
+			Product pro = new Product("Pen 2", 12, 12, 99);
+			InventoryEntry ie = new InventoryEntry(100,100,pro);
+			
 			try {
-				Database.replaceInventoryEntry(100100, ie);
+				Database.replaceInventoryEntry(100100,ie);
+				Database.editAttributeOfInventoryEntry(100100, "count", "1");
+				Database.deleteInventoryEntry(100100, false);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();
-				System.out.println("Die gewählte UID ist belegt.");
+				System.out.println("Error: "+e.getMessage());
 			}
 
 			

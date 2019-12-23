@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -33,7 +34,9 @@ public class Database implements DatabaseInterface {
 
 	static final String DBPATH="data/xml/";
 	
-	public static Document dbFactory(String file) throws SAXException, IOException {
+	static final String DBPATH_IE="inventoryEntries.xml";
+	
+	private static Document buildDocument(String file) throws SAXException, IOException {
 		File inventoryEntriesFile = new File(DBPATH+file);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
@@ -47,6 +50,41 @@ public class Database implements DatabaseInterface {
 		}
 		
 		return doc;
+	}
+	
+	private static Node xpathNode(Document doc,String xpath_query) {
+		Node node = null;
+		try {
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			node = (Node) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODE);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return node;
+		
+	}
+	
+	private static void transform(Document doc, String target) {
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer;
+		try {
+			transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File(DBPATH+target));
+			transformer.transform(source, result);
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries() {
@@ -131,13 +169,21 @@ public class Database implements DatabaseInterface {
 	}
 	
 	public static void addInventoryEntry(InventoryEntry newIE) throws Exception{
-		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database is now corrupted!");
-		if(newIE.validate()==false) {
+		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
+		if(!newIE.validate()) {
 			throw new Exception("New InventoryEntry failed validation.");
 		}
+		
 		if(Database.uidExists(newIE.getUID())){
 			throw new Exception("New InventoryEntry UID taken.");
 		}
+		
+		
+		if (Database.nameExists(newIE.product.getName()) != -1) {
+			System.out.print("NAME TAKEN");
+			throw new Exception("@editInventoryEntry newName is taken.");
+		}
+		
 		try {
 			String filepath = DBPATH+"inventoryEntries.xml";
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -238,36 +284,37 @@ public class Database implements DatabaseInterface {
 					System.out.println("@editInventoryEntry forced overwrite of "+newIE.getUID());
 				}
 			}
-		}		
+		}
+		if (Database.nameExists(newIE.product.getName())!=UID && Database.nameExists(newIE.product.getName())!=-1) {
+			throw new Exception("@editInventoryEntry newName is taken.");
+		}
 		try {
-			String filepath = DBPATH+"inventoryEntries.xml";
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(filepath);
 
+			Document doc = Database.buildDocument(DBPATH_IE);
+	
 			Node entries = doc.getFirstChild();
 			NodeList entryList = entries.getChildNodes();
 			
-
+	
 			for (int i = 0; i < entryList.getLength(); i++) {
 				
-               Node node = entryList.item(i);
-               //Element elNode = (Element) node;
-               NamedNodeMap attr = node.getAttributes();
-               
-
+	           Node node = entryList.item(i);
+	           //Element elNode = (Element) node;
+	           NamedNodeMap attr = node.getAttributes();
+	           
+	
 			   // get the salary element, and update the value
 			   if ("entry".equals(node.getNodeName())) {
 				   int entryUID=Integer.parseInt(attr.getNamedItem("place").getTextContent()+attr.getNamedItem("section").getTextContent());
 				   
 				   if (entryUID == UID) {
 					   NodeList nodeChilds = node.getChildNodes();
-					   for (int n = 0; i < nodeChilds.getLength(); n++) {
+					   for (int n = 0; n < nodeChilds.getLength(); n++) {
 						   Node subNode = nodeChilds.item(n);
 						   if ("name".equals(subNode.getNodeName())) {
-							   System.out.println("Name"+subNode.getTextContent());
+							   System.out.println("Replace Name: "+subNode.getTextContent());
 							   subNode.setTextContent(newIE.product.getName());
-							   break;
+							   //break;
 						   }
 					   }
 					   System.out.print("Found: "+entryUID+" (Name altered)");
@@ -275,23 +322,13 @@ public class Database implements DatabaseInterface {
 				   }
 			   }
 			}
-
+	
 			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(filepath));
-			transformer.transform(source, result);
-
+			
+			Database.transform(doc, DBPATH_IE);
+	
 			System.out.println("Done");
-
-		   } catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		   } catch (TransformerException tfe) {
-			tfe.printStackTrace();
+	
 		   } catch (IOException ioe) {
 			ioe.printStackTrace();
 		   } catch (SAXException sae) {
@@ -300,14 +337,80 @@ public class Database implements DatabaseInterface {
 		return newIE;
 		
 	}
-	
-	private static boolean nameExists(String name) {
-		return true;
+
+	public static void editAttributeOfInventoryEntry(int UID, String attribute, String newValue) throws Exception{
+		System.out.println("WARNING work in progress!\n@editAttributeOfInventoryEntry doesn't yet check for any constraints");
+		Document doc = Database.buildDocument(DBPATH_IE);
+		try {
+			Boolean attributeExists = false;
+			Element node;
+			int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
+	        int section=sectionPlace[0];
+	        int place=sectionPlace[1];
+			node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
+			NodeList nodeChilds = node.getChildNodes();
+			   for (int i = 0; i < nodeChilds.getLength(); i++) {
+				   Node subNode = nodeChilds.item(i);
+				   if (subNode.getNodeName()==attribute) {
+					   System.out.println("SetAttribute ("+subNode.getNodeName()+"):"+subNode.getTextContent());
+					   subNode.setTextContent(newValue);
+					   attributeExists=true;
+				   }
+			   }
+			if(!attributeExists) {
+				throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist.");
+			}
+			Database.transform(doc, DBPATH_IE);
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		return;
 	}
 	
-	private static boolean uidExists(int uid) {
+	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
+		System.out.println("WARNING work in progress!");
+		Document doc = Database.buildDocument(DBPATH_IE);
+
+			Element node;
+			int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
+	        int section=sectionPlace[0];
+	        int place=sectionPlace[1];
+			node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
+			NodeList nodeChilds = node.getChildNodes();
+			   for (int i = 0; i < nodeChilds.getLength(); i++) {
+				   Node subNode = nodeChilds.item(i);
+				   if (subNode.getNodeName()=="count" && Integer.parseInt(subNode.getTextContent())!=0 && force==false) {
+					   throw new Exception("@deleteInventoryEntry count is ("+subNode.getTextContent()+") should be zero, use force delete or set count to zero.");
+				   }
+			   }
+			node.getParentNode().removeChild(node);
+			Database.transform(doc, DBPATH_IE);
+		return;
+	}
+	
+	public static int nameExists(String name) {
 		try {
-	        Document xmlDocument = Database.dbFactory("inventoryEntries.xml");
+	        Document doc = Database.buildDocument("inventoryEntries.xml");
+	        Element node;
+			node = (Element) Database.xpathNode(doc,"/entries/entry[name/text()='"+name+"']");
+			if (node!=null) {
+				int shelfSection = Integer.parseInt(node.getAttributes().getNamedItem("section").getTextContent());
+				int shelfPlace = Integer.parseInt(node.getAttributes().getNamedItem("place").getTextContent());
+				return InventoryEntry.sectionPlaceToUID(shelfSection, shelfPlace);
+			};
+		}  catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
+	public static boolean uidExists(int uid) {
+		try {
+	        Document xmlDocument = Database.buildDocument("inventoryEntries.xml");
 	        XPath xPath = XPathFactory.newInstance().newXPath();
 	        Element subNode;
 	        int[] sectionPlace = InventoryEntry.uidToSectionPlace(uid);
@@ -402,11 +505,11 @@ public class Database implements DatabaseInterface {
 		   }
 	}*/
 	
-	public static Boolean editInventoryEntry() {
-		
-		
-		return false;
+	public static String escapeString(String unescapedString) {
+		return unescapedString;
 	}
+	
+	
 
 
 }

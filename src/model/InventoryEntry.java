@@ -14,10 +14,7 @@ public class InventoryEntry implements PositionInterface{
 	public Product product;
 	
 	public int getID() {
-		// TODO Auto-generated method stub
-		String sid = ""+shelfSection+shelfPlace;
-		int iid = Integer.parseInt(sid);
-		return iid;
+		return InventoryEntry.sectionPlaceToUID(shelfSection, shelfPlace);
 	}
 	
 	public int getShelfSection() {
@@ -86,11 +83,18 @@ public class InventoryEntry implements PositionInterface{
 		String stringUID = Integer.toString(UID);
 		String section=stringUID.substring(0, 3);
 		String place=stringUID.substring(3, 6);
-		System.out.println("UID:"+UID+">"+section+"|"+place);
+		//System.out.println("uidToSectionPlace("+UID+"): "+section+"|"+place);
 		sectionPlace[0]=Integer.parseInt(section);
 		sectionPlace[1]=Integer.parseInt(place);
 		return sectionPlace;
 	}
+	
+	static public int sectionPlaceToUID(int section, int place) {
+		String sid = ""+section+place;
+		int iid = Integer.parseInt(sid);
+		return iid;
+	}
+	
 	public String toString() {
 		if(this.validate()) {
 			return "InventoryEntry ("+this.getUID()+"):"+
