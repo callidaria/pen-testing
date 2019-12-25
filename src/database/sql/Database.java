@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import database.DatabaseInterface;
 import model.interfaces.StoredProductInterface;
 
+@Deprecated
 public class Database implements DatabaseInterface{
 	
 	static final String ROWID = "ROWID";

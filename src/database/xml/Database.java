@@ -1,9 +1,13 @@
 package database.xml;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,6 +18,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -26,76 +34,23 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import database.DatabaseInterface;
 import model.InventoryEntry;
 import model.Product;
 
-public class Database implements DatabaseInterface {
+public class Database{
 
 	static final String DBPATH="data/xml/";
 	
 	static final String DBPATH_IE="inventoryEntries.xml";
 	
-	private static Document buildDocument(String file) throws SAXException, IOException {
-		File inventoryEntriesFile = new File(DBPATH+file);
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder;
-		Document doc = null;
-		try {
-			dBuilder = dbFactory.newDocumentBuilder();
-			doc = dBuilder.parse(inventoryEntriesFile);
-			doc.getDocumentElement().normalize();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-		
-		return doc;
-	}
+	static final String DBPATH_IE_XSD="inventoryEntries.xsd";
 	
-	private static Node xpathNode(Document doc,String xpath_query) {
-		Node node = null;
-		try {
-			XPath xPath = XPathFactory.newInstance().newXPath();
-			node = (Node) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODE);
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return node;
-		
-	}
-	
-	private static void transform(Document doc, String target) {
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer;
-		try {
-			transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(DBPATH+target));
-			transformer.transform(source, result);
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
+
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries() {
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
-		File inventoryEntriesFile = new File(DBPATH+"inventoryEntries.xml");
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		//int count;
 		try {
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(inventoryEntriesFile);
-			doc.getDocumentElement().normalize();
+			Document doc = Database.buildDocument(DBPATH_IE);
 			NodeList nList = doc.getElementsByTagName("entry");
 			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 			System.out.println("Stored inventoryEntries: "+nList.getLength());
@@ -103,16 +58,16 @@ public class Database implements DatabaseInterface {
 				Element node = (Element) nList.item(i);
 				//System.out.println("Node ("+i+"):");
 				//int productID = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
-				int shelfSection = Integer.parseInt(node.getAttributes().getNamedItem("section").getTextContent());
-				int shelfPlace = Integer.parseInt(node.getAttributes().getNamedItem("place").getTextContent());
+				int shelfSection = Database.getAttributes(node,"section");
+				int shelfPlace = Database.getAttributes(node,"place");
 				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
 				//System.out.println("\tproduct_id:"+productID);
 				//System.out.println("\tposition:"+shelfSection+shelfPlace);
 				//System.out.println("\tcount:"+count);
-				String productName = node.getElementsByTagName("name").item(0).getTextContent();
-				int productWeight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
-				int productPrize = Integer.parseInt(node.getElementsByTagName("prize").item(0).getTextContent());
-				int productCount = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
+				String productName = Database.getElementTextContent(node,"name");
+				int productWeight = Database.getElementContent(node,"weight");
+				int productPrize = Database.getElementContent(node,"prize");
+				int productCount = Database.getElementContent(node,"count");
 				//int productCategoryID = Integer.parseInt(subNode.getElementsByTagName("category_id").item(0).getTextContent());
 				
 				//Product product = new Product(productID,productName,productCount);
@@ -128,45 +83,22 @@ public class Database implements DatabaseInterface {
 		return inventoryEntries;
 	}
 	
-	/**
-	 * @deprecated use retrieveInventoryEntries instead.  
-	 */
-	@Deprecated
-	public static ArrayList<Product> retrieveProducts() {
-		ArrayList<Product> inventoryEntries = new ArrayList<Product>();
-		File xmlFile = new File(DBPATH+"inventoryEntries.xml");
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(xmlFile);
-			doc.getDocumentElement().normalize();
-			NodeList nList = doc.getElementsByTagName("entry");
-			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-			System.out.println("Stored inventoryEntries: "+nList.getLength());
-			for(int i = 0; i < nList.getLength();i++) {
-				Element node = (Element) nList.item(i);
-				//System.out.println("Node ("+i+"):");
-				//int id = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
-				String name = node.getElementsByTagName("name").item(0).getTextContent();
-				int count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
-				int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
-				int prize = Integer.parseInt(node.getElementsByTagName("prize").item(0).getTextContent());
-				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
-				/*
-				System.out.println("\tid:"+id);
-				System.out.println("\tname:"+name);
-				System.out.println("\tcount:"+count);
-				*/
-				Product position = new Product(name,count,weight,prize);
-				inventoryEntries.add(position);
-			}
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}	
-		
-		return inventoryEntries;
+	private static String getElementTextContent(Element element, String string) {
+		return element.getElementsByTagName(string).item(0).getTextContent();
 	}
+
+	private static int getElementContent(Element element, String string) {
+		return Integer.parseInt(element.getElementsByTagName(string).item(0).getTextContent());
+	}
+
+	private static int getAttributes(Element element, String string) {
+		return Integer.parseInt(element.getAttributes().getNamedItem(string).getTextContent());
+	}
+	
+	
+
+
+	
 	
 	public static void addInventoryEntry(InventoryEntry newIE) throws Exception{
 		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
@@ -185,10 +117,7 @@ public class Database implements DatabaseInterface {
 		}
 		
 		try {
-			String filepath = DBPATH+"inventoryEntries.xml";
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(filepath);
+			Document doc = Database.buildDocument(DBPATH_IE);
 
 			// Get the root element
 			Node entries = doc.getFirstChild();
@@ -232,27 +161,17 @@ public class Database implements DatabaseInterface {
 			entries.appendChild(newEntry);
 
 			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(filepath));
-			transformer.transform(source, result);
+			Database.transform(doc, DBPATH_IE);
 
 			System.out.println("Done");
 
-		   } catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		   } catch (TransformerException tfe) {
-			tfe.printStackTrace();
 		   } catch (IOException ioe) {
 			ioe.printStackTrace();
 		   } catch (SAXException sae) {
 			sae.printStackTrace();
 		   }
 	}
+	
 	
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE) throws Exception{
 		return Database.replaceInventoryEntry(UID, newIE, false);
@@ -265,6 +184,7 @@ public class Database implements DatabaseInterface {
 	    * @see #setExtension(String)
 	    * @throws Exception in case of invalid value
 	    */
+	
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
 		System.out.println("WARNING METHODE: editInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
 		
@@ -338,6 +258,7 @@ public class Database implements DatabaseInterface {
 		
 	}
 
+	
 	public static void editAttributeOfInventoryEntry(int UID, String attribute, String newValue) throws Exception{
 		System.out.println("WARNING work in progress!\n@editAttributeOfInventoryEntry doesn't yet check for any constraints");
 		Document doc = Database.buildDocument(DBPATH_IE);
@@ -367,6 +288,7 @@ public class Database implements DatabaseInterface {
 		return;
 	}
 	
+	
 	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
 		System.out.println("WARNING work in progress!");
 		Document doc = Database.buildDocument(DBPATH_IE);
@@ -388,6 +310,12 @@ public class Database implements DatabaseInterface {
 		return;
 	}
 	
+	public static boolean validate() {
+		return Database.validateAgainstXSD(DBPATH_IE,DBPATH_IE_XSD);
+	}
+	
+
+	
 	public static int nameExists(String name) {
 		try {
 	        Document doc = Database.buildDocument("inventoryEntries.xml");
@@ -404,19 +332,23 @@ public class Database implements DatabaseInterface {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return -1;
 	}
 	
+	
+	
 	public static boolean uidExists(int uid) {
 		try {
 	        Document xmlDocument = Database.buildDocument("inventoryEntries.xml");
-	        XPath xPath = XPathFactory.newInstance().newXPath();
 	        Element subNode;
 	        int[] sectionPlace = InventoryEntry.uidToSectionPlace(uid);
 	        int section=sectionPlace[0];
 	        int place=sectionPlace[1];
-			subNode = (Element) xPath.compile("/entries/entry[@section="+section+" and @place="+place+"]").evaluate(xmlDocument, XPathConstants.NODE);
+			subNode = (Element) Database.xpathNode(xmlDocument, "/entries/entry[@section="+section+" and @place="+place+"]");
 			if (subNode!=null) {
 				return true;
 			};
@@ -509,7 +441,127 @@ public class Database implements DatabaseInterface {
 		return unescapedString;
 	}
 	
+	private static Document buildDocument(String file) throws SAXException, IOException {
+		File inventoryEntriesFile = new File(DBPATH+file);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder;
+		Document doc = null;
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(inventoryEntriesFile);
+			doc.getDocumentElement().normalize();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		
+		return doc;
+	}
 	
+	private static Node xpathNode(Document doc,String xpath_query) throws XPathExpressionException{
+		Node node = null;
+		try {
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			node = (Node) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODE);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return node;
+		
+	}
+	
+	private static void transform(Document doc, String targetPath) {
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer;
+		try {
+			transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File(DBPATH+targetPath));
+			transformer.transform(source, result);
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private static boolean validateAgainstXSD(String xmlPath, String xsdPath)
+	{
+		FileInputStream xml;
+		FileInputStream xsd;
+		try {
+		xml = new FileInputStream(DBPATH+xmlPath);
+		xsd = new FileInputStream(DBPATH+xsdPath);			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	    try
+	    {
+	        SchemaFactory factory = 
+	            SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	        Schema schema = factory.newSchema(new StreamSource(xsd));
+	        Validator validator = schema.newValidator();
+	        validator.validate(new StreamSource(xml));
+	        return true;
+	    }
+	    catch(Exception ex)
+	    {
+	        return false;
+	    }
+	}
+	
+	
+	
+	/* Graveyard for deprecated methodes  */
+	
+	/**
+	 * @deprecated use retrieveInventoryEntries instead.  
+	 */
+	@Deprecated
+	public static ArrayList<Product> retrieveProducts() {
+		ArrayList<Product> inventoryEntries = new ArrayList<Product>();
+		File xmlFile = new File(DBPATH+"inventoryEntries.xml");
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(xmlFile);
+			doc.getDocumentElement().normalize();
+			NodeList nList = doc.getElementsByTagName("entry");
+			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			System.out.println("Stored inventoryEntries: "+nList.getLength());
+			for(int i = 0; i < nList.getLength();i++) {
+				Element node = (Element) nList.item(i);
+				//System.out.println("Node ("+i+"):");
+				//int id = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
+				String name = node.getElementsByTagName("name").item(0).getTextContent();
+				int count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
+				int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
+				int prize = Integer.parseInt(node.getElementsByTagName("prize").item(0).getTextContent());
+				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
+				/*
+				System.out.println("\tid:"+id);
+				System.out.println("\tname:"+name);
+				System.out.println("\tcount:"+count);
+				*/
+				Product position = new Product(name,count,weight,prize);
+				inventoryEntries.add(position);
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}	
+		
+		return inventoryEntries;
+	}
 
 
 }

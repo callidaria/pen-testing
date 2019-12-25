@@ -55,9 +55,11 @@ public class Main {
 			InventoryEntry ie = new InventoryEntry(100,100,pro);
 			
 			try {
+				System.out.println("Database status: "+Database.validate());
 				Database.replaceInventoryEntry(100100,ie);
 				Database.editAttributeOfInventoryEntry(100100, "count", "1");
 				Database.deleteInventoryEntry(100100, false);
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();
