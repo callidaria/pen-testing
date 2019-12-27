@@ -76,4 +76,8 @@ public class Product {
 		}
 		return true;
 	}
+	public void repair() {
+		// TODO Auto-generated method stub
+		
+	}
 }

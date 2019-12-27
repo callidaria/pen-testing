@@ -9,6 +9,12 @@ public class InventoryEntry implements PositionInterface{
 	 * give getID better name.
 	 *
 	 */
+	
+	/**
+    * Edit a InventoryEntry
+    * @param UID edit Entry with this UID
+    * @throws Exception in case of invalid value
+    */
 	private Integer shelfSection;
 	private Integer shelfPlace;
 	public Product product;
@@ -20,6 +26,7 @@ public class InventoryEntry implements PositionInterface{
 	public int getShelfSection() {
 		return shelfSection;
 	}
+	
 	public void setShelfSection(int shelfSection) {
 		this.shelfSection = shelfSection;
 	}
@@ -28,6 +35,7 @@ public class InventoryEntry implements PositionInterface{
 	public int getShelfPlace() {
 		return shelfPlace;
 	}
+	
 	public void setShelfPlace(int shelfPlace) {
 		this.shelfPlace = shelfPlace;
 	}
@@ -68,6 +76,25 @@ public class InventoryEntry implements PositionInterface{
 		if (this.shelfSection==null || this.shelfPlace==null || this.product.validate()==false) {
 			return false;
 		}
+		return true;
+	}
+	
+	public boolean repair() {
+		if(!this.validate()) {
+			if (this.shelfSection==null) {
+				this.setShelfSection(-1);
+			}
+			if (this.shelfPlace==null) {
+				this.setShelfPlace(-1);
+			}
+			if(!this.product.validate()) {
+				this.product.repair();
+			}
+		}
+		else {
+			return false;
+		}
+		
 		return true;
 	}
 	
@@ -124,4 +151,13 @@ public class InventoryEntry implements PositionInterface{
 		}
 		
     }
+	
+	public Object[] toObjectArray() {
+		if (!this.validate()) {
+			return null;
+		}
+		
+		Object[] returnArray = { this.getShelfSection(), this.getShelfPlace(), this.product, this.product.getCategoryID()};
+		return returnArray;
+	}
 }

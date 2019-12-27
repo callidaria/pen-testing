@@ -176,14 +176,7 @@ public class Database{
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE) throws Exception{
 		return Database.replaceInventoryEntry(UID, newIE, false);
 	}
-	   /**
-	    * Edit a InventoryEntry
-	    * @param UID edit Entry with this UID
-	    * @see #setArea(String)
-	    * @see #setExchange(String)
-	    * @see #setExtension(String)
-	    * @throws Exception in case of invalid value
-	    */
+	   
 	
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
 		System.out.println("WARNING METHODE: editInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
