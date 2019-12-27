@@ -22,10 +22,10 @@ public class ArticleView extends JFrame {
 		JTextArea taanzahl = new JTextArea("Stückzahl	");
 		
 		//Label
-		JLabel lproduct = new JLabel("Produkt:	");
-		JLabel lregal = new JLabel("Regal:					");
-		JLabel lplatz = new JLabel("Platz:					");
-		JLabel lanzahl = new JLabel("Anzahl:				");
+		JLabel lproduct = new JLabel("Produkt:");
+		JLabel lregal = new JLabel("Regal:    ");
+		JLabel lplatz = new JLabel("Platz:     ");
+		JLabel lanzahl = new JLabel("Anzahl:  ");
 		
 		
 		
@@ -40,7 +40,7 @@ public class ArticleView extends JFrame {
 		
 		Container column2 = getContentPane();
 		column2.setLayout(new FlowLayout());
-	//	pane.add(column2);
+		//pane.add(column2);
 		
 		
 		column1.add(lproduct);
