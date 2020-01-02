@@ -1,8 +1,6 @@
 package model;
 
-import model.interfaces.PositionInterface;
-
-public class InventoryEntry implements PositionInterface{
+public class InventoryEntry{
 	/*to-do:
 	 * decide on UID (UniqueIDentifier);
 	 * give shelfSection & shelfPlace better names.
