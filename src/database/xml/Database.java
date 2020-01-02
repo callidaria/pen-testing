@@ -38,14 +38,19 @@ import model.InventoryEntry;
 import model.Product;
 
 public class Database{
-
+	
+	//**Der relative Pfad von root zu den Datenbankdateien
 	static final String DBPATH="data/xml/";
 	
+	//Dateiname von Inventareinträgen	
 	static final String DBPATH_IE="inventoryEntries.xml";
 	
+	//Dateiname der Definitionsdatei von Inventareinträgen
 	static final String DBPATH_IE_XSD="inventoryEntries.xsd";
 	
-
+	/** 	 
+	 * @return alle Inventareinträge aus der Datenbank als ArrayList. \nDie ArrayList ist unsortiert.
+	 */
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries() {
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
 		//int count;
@@ -83,23 +88,10 @@ public class Database{
 		return inventoryEntries;
 	}
 	
-	private static String getElementTextContent(Element element, String string) {
-		return element.getElementsByTagName(string).item(0).getTextContent();
-	}
-
-	private static int getElementContent(Element element, String string) {
-		return Integer.parseInt(element.getElementsByTagName(string).item(0).getTextContent());
-	}
-
-	private static int getAttributes(Element element, String string) {
-		return Integer.parseInt(element.getAttributes().getNamedItem(string).getTextContent());
-	}
-	
-	
-
-
-	
-	
+	/** 
+	 * @param newIE erwartet einen Inventareintrag, der validiert sein sollte, sonst wird eine Exception geworfen.
+	 * @throws some errors
+	 */
 	public static void addInventoryEntry(InventoryEntry newIE) throws Exception{
 		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
 		if(!newIE.validate()) {
@@ -173,11 +165,29 @@ public class Database{
 	}
 	
 	
+	/** Leitet die Funktion als Database.replaceInventoryEntry(UID, newIE, false) weiter.
+	 * @see (replaceInventoryEntry();)
+	 * 
+	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE) throws Exception{
 		return Database.replaceInventoryEntry(UID, newIE, false);
 	}
 	   
 	
+	/** Ersetzt den Inventareintrag an UID durch newIE.
+	 * 
+	 * @param force bestimmt ob, wenn ein Eintrag an UID vorhanden ist, überschrieben werden soll.
+	 * 
+	 * Pre:
+	 * newIE muss validieren.
+	 * an UID muss ein Eintrag existieren.
+	 * 
+	 * Post:
+	 * 
+	 * Der Eintrag an UID ist ersetzt durch newIE.
+	 * 
+	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
 		System.out.println("WARNING METHODE: editInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
 		
@@ -251,7 +261,16 @@ public class Database{
 		
 	}
 
-	
+	/** Ändert einen Attribut eines Inventareintrages.
+	 * 
+	 * @param UID bestimmt den Inventareintrag.
+	 * @param attribute bestimmt welchen Attribute (z.B. Gewicht, Menge oder Name)
+	 * @param newValue neuer Wert eines Attributes von UID.
+	 * 
+	 * Prüft Restriktionen der Datenbank.
+	 * 
+	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 */
 	public static void editAttributeOfInventoryEntry(int UID, String attribute, String newValue) throws Exception{
 		System.out.println("WARNING work in progress!\n@editAttributeOfInventoryEntry doesn't yet check for any constraints");
 		Document doc = Database.buildDocument(DBPATH_IE);
@@ -281,7 +300,13 @@ public class Database{
 		return;
 	}
 	
-	
+	/** Löscht einen Inventareintrag mit der passenden UID, wenn die Menge bereits 0 ist.
+	 * 
+	 * @param UID bestimmt den Inventareintrag.
+	 * @param force wenn wahr, ignoriert Menge des Inventareintrages.
+	 * 
+	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 */
 	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
 		System.out.println("WARNING work in progress!");
 		Document doc = Database.buildDocument(DBPATH_IE);
@@ -303,12 +328,45 @@ public class Database{
 		return;
 	}
 	
+	/*
+	 * @param shelf Nummer des Regals
+	 * 
+	 * @return die Menge ein freiem Platz in dem Regal mit der Nummer shelf.*/
+	public static int freeSpace(int shelf) {
+		System.out.println("WARNING work in progress!\n@editAttributeOfInventoryEntry doesn't yet check for any constraints");
+		
+		int shelfCapicity=100*1000;
+		int usedSpace = 0;
+		try {
+			Document doc = Database.buildDocument(DBPATH_IE);
+			NodeList nodes;
+			nodes = Database.xpathNodes(doc,"/entries/entry[@section="+shelf+"]");
+			System.out.println("Nodes in Shelf: "+nodes.getLength());
+			   for (int i = 0; i < nodes.getLength(); i++) {
+				   Element node = (Element) nodes.item(i);
+					int count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
+					int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
+					
+					usedSpace = usedSpace + (count*weight);
+			   }
+		}catch (Exception e) {
+			System.out.println("Exception in freeSpace ("+e.getMessage()+")");
+			return -1;
+		}
+		return shelfCapicity-usedSpace;
+	}
+	
+	/** Prüft die Datenbank auf das Einhalten der Datenbankrestriktionen mit hilfe einer XSD.
+	 * */
 	public static boolean validate() {
 		return Database.validateAgainstXSD(DBPATH_IE,DBPATH_IE_XSD);
 	}
 	
 
-	
+	/** Prüft ob ein Name in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
+	 * 
+	 * @return -1, wenn nicht exisitert, ansonsten UID wo der Name existiert.
+	 * */
 	public static int nameExists(String name) {
 		try {
 	        Document doc = Database.buildDocument("inventoryEntries.xml");
@@ -333,7 +391,10 @@ public class Database{
 	}
 	
 	
-	
+	/** Prüft ob eine UID in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
+	 * 
+	 * @return true, wenn exisitert, ansonsten false.
+	 * */
 	public static boolean uidExists(int uid) {
 		try {
 	        Document xmlDocument = Database.buildDocument("inventoryEntries.xml");
@@ -464,6 +525,20 @@ public class Database{
 		
 	}
 	
+	private static NodeList xpathNodes(Document doc,String xpath_query) throws XPathExpressionException{
+		NodeList node = null;
+		try {
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			node = (NodeList) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODESET);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return node;
+		
+	}
+	
 	private static void transform(Document doc, String targetPath) {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer;
@@ -512,9 +587,20 @@ public class Database{
 	    }
 	}
 	
+	private static String getElementTextContent(Element element, String string) {
+		return element.getElementsByTagName(string).item(0).getTextContent();
+	}
+
+	private static int getElementContent(Element element, String string) {
+		return Integer.parseInt(element.getElementsByTagName(string).item(0).getTextContent());
+	}
+
+	private static int getAttributes(Element element, String string) {
+		return Integer.parseInt(element.getAttributes().getNamedItem(string).getTextContent());
+	}
 	
 	
-	/* Graveyard for deprecated methodes  */
+	/** Graveyard for deprecated methodes  */
 	
 	/**
 	 * @deprecated use retrieveInventoryEntries instead.  
@@ -540,7 +626,7 @@ public class Database{
 				int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
 				int prize = Integer.parseInt(node.getElementsByTagName("prize").item(0).getTextContent());
 				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
-				/*
+				/**
 				System.out.println("\tid:"+id);
 				System.out.println("\tname:"+name);
 				System.out.println("\tcount:"+count);

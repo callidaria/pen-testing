@@ -53,6 +53,7 @@ public class Main {
 			
 			Product pro = new Product("Pen 2", 12, 12, 99);
 			InventoryEntry ie = new InventoryEntry(100,100,pro);
+			System.out.println("Free Space: "+Database.freeSpace(100));
 			
 			try {
 				System.out.println("Database status: "+Database.validate());
