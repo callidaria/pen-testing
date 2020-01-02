@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.xml.XMLConstants;
@@ -38,39 +37,37 @@ import model.InventoryEntry;
 import model.Product;
 
 public class Database{
-
+	
+	//**Der relative Pfad von root zu den Datenbankdateien
 	static final String DBPATH="data/xml/";
 	
+	//Dateiname von Inventareinträgen	
 	static final String DBPATH_IE="inventoryEntries.xml";
 	
+	//Dateiname der Definitionsdatei von Inventareinträgen
 	static final String DBPATH_IE_XSD="inventoryEntries.xsd";
 	
-
+	/** 	 
+	 * @return alle Inventareinträge aus der Datenbank als ArrayList. \nDie ArrayList ist unsortiert.
+	 */
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries() {
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
-		//int count;
 		try {
 			Document doc = Database.buildDocument(DBPATH_IE);
 			NodeList nList = doc.getElementsByTagName("entry");
-			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
 			System.out.println("Stored inventoryEntries: "+nList.getLength());
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
-				//System.out.println("Node ("+i+"):");
-				//int productID = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
+
 				int shelfSection = Database.getAttributes(node,"section");
 				int shelfPlace = Database.getAttributes(node,"place");
-				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
-				//System.out.println("\tproduct_id:"+productID);
-				//System.out.println("\tposition:"+shelfSection+shelfPlace);
-				//System.out.println("\tcount:"+count);
+
 				String productName = Database.getElementTextContent(node,"name");
 				int productWeight = Database.getElementContent(node,"weight");
 				int productPrize = Database.getElementContent(node,"prize");
 				int productCount = Database.getElementContent(node,"count");
-				//int productCategoryID = Integer.parseInt(subNode.getElementsByTagName("category_id").item(0).getTextContent());
-				
-				//Product product = new Product(productID,productName,productCount);
+
 				Product product = new Product(productName,productCount,productWeight,productPrize);
 				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,product);
 				inventoryEntries.add(position);
@@ -83,23 +80,10 @@ public class Database{
 		return inventoryEntries;
 	}
 	
-	private static String getElementTextContent(Element element, String string) {
-		return element.getElementsByTagName(string).item(0).getTextContent();
-	}
-
-	private static int getElementContent(Element element, String string) {
-		return Integer.parseInt(element.getElementsByTagName(string).item(0).getTextContent());
-	}
-
-	private static int getAttributes(Element element, String string) {
-		return Integer.parseInt(element.getAttributes().getNamedItem(string).getTextContent());
-	}
-	
-	
-
-
-	
-	
+	/** 
+	 * @param newIE erwartet einen Inventareintrag, der validiert sein sollte, sonst wird eine Exception geworfen.
+	 * @throws some errors
+	 */
 	public static void addInventoryEntry(InventoryEntry newIE) throws Exception{
 		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
 		if(!newIE.validate()) {
@@ -121,13 +105,6 @@ public class Database{
 
 			// Get the root element
 			Node entries = doc.getFirstChild();
-
-			// Get the staff element , it may not working if tag has spaces, or
-			// whatever weird characters in front...it's better to use
-			// getElementsByTagName() to get it directly.
-			// Node staff = company.getFirstChild();
-
-			// Get the staff element by tag name directly
 			Element newEntry = doc.createElement("entry");
 			
 			newEntry.setAttribute("section",Integer.toString(newIE.getShelfSection()));
@@ -146,10 +123,7 @@ public class Database{
 		
 			newWeight.appendChild(doc.createTextNode(Integer.toString(newIE.product.getWeight())));
 			
-			newPrize.appendChild(doc.createTextNode(Integer.toString(newIE.product.getPrize())));
-			
-			//newCategoryId.appendChild(doc.createTextNode(Integer.toString(newIE.product.getCategoryID())));
-						
+			newPrize.appendChild(doc.createTextNode(Integer.toString(newIE.product.getPrize())));				
 			
 			
 			newEntry.appendChild(newName);
@@ -162,9 +136,7 @@ public class Database{
 
 			// write the content into xml file
 			Database.transform(doc, DBPATH_IE);
-
-			System.out.println("Done");
-
+			
 		   } catch (IOException ioe) {
 			ioe.printStackTrace();
 		   } catch (SAXException sae) {
@@ -173,18 +145,29 @@ public class Database{
 	}
 	
 	
+	/** Leitet die Funktion als Database.replaceInventoryEntry(UID, newIE, false) weiter.
+	 * @see (replaceInventoryEntry();)
+	 * 
+	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE) throws Exception{
 		return Database.replaceInventoryEntry(UID, newIE, false);
 	}
-	   /**
-	    * Edit a InventoryEntry
-	    * @param UID edit Entry with this UID
-	    * @see #setArea(String)
-	    * @see #setExchange(String)
-	    * @see #setExtension(String)
-	    * @throws Exception in case of invalid value
-	    */
+	   
 	
+	/** Ersetzt den Inventareintrag an UID durch newIE.
+	 * 
+	 * @param force bestimmt ob, wenn ein Eintrag an UID vorhanden ist, überschrieben werden soll.
+	 * 
+	 * Pre:
+	 * newIE muss validieren.
+	 * an UID muss ein Eintrag existieren.
+	 * 
+	 * Post:
+	 * 
+	 * Der Eintrag an UID ist ersetzt durch newIE.
+	 * 
+	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
 		System.out.println("WARNING METHODE: editInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
 		
@@ -222,8 +205,6 @@ public class Database{
 	           //Element elNode = (Element) node;
 	           NamedNodeMap attr = node.getAttributes();
 	           
-	
-			   // get the salary element, and update the value
 			   if ("entry".equals(node.getNodeName())) {
 				   int entryUID=Integer.parseInt(attr.getNamedItem("place").getTextContent()+attr.getNamedItem("section").getTextContent());
 				   
@@ -243,12 +224,8 @@ public class Database{
 			   }
 			}
 	
-			// write the content into xml file
-			
-			Database.transform(doc, DBPATH_IE);
-	
-			System.out.println("Done");
-	
+			// write the content into xml file			
+			Database.transform(doc, DBPATH_IE);	
 		   } catch (IOException ioe) {
 			ioe.printStackTrace();
 		   } catch (SAXException sae) {
@@ -258,7 +235,16 @@ public class Database{
 		
 	}
 
-	
+	/** Ändert einen Attribut eines Inventareintrages.
+	 * 
+	 * @param UID bestimmt den Inventareintrag.
+	 * @param attribute bestimmt welchen Attribute (z.B. Gewicht, Menge oder Name)
+	 * @param newValue neuer Wert eines Attributes von UID.
+	 * 
+	 * Prüft Restriktionen der Datenbank.
+	 * 
+	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 */
 	public static void editAttributeOfInventoryEntry(int UID, String attribute, String newValue) throws Exception{
 		System.out.println("WARNING work in progress!\n@editAttributeOfInventoryEntry doesn't yet check for any constraints");
 		Document doc = Database.buildDocument(DBPATH_IE);
@@ -283,12 +269,18 @@ public class Database{
 			}
 			Database.transform(doc, DBPATH_IE);
 		}catch (Exception e) {
-			// TODO: handle exception
+			System.out.println("Fehler bei editAttributeOfInenvotryEntry"+e.getMessage());
 		}
 		return;
 	}
 	
-	
+	/** Löscht einen Inventareintrag mit der passenden UID, wenn die Menge bereits 0 ist.
+	 * 
+	 * @param UID bestimmt den Inventareintrag.
+	 * @param force wenn wahr, ignoriert Menge des Inventareintrages.
+	 * 
+	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 */
 	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
 		System.out.println("WARNING work in progress!");
 		Document doc = Database.buildDocument(DBPATH_IE);
@@ -310,12 +302,45 @@ public class Database{
 		return;
 	}
 	
+	/*
+	 * @param shelf Nummer des Regals
+	 * 
+	 * @return die Menge ein freiem Platz in dem Regal mit der Nummer shelf.*/
+	public static int freeSpace(int shelf) {
+		System.out.println("WARNING work in progress!\n@editAttributeOfInventoryEntry doesn't yet check for any constraints");
+		
+		int shelfCapicity=100*1000;
+		int usedSpace = 0;
+		try {
+			Document doc = Database.buildDocument(DBPATH_IE);
+			NodeList nodes;
+			nodes = Database.xpathNodes(doc,"/entries/entry[@section="+shelf+"]");
+			System.out.println("Nodes in Shelf: "+nodes.getLength());
+			   for (int i = 0; i < nodes.getLength(); i++) {
+				   Element node = (Element) nodes.item(i);
+					int count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
+					int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
+					
+					usedSpace = usedSpace + (count*weight);
+			   }
+		}catch (Exception e) {
+			System.out.println("Exception in freeSpace ("+e.getMessage()+")");
+			return -1;
+		}
+		return shelfCapicity-usedSpace;
+	}
+	
+	/** Prüft die Datenbank auf das Einhalten der Datenbankrestriktionen mit hilfe einer XSD.
+	 * */
 	public static boolean validate() {
 		return Database.validateAgainstXSD(DBPATH_IE,DBPATH_IE_XSD);
 	}
 	
 
-	
+	/** Prüft ob ein Name in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
+	 * 
+	 * @return -1, wenn nicht exisitert, ansonsten UID wo der Name existiert.
+	 * */
 	public static int nameExists(String name) {
 		try {
 	        Document doc = Database.buildDocument("inventoryEntries.xml");
@@ -340,7 +365,10 @@ public class Database{
 	}
 	
 	
-	
+	/** Prüft ob eine UID in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
+	 * 
+	 * @return true, wenn exisitert, ansonsten false.
+	 * */
 	public static boolean uidExists(int uid) {
 		try {
 	        Document xmlDocument = Database.buildDocument("inventoryEntries.xml");
@@ -364,78 +392,6 @@ public class Database{
 		}
 		return false;
 	}
-	
-	/*
-	 * example for how to use transform factory
-	 * 
-	public static void saveToXML() {
-		try {
-			String filepath = DBPATH+"file.xml";
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(filepath);
-
-			// Get the root element
-			Node company = doc.getFirstChild();
-
-			// Get the staff element , it may not working if tag has spaces, or
-			// whatever weird characters in front...it's better to use
-			// getElementsByTagName() to get it directly.
-			// Node staff = company.getFirstChild();
-
-			// Get the staff element by tag name directly
-			Node staff = doc.getElementsByTagName("staff").item(0);
-			Element newEntry = doc.createElement("entry");
-
-			// update staff attribute
-			NamedNodeMap attr = staff.getAttributes();
-			Node nodeAttr = attr.getNamedItem("id");
-			nodeAttr.setTextContent("2");
-
-			// append a new node to staff
-
-			// loop the staff child node
-			NodeList list = staff.getChildNodes();
-
-			for (int i = 0; i < list.getLength(); i++) {
-				
-	                   Node node = list.item(i);
-
-			   // get the salary element, and update the value
-			   if ("salary".equals(node.getNodeName())) {
-				node.setTextContent("2000000");
-			   }
-
-	                   //remove firstname
-			   if ("firstname".equals(node.getNodeName())) {
-				staff.removeChild(node);
-			   }
-
-			}
-			Element newElement = doc.createElement("NewEl");
-			newElement.appendChild(doc.createTextNode("New"));
-			newEntry.appendChild(newElement);
-			company.appendChild(newEntry);
-
-			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(filepath));
-			transformer.transform(source, result);
-
-			System.out.println("Done");
-
-		   } catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		   } catch (TransformerException tfe) {
-			tfe.printStackTrace();
-		   } catch (IOException ioe) {
-			ioe.printStackTrace();
-		   } catch (SAXException sae) {
-			sae.printStackTrace();
-		   }
-	}*/
 	
 	public static String escapeString(String unescapedString) {
 		return unescapedString;
@@ -462,6 +418,20 @@ public class Database{
 		try {
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			node = (Node) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODE);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return node;
+		
+	}
+	
+	private static NodeList xpathNodes(Document doc,String xpath_query) throws XPathExpressionException{
+		NodeList node = null;
+		try {
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			node = (NodeList) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODESET);
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -519,9 +489,20 @@ public class Database{
 	    }
 	}
 	
+	private static String getElementTextContent(Element element, String string) {
+		return element.getElementsByTagName(string).item(0).getTextContent();
+	}
+
+	private static int getElementContent(Element element, String string) {
+		return Integer.parseInt(element.getElementsByTagName(string).item(0).getTextContent());
+	}
+
+	private static int getAttributes(Element element, String string) {
+		return Integer.parseInt(element.getAttributes().getNamedItem(string).getTextContent());
+	}
 	
 	
-	/* Graveyard for deprecated methodes  */
+	/** Graveyard for deprecated methodes  */
 	
 	/**
 	 * @deprecated use retrieveInventoryEntries instead.  
@@ -547,7 +528,7 @@ public class Database{
 				int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
 				int prize = Integer.parseInt(node.getElementsByTagName("prize").item(0).getTextContent());
 				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
-				/*
+				/**
 				System.out.println("\tid:"+id);
 				System.out.println("\tname:"+name);
 				System.out.println("\tcount:"+count);

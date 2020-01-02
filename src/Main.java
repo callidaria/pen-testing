@@ -37,22 +37,13 @@ public class Main {
 			
 			
 			ArrayList<InventoryEntry> inventoryEntry = Database.retrieveInventoryEntries();
-			System.out.println("Objects in Array: "+inventoryEntry.size());
 			for (int i=0;i<inventoryEntry.size();i++) {
 				System.out.println(inventoryEntry.get(i));
-				/*System.out.println("InventoryEntry ("+i+"):");
-				System.out.println("\tUID :"+inventoryEntry.get(i).getUID());
-				System.out.println("\t\tproduct_name:"+inventoryEntry.get(i).product.getName());
-				System.out.println("\t\tproduct_count:"+inventoryEntry.get(i).product.getCount());
-				System.out.println("\t\tproduct_weight:"+inventoryEntry.get(i).product.getWeight()+"g");
-				System.out.println("\t\tproduct_prize:"+inventoryEntry.get(i).product.getPrize()+"c");
-				System.out.println("\tposition:"+inventoryEntry.get(i).getID());
-				System.out.println("\tshelf_section:"+inventoryEntry.get(i).getShelfSection());
-				System.out.println("\tshelf_place:"+inventoryEntry.get(i).getShelfPlace());*/
 			}
 			
 			Product pro = new Product("Pen 2", 12, 12, 99);
 			InventoryEntry ie = new InventoryEntry(100,100,pro);
+			System.out.println("Free Space: "+Database.freeSpace(100));
 			
 			try {
 				System.out.println("Database status: "+Database.validate());
