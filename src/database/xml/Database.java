@@ -53,7 +53,6 @@ public class Database{
 	 */
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries() {
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
-		//int count;
 		try {
 			Document doc = Database.buildDocument(DBPATH_IE);
 			NodeList nList = doc.getElementsByTagName("entry");
@@ -61,21 +60,15 @@ public class Database{
 			System.out.println("Stored inventoryEntries: "+nList.getLength());
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
-				//System.out.println("Node ("+i+"):");
-				//int productID = Integer.parseInt(node.getAttributes().getNamedItem("id").getTextContent());
+
 				int shelfSection = Database.getAttributes(node,"section");
 				int shelfPlace = Database.getAttributes(node,"place");
-				// count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
-				//System.out.println("\tproduct_id:"+productID);
-				//System.out.println("\tposition:"+shelfSection+shelfPlace);
-				//System.out.println("\tcount:"+count);
+
 				String productName = Database.getElementTextContent(node,"name");
 				int productWeight = Database.getElementContent(node,"weight");
 				int productPrize = Database.getElementContent(node,"prize");
 				int productCount = Database.getElementContent(node,"count");
-				//int productCategoryID = Integer.parseInt(subNode.getElementsByTagName("category_id").item(0).getTextContent());
-				
-				//Product product = new Product(productID,productName,productCount);
+
 				Product product = new Product(productName,productCount,productWeight,productPrize);
 				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,product);
 				inventoryEntries.add(position);
