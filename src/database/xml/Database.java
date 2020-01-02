@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.xml.XMLConstants;
@@ -56,7 +55,7 @@ public class Database{
 		try {
 			Document doc = Database.buildDocument(DBPATH_IE);
 			NodeList nList = doc.getElementsByTagName("entry");
-			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
 			System.out.println("Stored inventoryEntries: "+nList.getLength());
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
@@ -106,13 +105,6 @@ public class Database{
 
 			// Get the root element
 			Node entries = doc.getFirstChild();
-
-			// Get the staff element , it may not working if tag has spaces, or
-			// whatever weird characters in front...it's better to use
-			// getElementsByTagName() to get it directly.
-			// Node staff = company.getFirstChild();
-
-			// Get the staff element by tag name directly
 			Element newEntry = doc.createElement("entry");
 			
 			newEntry.setAttribute("section",Integer.toString(newIE.getShelfSection()));
@@ -131,10 +123,7 @@ public class Database{
 		
 			newWeight.appendChild(doc.createTextNode(Integer.toString(newIE.product.getWeight())));
 			
-			newPrize.appendChild(doc.createTextNode(Integer.toString(newIE.product.getPrize())));
-			
-			//newCategoryId.appendChild(doc.createTextNode(Integer.toString(newIE.product.getCategoryID())));
-						
+			newPrize.appendChild(doc.createTextNode(Integer.toString(newIE.product.getPrize())));				
 			
 			
 			newEntry.appendChild(newName);
@@ -147,9 +136,7 @@ public class Database{
 
 			// write the content into xml file
 			Database.transform(doc, DBPATH_IE);
-
-			System.out.println("Done");
-
+			
 		   } catch (IOException ioe) {
 			ioe.printStackTrace();
 		   } catch (SAXException sae) {
@@ -218,8 +205,6 @@ public class Database{
 	           //Element elNode = (Element) node;
 	           NamedNodeMap attr = node.getAttributes();
 	           
-	
-			   // get the salary element, and update the value
 			   if ("entry".equals(node.getNodeName())) {
 				   int entryUID=Integer.parseInt(attr.getNamedItem("place").getTextContent()+attr.getNamedItem("section").getTextContent());
 				   
@@ -239,12 +224,8 @@ public class Database{
 			   }
 			}
 	
-			// write the content into xml file
-			
-			Database.transform(doc, DBPATH_IE);
-	
-			System.out.println("Done");
-	
+			// write the content into xml file			
+			Database.transform(doc, DBPATH_IE);	
 		   } catch (IOException ioe) {
 			ioe.printStackTrace();
 		   } catch (SAXException sae) {
@@ -288,7 +269,7 @@ public class Database{
 			}
 			Database.transform(doc, DBPATH_IE);
 		}catch (Exception e) {
-			// TODO: handle exception
+			System.out.println("Fehler bei editAttributeOfInenvotryEntry"+e.getMessage());
 		}
 		return;
 	}
@@ -411,78 +392,6 @@ public class Database{
 		}
 		return false;
 	}
-	
-	/*
-	 * example for how to use transform factory
-	 * 
-	public static void saveToXML() {
-		try {
-			String filepath = DBPATH+"file.xml";
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(filepath);
-
-			// Get the root element
-			Node company = doc.getFirstChild();
-
-			// Get the staff element , it may not working if tag has spaces, or
-			// whatever weird characters in front...it's better to use
-			// getElementsByTagName() to get it directly.
-			// Node staff = company.getFirstChild();
-
-			// Get the staff element by tag name directly
-			Node staff = doc.getElementsByTagName("staff").item(0);
-			Element newEntry = doc.createElement("entry");
-
-			// update staff attribute
-			NamedNodeMap attr = staff.getAttributes();
-			Node nodeAttr = attr.getNamedItem("id");
-			nodeAttr.setTextContent("2");
-
-			// append a new node to staff
-
-			// loop the staff child node
-			NodeList list = staff.getChildNodes();
-
-			for (int i = 0; i < list.getLength(); i++) {
-				
-	                   Node node = list.item(i);
-
-			   // get the salary element, and update the value
-			   if ("salary".equals(node.getNodeName())) {
-				node.setTextContent("2000000");
-			   }
-
-	                   //remove firstname
-			   if ("firstname".equals(node.getNodeName())) {
-				staff.removeChild(node);
-			   }
-
-			}
-			Element newElement = doc.createElement("NewEl");
-			newElement.appendChild(doc.createTextNode("New"));
-			newEntry.appendChild(newElement);
-			company.appendChild(newEntry);
-
-			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(filepath));
-			transformer.transform(source, result);
-
-			System.out.println("Done");
-
-		   } catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		   } catch (TransformerException tfe) {
-			tfe.printStackTrace();
-		   } catch (IOException ioe) {
-			ioe.printStackTrace();
-		   } catch (SAXException sae) {
-			sae.printStackTrace();
-		   }
-	}*/
 	
 	public static String escapeString(String unescapedString) {
 		return unescapedString;
