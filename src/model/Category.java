@@ -1,13 +1,17 @@
 package model;
 
 public class Category {
-	private int id;
+	private int uid;
 	private String name;
-	public int getId() {
-		return id;
+	public Category(int uid, String name) {
+		this.uid=uid;
+		this.name = name;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public int getUID() {
+		return uid;
+	}
+	public void setUID(int uid) {
+		this.uid = uid;
 	}
 	public String getName() {
 		return name;
@@ -16,5 +20,8 @@ public class Category {
 		this.name = name;
 	}
 	
+	public String toString() {
+		return "Category ("+uid+"): "+name;
+	}
 	
 }

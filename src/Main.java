@@ -4,6 +4,7 @@ import javax.swing.SwingUtilities;
 import javax.xml.transform.TransformerException;
 
 import database.xml.Database;
+import model.Category;
 import model.InventoryEntry;
 import model.Product;
 import view.TextAreaLogProgram;
@@ -58,7 +59,10 @@ public class Main {
 			}
 
 			
-			
+			ArrayList<Category> categories = Database.retrieveCategories();
+			for (int i=0;i<categories.size();i++) {
+				System.out.println(categories.get(i));
+			}
 			
 			SwingUtilities.invokeLater(new Runnable() {
 	            @Override

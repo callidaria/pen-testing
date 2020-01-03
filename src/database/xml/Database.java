@@ -33,6 +33,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import model.Category;
 import model.InventoryEntry;
 import model.Product;
 
@@ -47,8 +48,14 @@ public class Database{
 	//Dateiname der Definitionsdatei von Inventareinträgen
 	static final String DBPATH_IE_XSD="inventoryEntries.xsd";
 	
+	//Dateiname von Kategorien	
+		static final String DBPATH_CAT="categories.xml";
+		
+	//Dateiname der Definitionsdatei von Kategorien
+	static final String DBPATH_CAT_XSD="categories.xsd";
+	
 	/** 	 
-	 * @return alle Inventareinträge aus der Datenbank als ArrayList. \nDie ArrayList ist unsortiert.
+	 * @return alle Inventareinträge aus der Datenbank als ArrayList. Die ArrayList ist unsortiert.
 	 */
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries() {
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
@@ -74,11 +81,41 @@ public class Database{
 			}
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			return null;
 		}	
 		
 		return inventoryEntries;
 	}
+	
+	/** 	 
+	 * @return alle Kategorien aus der Datenbank als ArrayList. Die ArrayList ist unsortiert.
+	 */
+	public static ArrayList<Category> retrieveCategories() {
+		ArrayList<Category> categories = new ArrayList<Category>();
+		try {
+			Document doc = Database.buildDocument(DBPATH_CAT);
+			NodeList nList = doc.getElementsByTagName("category");
+			System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
+			System.out.println("Stored categories: "+nList.getLength());
+			for(int i = 0; i < nList.getLength();i++) {
+				Element node = (Element) nList.item(i);
+
+				int uid = Database.getAttributes(node,"uid");
+
+				String name = Database.getElementTextContent(node,"name");
+				Category category = new Category(uid,name);
+				categories.add(category);
+			}
+		}
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}	
+		
+		return categories;
+	}
+	
 	
 	/** 
 	 * @param newIE erwartet einen Inventareintrag, der validiert sein sollte, sonst wird eine Exception geworfen.
@@ -138,9 +175,9 @@ public class Database{
 			Database.transform(doc, DBPATH_IE);
 			
 		   } catch (IOException ioe) {
-			ioe.printStackTrace();
+			System.out.println(ioe.getMessage());
 		   } catch (SAXException sae) {
-			sae.printStackTrace();
+			   System.out.println(sae.getMessage());
 		   }
 	}
 	
@@ -227,9 +264,9 @@ public class Database{
 			// write the content into xml file			
 			Database.transform(doc, DBPATH_IE);	
 		   } catch (IOException ioe) {
-			ioe.printStackTrace();
+			   System.out.println(ioe.getMessage());
 		   } catch (SAXException sae) {
-			sae.printStackTrace();
+			   System.out.println(sae.getMessage());
 		   }
 		return newIE;
 		
@@ -248,29 +285,31 @@ public class Database{
 	public static void editAttributeOfInventoryEntry(int UID, String attribute, String newValue) throws Exception{
 		System.out.println("WARNING work in progress!\n@editAttributeOfInventoryEntry doesn't yet check for any constraints");
 		Document doc = Database.buildDocument(DBPATH_IE);
-		try {
 			Boolean attributeExists = false;
 			Element node;
 			int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
 	        int section=sectionPlace[0];
 	        int place=sectionPlace[1];
-			node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
-			NodeList nodeChilds = node.getChildNodes();
-			   for (int i = 0; i < nodeChilds.getLength(); i++) {
-				   Node subNode = nodeChilds.item(i);
-				   if (subNode.getNodeName()==attribute) {
-					   System.out.println("SetAttribute ("+subNode.getNodeName()+"):"+subNode.getTextContent());
-					   subNode.setTextContent(newValue);
-					   attributeExists=true;
+			try {
+				node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
+				NodeList nodeChilds = node.getChildNodes();
+				   for (int i = 0; i < nodeChilds.getLength(); i++) {
+					   Node subNode = nodeChilds.item(i);
+					   if (subNode.getNodeName()==attribute) {
+						   System.out.println("SetAttribute ("+subNode.getNodeName()+"):"+subNode.getTextContent());
+						   subNode.setTextContent(newValue);
+						   attributeExists=true;
+					   }
 				   }
-			   }
-			if(!attributeExists) {
-				throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist.");
+				if(!attributeExists) {
+					throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist.");
+				}
+				Database.transform(doc, DBPATH_IE);
+			} catch (XPathExpressionException e) {
+				e.printStackTrace();
 			}
-			Database.transform(doc, DBPATH_IE);
-		}catch (Exception e) {
-			System.out.println("Fehler bei editAttributeOfInenvotryEntry"+e.getMessage());
-		}
+			
+
 		return;
 	}
 	
