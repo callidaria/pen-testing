@@ -4,7 +4,8 @@ public class Main {
 		
 		new DatabaseExamples();
 		System.out.println("\n---END OF EXAMPLE---\n");
-		new view.Front();
+		view.Front app = new view.Front();
+		app.setVisible(true);
 	}
 	
 	
