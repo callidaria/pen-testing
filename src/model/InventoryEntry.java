@@ -103,7 +103,7 @@ public class InventoryEntry{
 		 */
 		int[] sectionPlace= new int[2];
 		if((int) (Math.log10(UID) + 1)!=6){
-			return null;
+			return new int[] {-1,-1};
 		}
 		String stringUID = Integer.toString(UID);
 		String section=stringUID.substring(0, 3);

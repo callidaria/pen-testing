@@ -25,10 +25,12 @@ public class DatabaseExamples{
 		
 		
 		
-		ArrayList<InventoryEntry> inventoryEntry = Database.retrieveInventoryEntries();
-		inventoryEntry.get(0).product.category.setName("NOT PENS");
-		for (int i=0;i<inventoryEntry.size();i++) {
-			System.out.println(inventoryEntry.get(i));
+		
+		ArrayList<Category> categories = Database.retrieveCategories();
+		ArrayList<InventoryEntry> inventoryEntries = Database.retrieveInventoryEntriesWithCategory(categories);
+		inventoryEntries.get(0).product.category.setName("NOT PENS");
+		for (int i=0;i<inventoryEntries.size();i++) {
+			System.out.println(inventoryEntries.get(i));
 		}
 		
 		Product pro = new Product("Pen 2", 12, 12, 99, 1);
@@ -47,7 +49,7 @@ public class DatabaseExamples{
 		}
 
 		
-		ArrayList<Category> categories = Database.retrieveCategories();
+		
 		for (int i=0;i<categories.size();i++) {
 			System.out.println(categories.get(i));
 		}

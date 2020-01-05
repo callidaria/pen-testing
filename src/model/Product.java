@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Product {
 	@Deprecated
 	private int id;
@@ -49,9 +51,12 @@ public class Product {
 		this.count = count;
 	}
 	
-	public void assignCategory(int categoryID) {
-		this.category= new Category(categoryID,"Neustart erforderlich");
+	
+	public void setCategory(Category category) {
+		this.categoryID=category.getUID();
+		this.category=category;
 	}
+	
 	
 	@Deprecated
 	public Product(int id, String name, int count){
@@ -74,7 +79,7 @@ public class Product {
 		this.weight=weight;
 		this.prize=prize;
 		this.categoryID=categoryID;
-		this.assignCategory(categoryID);
+		this.setCategory(new Category(1,"Keine Kategorie"));
 	}
 	
 	public Product(String name, int count, int weight, int prize, int categoryID, Category category){

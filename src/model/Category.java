@@ -11,7 +11,7 @@ public class Category {
 		return uid;
 	}
 	public void setUID(int uid) {
-		this.uid = uid;
+		//illegal operation
 	}
 	public String getName() {
 		return name;

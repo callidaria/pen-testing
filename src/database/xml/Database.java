@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -60,11 +61,10 @@ public class Database{
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries(){
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
 		try {
-			ArrayList<Category> categories = Database.retrieveCategories();
 			Document doc = Database.buildDocument(DBPATH_IE);
 			NodeList nList = doc.getElementsByTagName("entry");
-			System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
-			System.out.println("Stored inventoryEntries: "+nList.getLength());
+			//System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
+			//System.out.println("Stored inventoryEntries: "+nList.getLength());
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
 
@@ -76,20 +76,41 @@ public class Database{
 				int productPrize = Database.getElementContent(node,"prize");
 				int productCount = Database.getElementContent(node,"count");
 				int categoryid = Database.getElementContent(node,"category_id");
-				Category category = null;
 				
-				for(int n =0;n < categories.size();n++) {
-					if(categoryid==categories.get(n).getUID()) {
-						category=categories.get(n);
-					}
-				}
-				if(category==null) {
-					category=categories.get(0);
-				}
-				
-				Product product = new Product(productName,productCount,productWeight,productPrize,categoryid,category);
+				Product product = new Product(productName,productCount,productWeight,productPrize,categoryid);
 				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,product);
 				inventoryEntries.add(position);
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("Error @retrieveInventoryEntries:"+e.getMessage());
+			return null;
+		}	
+		System.out.println("Retrieved Inventory Entries");
+		return inventoryEntries;
+	}
+	
+	/**
+	 * Bin noch nicht so ganz zufrieden, aber funktioniert gut. Allerdings O(n^2);
+	 * 
+	 * @param categories Die List an Kategorie. Damit die Referenzen korrekt sind und keine Kategorie doppelt während der Laufzeit existiert.
+	 * @return alle Inventareintrag mit Kategorie.
+	 */
+	public static ArrayList<InventoryEntry> retrieveInventoryEntriesWithCategory(ArrayList<Category> categories){
+		ArrayList<InventoryEntry> inventoryEntries = Database.retrieveInventoryEntries();
+		Category defaultCategory = new Category(0, "Keine Kategorie");
+		try {
+			for(int i=0;i < inventoryEntries.size();i++) {
+				int categoryID = inventoryEntries.get(i).product.getCategoryID();
+				inventoryEntries.get(i).product.setCategory(defaultCategory);
+				for(int n =0;n < categories.size();n++) {
+					if(categoryID==categories.get(n).getUID()) {
+						inventoryEntries.get(i).product.setCategory(categories.get(n));
+						break;
+					}
+				}
+				
 			}
 		}
 		catch(Exception e) {
@@ -109,8 +130,8 @@ public class Database{
 		try {
 			Document doc = Database.buildDocument(DBPATH_CAT);
 			NodeList nList = doc.getElementsByTagName("category");
-			System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
-			System.out.println("Stored categories: "+nList.getLength());
+			//System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
+			//System.out.println("Stored categories: "+nList.getLength());
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
 
@@ -125,7 +146,7 @@ public class Database{
 			System.out.println(e.getMessage());
 			return null;
 		}	
-		
+		System.out.println("Retrieved Categories");
 		return categories;
 	}
 	
@@ -136,18 +157,18 @@ public class Database{
 	 */
 	public static void addInventoryEntry(InventoryEntry newIE) throws Exception{
 		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
+		String errorPreamble="Fehler beim Hinzufügen eines Inventareintrages.\n";
 		if(!newIE.validate()) {
-			throw new Exception("New InventoryEntry failed validation.");
+			throw new Exception(errorPreamble+DatabaseErrors.inventoryEntryFailedValidation);
 		}
 		
 		if(Database.uidExists(newIE.getUID())){
-			throw new Exception("New InventoryEntry UID taken.");
+			throw new Exception(errorPreamble+DatabaseErrors.uidTaken(newIE.getUID()));
 		}
 		
 		
 		if (Database.nameExists(newIE.product.getName()) != -1) {
-			System.out.print("NAME TAKEN");
-			throw new Exception("@editInventoryEntry newName is taken.");
+			throw new Exception(errorPreamble+DatabaseErrors.nameTaken(newIE.product.getName()));
 		}
 		
 		try {
@@ -219,8 +240,6 @@ public class Database{
 	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
-		System.out.println("WARNING METHODE: editInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
-		
 		if(!newIE.validate()) {
 			throw new Exception("@editInventoryEntry newInventoryEntry failed validation.");
 		}
@@ -263,13 +282,10 @@ public class Database{
 					   for (int n = 0; n < nodeChilds.getLength(); n++) {
 						   Node subNode = nodeChilds.item(n);
 						   if ("name".equals(subNode.getNodeName())) {
-							   System.out.println("Replace Name: "+subNode.getTextContent());
 							   subNode.setTextContent(newIE.product.getName());
 							   //break;
 						   }
-					   }
-					   System.out.print("Found: "+entryUID+" (Name altered)");
-					   
+					   }					   
 				   }
 			   }
 			}
@@ -281,10 +297,77 @@ public class Database{
 		   } catch (SAXException sae) {
 			   System.out.println(sae.getMessage());
 		   }
+		System.out.println("InventoryEntry ("+UID+"): replaced with\n"+newIE);
+	
 		return newIE;
 		
 	}
 
+	/** Ändert einen Attribut eines Inventareintrages.
+	 * 
+	 * @param UID bestimmt den Inventareintrag, der bearbeitet wird.
+	 * @param attribute bestimmt welchen Attribute (z.B. Gewicht, Menge oder Name)
+	 * @param newValue neuer Wert eines Attributes von UID.
+	 * 
+	 * Prüft Restriktionen der Datenbank.
+	 * 
+	 * @throws Exception - wenn der Attribute nicht in der Databankdefinition existiert {@link DatabaseSchema}.
+	 * @throws Exception - wenn der Attribute den newValue nicht annehmen darf.
+	 * @throws Exception - wenn die neue UID bereits belegt ist.
+	 * @throws Exception - wenn der neue Name bereits benutzt wird.
+	 */
+	public static void editAttributeOfInventoryEntry(int UID, String attribute, String newValue) throws Exception{
+		boolean inElements = Arrays.stream(DatabaseSchema.elements).anyMatch(attribute::equals);
+		boolean inAttributes = Arrays.stream(DatabaseSchema.attributes).anyMatch(attribute::equals);
+		if(!inElements&&!inAttributes) {
+			throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist.");
+		}
+		boolean verifiedAttribute = DatabaseSchema.verifyAttribute(attribute, newValue);
+		if(!verifiedAttribute){
+			throw new Exception("Attribute ("+attribute+") darf den Wert ("+newValue+") nicht haben.");
+		}
+		if(attribute=="UID") {
+			if(Database.uidExists(Integer.parseInt(newValue))) {
+				throw new Exception("Der Platz ("+newValue+") ist belegt.");
+			}
+		}
+		if(attribute=="name") {
+			if(Database.nameExists(newValue)!=-1) {
+				throw new Exception("Der Name ("+newValue+") wird bereits benutzt.");
+			}
+		}
+		Document doc = Database.buildDocument(DBPATH_IE);
+		Element node;
+		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
+        int section=sectionPlace[0];
+        int place=sectionPlace[1];
+		try {
+			node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
+			NodeList nodeChilds = node.getChildNodes();
+			if(inElements) {
+				for (int i = 0; i < nodeChilds.getLength(); i++) {
+				   Node subNode = nodeChilds.item(i);
+				   if (subNode.getNodeName()==attribute) {
+					   System.out.println("SetAttribute ("+subNode.getNodeName()+"):"+subNode.getTextContent());
+					   subNode.setTextContent(newValue);
+					   break;
+				   }
+			   }
+			}
+			if(inAttributes) {
+				node.setAttribute(attribute, newValue);
+			}
+			   
+			
+			Database.transform(doc, DBPATH_IE);
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		}
+			
+
+		return;
+	}
+	
 	/** Ändert einen Attribut eines Inventareintrages.
 	 * 
 	 * @param UID bestimmt den Inventareintrag.
@@ -295,34 +378,7 @@ public class Database{
 	 * 
 	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
 	 */
-	public static void editAttributeOfInventoryEntry(int UID, String attribute, String newValue) throws Exception{
-		System.out.println("WARNING work in progress!\n@editAttributeOfInventoryEntry doesn't yet check for any constraints");
-		Document doc = Database.buildDocument(DBPATH_IE);
-			Boolean attributeExists = false;
-			Element node;
-			int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
-	        int section=sectionPlace[0];
-	        int place=sectionPlace[1];
-			try {
-				node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
-				NodeList nodeChilds = node.getChildNodes();
-				   for (int i = 0; i < nodeChilds.getLength(); i++) {
-					   Node subNode = nodeChilds.item(i);
-					   if (subNode.getNodeName()==attribute) {
-						   System.out.println("SetAttribute ("+subNode.getNodeName()+"):"+subNode.getTextContent());
-						   subNode.setTextContent(newValue);
-						   attributeExists=true;
-					   }
-				   }
-				if(!attributeExists) {
-					throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist.");
-				}
-				Database.transform(doc, DBPATH_IE);
-			} catch (XPathExpressionException e) {
-				e.printStackTrace();
-			}
-			
-
+	public static void editCategoryOfInventoryEntry(int inventoryUID, int categoryUID) throws Exception{
 		return;
 	}
 	
@@ -334,23 +390,22 @@ public class Database{
 	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
 	 */
 	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
-		System.out.println("WARNING work in progress!");
 		Document doc = Database.buildDocument(DBPATH_IE);
-
-			Element node;
-			int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
-	        int section=sectionPlace[0];
-	        int place=sectionPlace[1];
-			node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
-			NodeList nodeChilds = node.getChildNodes();
-			   for (int i = 0; i < nodeChilds.getLength(); i++) {
-				   Node subNode = nodeChilds.item(i);
-				   if (subNode.getNodeName()=="count" && Integer.parseInt(subNode.getTextContent())!=0 && force==false) {
-					   throw new Exception("@deleteInventoryEntry count is ("+subNode.getTextContent()+") should be zero, use force delete or set count to zero.");
-				   }
+		Element node;
+		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
+        int section=sectionPlace[0];
+        int place=sectionPlace[1];
+		node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
+		NodeList nodeChilds = node.getChildNodes();
+		   for (int i = 0; i < nodeChilds.getLength(); i++) {
+			   Node subNode = nodeChilds.item(i);
+			   if (subNode.getNodeName()=="count" && Integer.parseInt(subNode.getTextContent())!=0 && force==false) {
+				   throw new Exception("Löschen von Inventareintrag("+UID+") fehlgeschlagen. Die Quantität ("+subNode.getTextContent()+") sollte 0 sein ist, ansonsten benutzten Sie 'force delete'.");
 			   }
-			node.getParentNode().removeChild(node);
-			Database.transform(doc, DBPATH_IE);
+		   }
+		node.getParentNode().removeChild(node);
+		Database.transform(doc, DBPATH_IE);
+		System.out.println("InventoryEntry ("+UID+"): deleted");
 		return;
 	}
 	
@@ -359,7 +414,7 @@ public class Database{
 	 * 
 	 * @return die Menge ein freiem Platz in dem Regal mit der Nummer shelf.*/
 	public static int freeSpace(int shelf) {
-		System.out.println("WARNING work in progress!\n@editAttributeOfInventoryEntry doesn't yet check for any constraints");
+		System.out.println("WARNING work in progress @freeSpace!");
 		
 		int shelfCapicity=100*1000;
 		int usedSpace = 0;
