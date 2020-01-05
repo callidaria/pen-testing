@@ -54,12 +54,13 @@ public class DatabaseExamples{
 			System.out.println(categories.get(i));
 		}
 		
+		/*
 		SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 new TextAreaLogProgram().setVisible(true);
             }
         });
-		
+		*/
 	}
 }
