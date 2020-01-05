@@ -49,6 +49,10 @@ public class Product {
 		this.count = count;
 	}
 	
+	public void assignCategory(int categoryID) {
+		this.category= new Category(categoryID,"Neustart erforderlich");
+	}
+	
 	@Deprecated
 	public Product(int id, String name, int count){
 		this.id=id;
@@ -56,6 +60,7 @@ public class Product {
 		this.count=count;
 	}
 	
+	@Deprecated
 	public Product(String name, int count, int weight, int prize){
 		this.name=name;
 		this.count=count;
@@ -68,10 +73,22 @@ public class Product {
 		this.count=count;
 		this.weight=weight;
 		this.prize=prize;
-		//to-do: append category
+		this.categoryID=categoryID;
+		this.assignCategory(categoryID);
 	}
+	
+	public Product(String name, int count, int weight, int prize, int categoryID, Category category){
+		this.name=name;
+		this.count=count;
+		this.weight=weight;
+		this.prize=prize;
+		this.categoryID=categoryID;
+		this.category=category;
+	}
+	
+	
 	public boolean validate() {
-		if (this.name==null || this.count==null || this.weight==null || this.prize==null /*|| this.categoryID==null*/) {
+		if (this.name==null || this.count==null || this.weight==null || this.prize==null || this.categoryID==null || this.category.validate() == false) {
 			return false;
 		}
 		return true;
@@ -79,5 +96,18 @@ public class Product {
 	public void repair() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public String toString() {
+		if(this.validate()) {
+			return "Product:"+
+					"\n\t\tproduct_name:"+this.getName()+
+					"\n\t\tproduct_count:"+this.getCount()+
+					"\n\t\tproduct_weight:"+this.getWeight()+"g"+
+					"\n\t\tproduct_prize:"+this.getPrize()+"c"+
+					"\n\t\t"+this.category;
+		}
+		return "Product:"+
+		"\n\tvalidate:false";
 	}
 }

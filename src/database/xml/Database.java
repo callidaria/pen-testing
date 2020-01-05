@@ -57,9 +57,10 @@ public class Database{
 	/** 	 
 	 * @return alle Inventareinträge aus der Datenbank als ArrayList. Die ArrayList ist unsortiert.
 	 */
-	public static ArrayList<InventoryEntry> retrieveInventoryEntries() {
+	public static ArrayList<InventoryEntry> retrieveInventoryEntries(){
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
 		try {
+			ArrayList<Category> categories = Database.retrieveCategories();
 			Document doc = Database.buildDocument(DBPATH_IE);
 			NodeList nList = doc.getElementsByTagName("entry");
 			System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
@@ -74,14 +75,26 @@ public class Database{
 				int productWeight = Database.getElementContent(node,"weight");
 				int productPrize = Database.getElementContent(node,"prize");
 				int productCount = Database.getElementContent(node,"count");
-
-				Product product = new Product(productName,productCount,productWeight,productPrize);
+				int categoryid = Database.getElementContent(node,"category_id");
+				Category category = null;
+				
+				for(int n =0;n < categories.size();n++) {
+					if(categoryid==categories.get(n).getUID()) {
+						category=categories.get(n);
+					}
+				}
+				if(category==null) {
+					category=categories.get(0);
+				}
+				
+				Product product = new Product(productName,productCount,productWeight,productPrize,categoryid,category);
 				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,product);
 				inventoryEntries.add(position);
 			}
 		}
 		catch(Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
+			System.out.println("Error @retrieveInventoryEntries:"+e.getMessage());
 			return null;
 		}	
 		

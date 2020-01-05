@@ -125,11 +125,7 @@ public class InventoryEntry{
 			return "InventoryEntry ("+this.getUID()+"):"+
 					"\n\tShelfSection :"+this.getShelfSection()+
 					"\n\tShelfPlace :"+this.getShelfPlace()+
-					"\n\t\tproduct_name:"+this.product.getName()+
-					"\n\t\tproduct_count:"+this.product.getCount()+
-					"\n\t\tproduct_weight:"+this.product.getWeight()+"g"+
-					"\n\t\tproduct_prize:"+this.product.getPrize()+"c"+
-					"\n\tposition:"+this.getID()+
+					"\n\t"+this.product+
 					"\n\tvalide:"+this.validate();
 		}
 		if(this.product.validate()) {

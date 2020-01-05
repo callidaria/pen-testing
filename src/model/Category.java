@@ -1,7 +1,7 @@
 package model;
 
 public class Category {
-	private int uid;
+	private Integer uid;
 	private String name;
 	public Category(int uid, String name) {
 		this.uid=uid;
@@ -22,6 +22,12 @@ public class Category {
 	
 	public String toString() {
 		return "Category ("+uid+"): "+name;
+	}
+	public boolean validate() {
+		if (this.name==null || this.uid==null) {
+			return false;
+		}
+		return true;
 	}
 	
 }
