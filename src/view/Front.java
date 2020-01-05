@@ -34,7 +34,7 @@ public class Front extends JFrame {
 		setTitle("Bestandsübersicht");
 		setSize(400,220);
 		setLocationRelativeTo(null);
-		//setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		
 		//Button
@@ -83,6 +83,8 @@ public class Front extends JFrame {
 			        if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
 			        	ArticleView article = new ArticleView();
 						article.setVisible(true);
+			        	//NewArticle neu = new NewArticle();
+						//neu.setVisible(true);
 			        }
 			    }	
 		});
@@ -92,16 +94,16 @@ public class Front extends JFrame {
 		
 		//Menubar
 		JMenuBar menu = new JMenuBar();
-		JMenu datei = new JMenu("Menü");
+		JMenu datei = new JMenu("Datei");
 		JMenu submenu = new JMenu("Submenü");
-		JMenuItem category = new JMenuItem("Kategorien");
+		JMenuItem eins = new JMenuItem("Kategorie");
 		JMenuItem zwei = new JMenuItem("Punkt 2");
-		category.addActionListener(new ActionListener() { 
+		eins.addActionListener(new ActionListener() { 
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Category cat = new Category();
-				cat.setVisible(true);
+				Front m = new Front();
+				m.setVisible(true);
 			}
 			
 		});
@@ -117,7 +119,7 @@ public class Front extends JFrame {
 		
 		
 		submenu.add(zwei);
-		datei.add(category);
+		datei.add(eins);
 		datei.addSeparator();
 		datei.add(submenu);
 		menu.add(datei);
