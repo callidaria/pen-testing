@@ -54,6 +54,13 @@ public class DatabaseExamples{
 			System.out.println(categories.get(i));
 		}
 		
+		Category newCategory = new Category("New category");
+		try {
+			Database.addCategory(newCategory);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		/*
 		SwingUtilities.invokeLater(new Runnable() {
             @Override

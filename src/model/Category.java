@@ -7,6 +7,10 @@ public class Category {
 		this.uid=uid;
 		this.name = name;
 	}
+	public Category(String string) {
+		this.uid = -1;
+		this.name=string;
+	}
 	public int getUID() {
 		return uid;
 	}

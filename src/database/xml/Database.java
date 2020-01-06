@@ -407,10 +407,58 @@ public class Database{
 		System.out.println("Retrieved Categories");
 		return categories;
 	}
-	public static void addCategory(Category category) {
+	public static int addCategory(Category category) throws Exception {
+		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
+		String errorPreamble="Fehler beim Hinzufügen eines Inventareintrages.\n";
+		int freeUID=-1;
+		if(!category.validate()) {
+			throw new Exception(errorPreamble+DatabaseErrors.inventoryEntryFailedValidation);
+		}		
+		if (Database.categoryExists(category.getName()) != -1) {
+			throw new Exception(errorPreamble+DatabaseErrors.nameTaken);
+		}
 		
+		try {
+			Document doc = Database.buildDocument(DBPATH_CAT);
+			freeUID = Database.freeCategoryUID();
+			// Get the root element
+			Node entries = doc.getFirstChild();
+			Element newCategory = doc.createElement("category");
+			
+			newCategory.setAttribute("uid",Integer.toString(freeUID));
+			
+			
+			Element newName = doc.createElement("name");
+			
+			newName.appendChild(doc.createTextNode(category.getName()));			
+			
+			
+			newCategory.appendChild(newName);
+			
+			entries.appendChild(newCategory);
+
+			// write the content into xml file
+			Database.transform(doc, DBPATH_CAT);
+			
+		   } catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
+		   } catch (SAXException sae) {
+			   System.out.println(sae.getMessage());
+		   }
+		return freeUID;
 	}
 	
+	private static int freeCategoryUID() {
+		// TODO Auto-generated method stub
+		Category lastCategory=Database.retrieveCategories().get(Database.retrieveCategories().size() -1);
+		return lastCategory.getUID()+1;
+	}
+
+	private static int categoryExists(String name) {
+		// TODO Auto-generated method stub
+		return -1;
+	}
+
 	public static void renameCategory(int UID, String newName) {
 		
 	}
