@@ -122,35 +122,6 @@ public class Database{
 		return inventoryEntries;
 	}
 	
-	/** 	 
-	 * @return alle Kategorien aus der Datenbank als ArrayList. Die ArrayList ist unsortiert.
-	 */
-	public static ArrayList<Category> retrieveCategories() {
-		ArrayList<Category> categories = new ArrayList<Category>();
-		try {
-			Document doc = Database.buildDocument(DBPATH_CAT);
-			NodeList nList = doc.getElementsByTagName("category");
-			//System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
-			//System.out.println("Stored categories: "+nList.getLength());
-			for(int i = 0; i < nList.getLength();i++) {
-				Element node = (Element) nList.item(i);
-
-				int uid = Database.getAttributes(node,"uid");
-
-				String name = Database.getElementTextContent(node,"name");
-				Category category = new Category(uid,name);
-				categories.add(category);
-			}
-		}
-		catch(Exception e) {
-			System.out.println(e.getMessage());
-			return null;
-		}	
-		System.out.println("Retrieved Categories");
-		return categories;
-	}
-	
-	
 	/** 
 	 * @param newIE erwartet einen Inventareintrag, der validiert sein sollte, sonst wird eine Exception geworfen.
 	 * @throws some errors
@@ -368,6 +339,33 @@ public class Database{
 		return;
 	}
 	
+	/** Löscht einen Inventareintrag mit der passenden UID, wenn die Menge bereits 0 ist.
+	 * 
+	 * @param UID bestimmt den Inventareintrag.
+	 * @param force wenn wahr, ignoriert Menge des Inventareintrages.
+	 * 
+	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 */
+	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
+		Document doc = Database.buildDocument(DBPATH_IE);
+		Element node;
+		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
+	    int section=sectionPlace[0];
+	    int place=sectionPlace[1];
+		node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
+		NodeList nodeChilds = node.getChildNodes();
+		   for (int i = 0; i < nodeChilds.getLength(); i++) {
+			   Node subNode = nodeChilds.item(i);
+			   if (subNode.getNodeName()=="count" && Integer.parseInt(subNode.getTextContent())!=0 && force==false) {
+				   throw new Exception("Löschen von Inventareintrag("+UID+") fehlgeschlagen. Die Quantität ("+subNode.getTextContent()+") sollte 0 sein ist, ansonsten benutzten Sie 'force delete'.");
+			   }
+		   }
+		node.getParentNode().removeChild(node);
+		Database.transform(doc, DBPATH_IE);
+		System.out.println("InventoryEntry ("+UID+"): deleted");
+		return;
+	}
+
 	/** Ändert einen Attribut eines Inventareintrages.
 	 * 
 	 * @param UID bestimmt den Inventareintrag.
@@ -382,33 +380,45 @@ public class Database{
 		return;
 	}
 	
-	/** Löscht einen Inventareintrag mit der passenden UID, wenn die Menge bereits 0 ist.
-	 * 
-	 * @param UID bestimmt den Inventareintrag.
-	 * @param force wenn wahr, ignoriert Menge des Inventareintrages.
-	 * 
-	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	/** 	 
+	 * @return alle Kategorien aus der Datenbank als ArrayList. Die ArrayList ist unsortiert.
 	 */
-	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
-		Document doc = Database.buildDocument(DBPATH_IE);
-		Element node;
-		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
-        int section=sectionPlace[0];
-        int place=sectionPlace[1];
-		node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
-		NodeList nodeChilds = node.getChildNodes();
-		   for (int i = 0; i < nodeChilds.getLength(); i++) {
-			   Node subNode = nodeChilds.item(i);
-			   if (subNode.getNodeName()=="count" && Integer.parseInt(subNode.getTextContent())!=0 && force==false) {
-				   throw new Exception("Löschen von Inventareintrag("+UID+") fehlgeschlagen. Die Quantität ("+subNode.getTextContent()+") sollte 0 sein ist, ansonsten benutzten Sie 'force delete'.");
-			   }
-		   }
-		node.getParentNode().removeChild(node);
-		Database.transform(doc, DBPATH_IE);
-		System.out.println("InventoryEntry ("+UID+"): deleted");
-		return;
+	public static ArrayList<Category> retrieveCategories() {
+		ArrayList<Category> categories = new ArrayList<Category>();
+		try {
+			Document doc = Database.buildDocument(DBPATH_CAT);
+			NodeList nList = doc.getElementsByTagName("category");
+			//System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
+			//System.out.println("Stored categories: "+nList.getLength());
+			for(int i = 0; i < nList.getLength();i++) {
+				Element node = (Element) nList.item(i);
+	
+				int uid = Database.getAttributes(node,"uid");
+	
+				String name = Database.getElementTextContent(node,"name");
+				Category category = new Category(uid,name);
+				categories.add(category);
+			}
+		}
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}	
+		System.out.println("Retrieved Categories");
+		return categories;
+	}
+	public static void addCategory(Category category) {
+		
 	}
 	
+	public static void renameCategory(int UID, String newName) {
+		
+	}
+	
+	public static void deleteCategory(int UID) {
+		
+	}
+
 	/*
 	 * @param shelf Nummer des Regals
 	 * 
