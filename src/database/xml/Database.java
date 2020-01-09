@@ -27,6 +27,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -35,6 +36,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import model.Category;
+import model.CodedException;
 import model.InventoryEntry;
 import model.Product;
 
@@ -55,16 +57,21 @@ public class Database{
 	//Dateiname der Definitionsdatei von Kategorien
 	static final String DBPATH_CAT_XSD="categories.xsd";
 	
-	/** 	 
+	/**Abfragen aller Inventareinträge aus der XML Datei unter DBPATH_IE
+	 *  
 	 * @return alle Inventareinträge aus der Datenbank als ArrayList. Die ArrayList ist unsortiert.
+	 * 
+	 * @deprecated bitte benutzte retrieveInventoryEntriesWithCategory
 	 */
+	@Deprecated
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries(){
 		ArrayList<InventoryEntry> inventoryEntries = new ArrayList<InventoryEntry>();
 		try {
+			//Lesen der Datei
 			Document doc = Database.buildDocument(DBPATH_IE);
 			NodeList nList = doc.getElementsByTagName("entry");
-			//System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
-			//System.out.println("Stored inventoryEntries: "+nList.getLength());
+			
+			//Füge jeden Eintrag in der XML Datei zu ArrayList als Inventareintrag hinzu.
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
 
@@ -82,17 +89,17 @@ public class Database{
 				inventoryEntries.add(position);
 			}
 		}
-		catch(Exception e) {
+		catch(SAXException|IOException e) {
 			e.printStackTrace();
 			System.out.println("Error @retrieveInventoryEntries:"+e.getMessage());
 			return null;
-		}	
+		}
 		System.out.println("Retrieved Inventory Entries");
 		return inventoryEntries;
 	}
 	
 	/**
-	 * Bin noch nicht so ganz zufrieden, aber funktioniert gut. Allerdings O(n^2);
+	 * Bin noch nicht so ganz zufrieden, aber funktioniert gut. Allerdings O(n*m);
 	 * 
 	 * @param categories Die List an Kategorie. Damit die Referenzen korrekt sind und keine Kategorie doppelt während der Laufzeit existiert.
 	 * @return alle Inventareintrag mit Kategorie.
@@ -100,23 +107,16 @@ public class Database{
 	public static ArrayList<InventoryEntry> retrieveInventoryEntriesWithCategory(ArrayList<Category> categories){
 		ArrayList<InventoryEntry> inventoryEntries = Database.retrieveInventoryEntries();
 		Category defaultCategory = new Category(0, "Keine Kategorie");
-		try {
-			for(int i=0;i < inventoryEntries.size();i++) {
-				int categoryID = inventoryEntries.get(i).product.getCategoryID();
-				inventoryEntries.get(i).product.setCategory(defaultCategory);
-				for(int n =0;n < categories.size();n++) {
-					if(categoryID==categories.get(n).getUID()) {
-						inventoryEntries.get(i).product.setCategory(categories.get(n));
-						break;
-					}
+		for(int i=0;i < inventoryEntries.size();i++) {
+			int categoryID = inventoryEntries.get(i).product.getCategoryID();
+			inventoryEntries.get(i).product.setCategory(defaultCategory);
+			for(int n =0;n < categories.size();n++) {
+				if(categoryID==categories.get(n).getUID()) {
+					inventoryEntries.get(i).product.setCategory(categories.get(n));
+					break;
 				}
-				
 			}
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-			System.out.println("Error @retrieveInventoryEntries:"+e.getMessage());
-			return null;
+			
 		}	
 		
 		return inventoryEntries;
@@ -126,11 +126,10 @@ public class Database{
 	 * @param newIE erwartet einen Inventareintrag, der validiert sein sollte, sonst wird eine Exception geworfen.
 	 * @throws some errors
 	 */
-	public static void addInventoryEntry(InventoryEntry newIE) throws Exception{
-		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
+	public static void addInventoryEntry(InventoryEntry newIE) throws Exception,CodedException{
 		String errorPreamble="Fehler beim Hinzufügen eines Inventareintrages.\n";
 		if(!newIE.validate()) {
-			throw new Exception(errorPreamble+DatabaseErrors.inventoryEntryFailedValidation);
+			throw new CodedException(errorPreamble+DatabaseErrors.inventoryEntryFailedValidation,1);
 		}
 		
 		if(Database.uidExists(newIE.getUID())){
@@ -179,10 +178,8 @@ public class Database{
 			// write the content into xml file
 			Database.transform(doc, DBPATH_IE);
 			
-		   } catch (IOException ioe) {
+		   } catch (IOException|SAXException ioe) {
 			System.out.println(ioe.getMessage());
-		   } catch (SAXException sae) {
-			   System.out.println(sae.getMessage());
 		   }
 	}
 	
@@ -263,10 +260,8 @@ public class Database{
 	
 			// write the content into xml file			
 			Database.transform(doc, DBPATH_IE);	
-		   } catch (IOException ioe) {
-			   System.out.println(ioe.getMessage());
-		   } catch (SAXException sae) {
-			   System.out.println(sae.getMessage());
+		   } catch (IOException|SAXException e) {
+			   System.out.println(e.getMessage());
 		   }
 		System.out.println("InventoryEntry ("+UID+"): replaced with\n"+newIE);
 	
@@ -328,7 +323,6 @@ public class Database{
 			if(inAttributes) {
 				node.setAttribute(attribute, newValue);
 			}
-			   
 			
 			Database.transform(doc, DBPATH_IE);
 		} catch (XPathExpressionException e) {
@@ -343,6 +337,8 @@ public class Database{
 	 * 
 	 * @param UID bestimmt den Inventareintrag.
 	 * @param force wenn wahr, ignoriert Menge des Inventareintrages.
+	 * @throws Exception 
+	 * @throws  
 	 * 
 	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
 	 */
@@ -352,16 +348,22 @@ public class Database{
 		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
 	    int section=sectionPlace[0];
 	    int place=sectionPlace[1];
-		node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
-		NodeList nodeChilds = node.getChildNodes();
-		   for (int i = 0; i < nodeChilds.getLength(); i++) {
-			   Node subNode = nodeChilds.item(i);
-			   if (subNode.getNodeName()=="count" && Integer.parseInt(subNode.getTextContent())!=0 && force==false) {
-				   throw new Exception("Löschen von Inventareintrag("+UID+") fehlgeschlagen. Die Quantität ("+subNode.getTextContent()+") sollte 0 sein ist, ansonsten benutzten Sie 'force delete'.");
+		try {
+			node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
+		
+			NodeList nodeChilds = node.getChildNodes();
+			for (int i = 0; i < nodeChilds.getLength(); i++) {
+				   Node subNode = nodeChilds.item(i);
+				   if (subNode.getNodeName()=="count" && Integer.parseInt(subNode.getTextContent())!=0 && force==false) {
+					   throw new Exception("Löschen von Inventareintrag("+UID+") fehlgeschlagen. Die Quantität ("+subNode.getTextContent()+") sollte 0 sein ist, ansonsten benutzten Sie 'force delete'.");
+				   }
 			   }
-		   }
 		node.getParentNode().removeChild(node);
 		Database.transform(doc, DBPATH_IE);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("InventoryEntry ("+UID+"): deleted");
 		return;
 	}
@@ -400,10 +402,10 @@ public class Database{
 				categories.add(category);
 			}
 		}
-		catch(Exception e) {
+		catch(IOException e) {
 			System.out.println(e.getMessage());
 			return null;
-		}	
+		}
 		System.out.println("Retrieved Categories");
 		return categories;
 	}
@@ -431,19 +433,15 @@ public class Database{
 			Element newName = doc.createElement("name");
 			
 			newName.appendChild(doc.createTextNode(category.getName()));			
-			
-			
+	
 			newCategory.appendChild(newName);
 			
 			entries.appendChild(newCategory);
 
-			// write the content into xml file
 			Database.transform(doc, DBPATH_CAT);
 			
-		   } catch (IOException ioe) {
-			System.out.println(ioe.getMessage());
-		   } catch (SAXException sae) {
-			   System.out.println(sae.getMessage());
+		   } catch (IOException|SAXException e) {
+			System.out.println(e.getMessage());
 		   }
 		return freeUID;
 	}
@@ -488,7 +486,9 @@ public class Database{
 					
 					usedSpace = usedSpace + (count*weight);
 			   }
-		}catch (Exception e) {
+		}catch (SAXException | IOException | XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			System.out.println("Exception in freeSpace ("+e.getMessage()+")");
 			return -1;
 		}
@@ -516,13 +516,7 @@ public class Database{
 				int shelfPlace = Integer.parseInt(node.getAttributes().getNamedItem("place").getTextContent());
 				return InventoryEntry.sectionPlaceToUID(shelfSection, shelfPlace);
 			};
-		}  catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XPathExpressionException e) {
+		}  catch (SAXException|IOException|XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -545,13 +539,7 @@ public class Database{
 			if (subNode!=null) {
 				return true;
 			};
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (XPathExpressionException|SAXException|IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -641,17 +629,16 @@ public class Database{
 		}
 	    try
 	    {
-	        SchemaFactory factory = 
-	            SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	        Schema schema = factory.newSchema(new StreamSource(xsd));
 	        Validator validator = schema.newValidator();
 	        validator.validate(new StreamSource(xml));
 	        return true;
 	    }
-	    catch(Exception ex)
-	    {
-	        return false;
-	    }
+	    catch (SAXException | IOException e) {
+			e.printStackTrace();
+	    	return false;
+		}
 	}
 	
 	private static String getElementTextContent(Element element, String string) {
@@ -667,7 +654,7 @@ public class Database{
 	}
 	
 	
-	/** Graveyard for deprecated methodes  */
+	/** Friedhof für deprecated Methoden  */
 	
 	/**
 	 * @deprecated use retrieveInventoryEntries instead.  

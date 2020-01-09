@@ -4,6 +4,7 @@ import javax.swing.SwingUtilities;
 
 import database.xml.Database;
 import model.Category;
+import model.CodedException;
 import model.InventoryEntry;
 import model.Product;
 import view.TextAreaLogProgram;
