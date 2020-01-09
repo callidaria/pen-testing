@@ -402,7 +402,7 @@ public class Database{
 				categories.add(category);
 			}
 		}
-		catch(IOException e) {
+		catch(SAXException | IOException e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
