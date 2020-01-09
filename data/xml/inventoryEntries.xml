@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="inventoryEntries.xsd">
-  <entry section="100" place="100" >
-    <name>Simple Pen 2nd</name>
-    <count>100000</count>
+  <entry area="100" place="100">
+    <name>Pen 2</name>
+    <count>1</count>
     <weight>12</weight>
     <prize>99</prize>
     <category_id>1</category_id>
   </entry>
-  <entry section="100" place="200" >
+  <entry area="100" place="200">
     <name>Big Pen</name>
     <count>400</count>
     <weight>20</weight>
     <prize>199</prize>
     <category_id>1</category_id>
   </entry>
-  <entry section="100" place="300">
+  <entry area="100" place="300">
     <name>XL Pen</name>
     <count>400</count>
     <weight>20</weight>

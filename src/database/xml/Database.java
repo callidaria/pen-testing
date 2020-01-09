@@ -75,7 +75,7 @@ public class Database{
 			for(int i = 0; i < nList.getLength();i++) {
 				Element node = (Element) nList.item(i);
 
-				int shelfSection = Database.getAttributes(node,"section");
+				int shelfSection = Database.getAttributes(node,"area");
 				int shelfPlace = Database.getAttributes(node,"place");
 
 				String productName = Database.getElementTextContent(node,"name");
@@ -148,7 +148,7 @@ public class Database{
 			Node entries = doc.getFirstChild();
 			Element newEntry = doc.createElement("entry");
 			
-			newEntry.setAttribute("section",Integer.toString(newIE.getShelfSection()));
+			newEntry.setAttribute("area",Integer.toString(newIE.getShelfSection()));
 			newEntry.setAttribute("place",Integer.toString(newIE.getShelfPlace()));
 			
 			
@@ -243,7 +243,7 @@ public class Database{
 	           NamedNodeMap attr = node.getAttributes();
 	           
 			   if ("entry".equals(node.getNodeName())) {
-				   int entryUID=Integer.parseInt(attr.getNamedItem("place").getTextContent()+attr.getNamedItem("section").getTextContent());
+				   int entryUID=Integer.parseInt(attr.getNamedItem("place").getTextContent()+attr.getNamedItem("area").getTextContent());
 				   
 				   if (entryUID == UID) {
 					   NodeList nodeChilds = node.getChildNodes();
@@ -308,7 +308,7 @@ public class Database{
         int section=sectionPlace[0];
         int place=sectionPlace[1];
 		try {
-			node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
+			node = (Element) Database.xpathNode(doc,"/entries/entry[@area="+section+" and @place="+place+"]");
 			NodeList nodeChilds = node.getChildNodes();
 			if(inElements) {
 				for (int i = 0; i < nodeChilds.getLength(); i++) {
@@ -349,7 +349,7 @@ public class Database{
 	    int section=sectionPlace[0];
 	    int place=sectionPlace[1];
 		try {
-			node = (Element) Database.xpathNode(doc,"/entries/entry[@section="+section+" and @place="+place+"]");
+			node = (Element) Database.xpathNode(doc,"/entries/entry[@area="+section+" and @place="+place+"]");
 		
 			NodeList nodeChilds = node.getChildNodes();
 			for (int i = 0; i < nodeChilds.getLength(); i++) {
@@ -477,7 +477,7 @@ public class Database{
 		try {
 			Document doc = Database.buildDocument(DBPATH_IE);
 			NodeList nodes;
-			nodes = Database.xpathNodes(doc,"/entries/entry[@section="+shelf+"]");
+			nodes = Database.xpathNodes(doc,"/entries/entry[@area="+shelf+"]");
 			System.out.println("Nodes in Shelf: "+nodes.getLength());
 			   for (int i = 0; i < nodes.getLength(); i++) {
 				   Element node = (Element) nodes.item(i);
@@ -512,7 +512,7 @@ public class Database{
 	        Element node;
 			node = (Element) Database.xpathNode(doc,"/entries/entry[name/text()='"+name+"']");
 			if (node!=null) {
-				int shelfSection = Integer.parseInt(node.getAttributes().getNamedItem("section").getTextContent());
+				int shelfSection = Integer.parseInt(node.getAttributes().getNamedItem("area").getTextContent());
 				int shelfPlace = Integer.parseInt(node.getAttributes().getNamedItem("place").getTextContent());
 				return InventoryEntry.sectionPlaceToUID(shelfSection, shelfPlace);
 			};
@@ -535,7 +535,7 @@ public class Database{
 	        int[] sectionPlace = InventoryEntry.uidToSectionPlace(uid);
 	        int section=sectionPlace[0];
 	        int place=sectionPlace[1];
-			subNode = (Element) Database.xpathNode(xmlDocument, "/entries/entry[@section="+section+" and @place="+place+"]");
+			subNode = (Element) Database.xpathNode(xmlDocument, "/entries/entry[@area="+section+" and @place="+place+"]");
 			if (subNode!=null) {
 				return true;
 			};

@@ -3,4 +3,7 @@
   <category uid="1">
     <name>Pens</name>
   </category>
+<category uid="2">
+    <name>New category</name>
+  </category>
 </categories>

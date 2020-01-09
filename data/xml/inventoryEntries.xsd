@@ -12,7 +12,7 @@
 							<xs:element name="prize" type="xs:integer"/>
 							<xs:element name="category_id" type="xs:integer"/>
                         </xs:sequence>
-						<xs:attribute name="section" type="xs:integer" />
+						<xs:attribute name="area" type="xs:integer" />
 						<xs:attribute name="place" type="xs:integer" />
                     </xs:complexType>
                 </xs:element>
@@ -22,9 +22,9 @@
 			<xs:selector xpath="entry/name"/>
             <xs:field xpath="." />
 		</xs:unique>
-        <xs:unique name="sectionPlaceMustBeUnique">
+        <xs:unique name="areaPlaceMustBeUnique">
 			<xs:selector xpath="entry" />
-			<xs:field xpath="@section" />
+			<xs:field xpath="@area" />
             <xs:field xpath="@place" />
         </xs:unique>
         
