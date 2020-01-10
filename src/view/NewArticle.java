@@ -28,36 +28,42 @@ public class NewArticle extends JFrame {
 		
 		//GUI
 		setTitle("New Article");
-		setSize(400,100);
+		setSize(500,100);
 		setLocationRelativeTo(null);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		//Textarea
-		JTextArea ta1 = new JTextArea("          ");
-		JTextArea ta2 = new JTextArea("          ");
-		JTextArea ta3 = new JTextArea("          ");
-		JTextArea ta4 = new JTextArea("          ");
+		JTextArea tregal = new JTextArea(1,5);
+		JTextArea tplatz = new JTextArea(1,5);
+		JTextArea tprodukt = new JTextArea(1,5);
+		JTextArea tanzahl = new JTextArea(1,5);
 		
 		//Label
-		JLabel l1 = new JLabel("Regal");
-		JLabel l2 = new JLabel("Platz");
-		JLabel l3 = new JLabel("Produktname");
-		JLabel l4 = new JLabel("Anzahl");
+		JLabel lregal = new JLabel("Regal");
+		JLabel lplatz = new JLabel("Platz");
+		JLabel lprodukt = new JLabel("Produktname");
+		JLabel lanzahl = new JLabel("Anzahl");
 		
 		//Button
 		JButton button = new JButton ("Save");
-		//public void actionPerformed(ActionEvent e) {}
+		button.addActionListener(new ActionListener() { 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String eins = tregal.getText();
+                System.out.println("contents = " + eins);
+			}
+		});
 		
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
-		pane.add(l1);
-		pane.add(ta1);
-		pane.add(l2);
-		pane.add(ta2);
-		pane.add(l3);
-		pane.add(ta3);
-		pane.add(l4);
-		pane.add(ta4);
+		pane.add(lregal);
+		pane.add(tregal);
+		pane.add(lplatz);
+		pane.add(tplatz);
+		pane.add(lprodukt);
+		pane.add(tprodukt);
+		pane.add(lanzahl);
+		pane.add(tanzahl);
 		pane.add(button);
 	
 	}

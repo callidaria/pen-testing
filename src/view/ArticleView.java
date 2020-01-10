@@ -51,6 +51,7 @@ public class ArticleView extends JFrame {
 		JButton badd = new JButton ("Add");
 		JButton bsubtract = new JButton ("Subtract");
 		JButton bdelete = new JButton ("Delete Article");
+		JButton bsave = new JButton ("Save Changes");
 		
 		//Layout
 		//Container pane = getContentPane();
@@ -167,17 +168,21 @@ public class ArticleView extends JFrame {
         c.gridy = 7;
         pane.add(tagewicht, c);
         
+       
+        
       
         c.ipady = 0;       //reset to default
         c.weighty = 1.0;   //request any extra vertical space
         c.anchor = GridBagConstraints.PAGE_END; //bottom of space
         //c.insets = new Insets(10,0,0,0);  //top padding
-        c.gridx = 1;       //aligned with button 2
-        c.gridwidth = 2;   //2 columns wide
+        c.gridx = 2;        
         c.gridy = 8;       
         pane.add(bdelete, c);
 		
-		
+        c.gridwidth = 2;   //2 columns wide
+        c.gridx = 0;
+        c.gridy = 8;
+        pane.add(bsave, c);
 		
 	}
 }

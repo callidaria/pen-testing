@@ -32,7 +32,7 @@ public class Front extends JFrame {
 	{	
 		//GUI
 		setTitle("Bestandsübersicht");
-		setSize(400,220);
+		setSize(500,600);
 		setLocationRelativeTo(null);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
@@ -54,7 +54,7 @@ public class Front extends JFrame {
 		JLabel suchen = new JLabel("Suchen:");
 		
 		//Textarea
-		JTextArea ta = new JTextArea("Bitte eingeben!");
+		JTextArea ta = new JTextArea(1,5);
 		
 		//Table
 		String[] columnNames = {"Bereich",
@@ -130,12 +130,13 @@ public class Front extends JFrame {
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
 	
+		pane.add(button);
+		
 		pane.add(suchen);
 		pane.add(ta);
 		pane.add(such);
 		pane.add(table.getTableHeader());
-		pane.add(table);
-		pane.add(button);
+		pane.add(scrollPane);
 		
 	}
 	
