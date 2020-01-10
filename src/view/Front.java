@@ -46,8 +46,10 @@ public class Front extends JFrame {
 				NewArticle neu = new NewArticle();
 				neu.setVisible(true);
 			}
-			
 		});
+		
+		JButton such = new JButton ("Los!");
+		
 		//Label
 		JLabel suchen = new JLabel("Suchen:");
 		
@@ -130,6 +132,7 @@ public class Front extends JFrame {
 	
 		pane.add(suchen);
 		pane.add(ta);
+		pane.add(such);
 		pane.add(table.getTableHeader());
 		pane.add(table);
 		pane.add(button);
