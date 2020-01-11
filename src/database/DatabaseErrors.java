@@ -1,5 +1,10 @@
-package database.xml;
+package database;
 
+/**Experimentelle Klasse.
+ * 
+ * @author Freddy
+ *
+ */
 public class DatabaseErrors {
 	public static final String uidTaken = "Der Platz ist bereits belegt";
 	public static final String nameTaken = "Der Name ist bereits belegt";

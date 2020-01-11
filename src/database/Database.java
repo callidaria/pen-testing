@@ -1,4 +1,4 @@
-package database.xml;
+package database;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,6 +40,14 @@ import model.CodedException;
 import model.InventoryEntry;
 import model.Product;
 
+/**
+ * Hauptklasse im database Packet. Beinhaltet Methoden um von einer XML Datei zulesen und zuschreiben.
+ * Ermöglicht das Lesen und Schreiben von der Inventareintrags XML Datei
+ * Ermöglicht das Lesen und Schreiben von der Kategorie XML Datei 
+ * 
+ * @author Freddy
+ *
+ */
 public class Database{
 	
 	//**Der relative Pfad von root zu den Datenbankdateien

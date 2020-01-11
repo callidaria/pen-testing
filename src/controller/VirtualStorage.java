@@ -2,7 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 
-import database.xml.Database;
+import database.Database;
 import model.InventoryEntry;
 import model.Product;
 

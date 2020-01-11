@@ -1,5 +1,11 @@
-package database.xml;
+package database;
 
+/**
+ * Nebenklasse im database Packet. Hält wichtig statische Werte, wie zum Beispiel den Pfad zu den XML Dateien.
+ * 
+ * @author Freddy
+ *
+ */
 public class DatabaseSchema {
 	
 	//**Der relative Pfad von root zu den Datenbankdateien

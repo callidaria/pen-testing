@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
-import database.xml.Database;
+import database.Database;
 import model.Category;
 import model.CodedException;
 import model.InventoryEntry;
