@@ -124,7 +124,8 @@ public class Database{
 	
 	/** 
 	 * @param newIE erwartet einen Inventareintrag, der validiert sein sollte, sonst wird eine Exception geworfen.
-	 * @throws some errors
+	 * @throws Exception errors
+	 * @throws CodedException errors
 	 */
 	public static void addInventoryEntry(InventoryEntry newIE) throws Exception,CodedException{
 		String errorPreamble="Fehler beim Hinzufügen eines Inventareintrages.\n";
@@ -185,8 +186,13 @@ public class Database{
 	
 	
 	/** Leitet die Funktion als Database.replaceInventoryEntry(UID, newIE, false) weiter.
-	 * @see (replaceInventoryEntry();)
+	 * {@link #replaceInventoryEntry(int, InventoryEntry, Boolean)}
 	 * 
+	 * @param UID Bestimmt den Inventareintrag, der ersetzt werden soll.
+	 * @param newIE der Inventareintrag der an der ausgewählten Stelle eingefügt wird.
+	 * 
+	 * @throws Exception unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 * @return Gibt den newIE zurück. (warum?)
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE) throws Exception{
 		return Database.replaceInventoryEntry(UID, newIE, false);
@@ -195,7 +201,9 @@ public class Database{
 	
 	/** Ersetzt den Inventareintrag an UID durch newIE.
 	 * 
-	 * @param force bestimmt ob, wenn ein Eintrag an UID vorhanden ist, überschrieben werden soll.
+	 * @param UID Bestimmt den Inventareintrag, der ersetzt werden soll.
+	 * @param newIE der Inventareintrag der an der ausgewählten Stelle eingefügt wird.
+	 * @param force bestimmt ob, wenn ein anderer Eintrag an UID vorhanden ist, überschrieben werden soll.
 	 * 
 	 * Pre:
 	 * newIE muss validieren.
@@ -205,7 +213,8 @@ public class Database{
 	 * 
 	 * Der Eintrag an UID ist ersetzt durch newIE.
 	 * 
-	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 * @throws Exception unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 * @return Gibt den newIE zurück. (warum?)
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
 		if(!newIE.validate()) {
@@ -334,13 +343,9 @@ public class Database{
 	}
 	
 	/** Löscht einen Inventareintrag mit der passenden UID, wenn die Menge bereits 0 ist.
-	 * 
 	 * @param UID bestimmt den Inventareintrag.
 	 * @param force wenn wahr, ignoriert Menge des Inventareintrages.
-	 * @throws Exception 
-	 * @throws  
-	 * 
-	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 * @throws Exception unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
 	 */
 	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
 		Document doc = Database.buildDocument(DBPATH_IE);
@@ -368,15 +373,11 @@ public class Database{
 		return;
 	}
 
-	/** Ändert einen Attribut eines Inventareintrages.
+	/**
 	 * 
-	 * @param UID bestimmt den Inventareintrag.
-	 * @param attribute bestimmt welchen Attribute (z.B. Gewicht, Menge oder Name)
-	 * @param newValue neuer Wert eines Attributes von UID.
-	 * 
-	 * Prüft Restriktionen der Datenbank.
-	 * 
-	 * @throws unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 * @param inventoryUID, der Inventareintrag dem eine Kategorie zugewiesen werden soll.
+	 * @param categoryUID, die Kategorie die dem Inventareintrag zugewiesen werden soll.
+	 * @throws Exception zum Beispiel wenn der Inventareintrag oder die Kategorie nicht existiert.
 	 */
 	public static void editCategoryOfInventoryEntry(int inventoryUID, int categoryUID) throws Exception{
 		return;
@@ -446,12 +447,21 @@ public class Database{
 		return freeUID;
 	}
 	
+	/** Gibt die nächste frei UID für Kategorien zurück. Dabei wird die UID des letzten Eintrags mit eins addiert. 
+	 * 
+	 * @return nächste freie UID
+	 */
 	private static int freeCategoryUID() {
 		// TODO Auto-generated method stub
 		Category lastCategory=Database.retrieveCategories().get(Database.retrieveCategories().size() -1);
 		return lastCategory.getUID()+1;
 	}
 
+	/** Gibt zurück ob der Name bereits für eine Kategorie benutzt wird.
+	 * 
+	 * @param name, der Name der zu überprüfen ist.
+	 * @return -1, wenn Kategoriename nicht existiert, ansonsten UID der Kategorie mit dem zu prüfenden Namen.
+	 */
 	private static int categoryExists(String name) {
 		// TODO Auto-generated method stub
 		return -1;
@@ -496,13 +506,15 @@ public class Database{
 	}
 	
 	/** Prüft die Datenbank auf das Einhalten der Datenbankrestriktionen mit hilfe einer XSD.
-	 * */
+	 * @return wahr, wenn die Inventareintragsdatei gegen die XSD validiert.
+	 */
 	public static boolean validate() {
 		return Database.validateAgainstXSD(DBPATH_IE,DBPATH_IE_XSD);
 	}
 	
 
 	/** Prüft ob ein Name in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
+	 * @param name, der zu prüfende Name.
 	 * 
 	 * @return -1, wenn nicht exisitert, ansonsten UID wo der Name existiert.
 	 * */
@@ -525,6 +537,7 @@ public class Database{
 	
 	
 	/** Prüft ob eine UID in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
+	 * @param uid, die zu prüfende UID.
 	 * 
 	 * @return true, wenn exisitert, ansonsten false.
 	 * */
@@ -550,6 +563,13 @@ public class Database{
 		return unescapedString;
 	}
 	
+	/** Hilfsmethode. Gibt das fertige Document zurück.
+	 * 
+	 * @param file Pfad zur Datei
+	 * @return Document
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	private static Document buildDocument(String file) throws SAXException, IOException {
 		File inventoryEntriesFile = new File(DBPATH+file);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -566,34 +586,46 @@ public class Database{
 		return doc;
 	}
 	
+	/** Hilfsmethode. Gibt einen einzellen Node zurück. Dazu wird der eine XPath Anfrage auf ein XML Document angewandt.
+	 * 
+	 * @param doc, erwartet das zu parsende Document
+	 * @param xpath_query, die Anfrage die auf das doc angewandt werden soll.
+	 * @return gibt einen einzellnen Node der mit XPath gefunden wurde zurück.
+	 * @throws XPathExpressionException wenn die eingebene xpath_query nicht valide ist.
+	 */
 	private static Node xpathNode(Document doc,String xpath_query) throws XPathExpressionException{
 		Node node = null;
-		try {
-			XPath xPath = XPathFactory.newInstance().newXPath();
-			node = (Node) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODE);
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		node = (Node) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODE);
 		
 		return node;
 		
 	}
 	
+	/** Hilfsmethode. Gibt einen eine NodeList zurück. Dazu wird der eine XPath Anfrage auf ein XML Document angewandt.
+	 * 
+	 * @param doc, erwartet das zu parsende Document
+	 * @param xpath_query, die Anfrage die auf das doc angewandt werden soll.
+	 * @return gibt einen NodeList, mit Nodes die via XPath gefunden wurde, zurück.
+	 * @throws XPathExpressionException wenn die eingebene xpath_query nicht valide ist.
+	 */
 	private static NodeList xpathNodes(Document doc,String xpath_query) throws XPathExpressionException{
 		NodeList node = null;
-		try {
-			XPath xPath = XPathFactory.newInstance().newXPath();
-			node = (NodeList) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODESET);
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		node = (NodeList) xPath.compile(Database.escapeString(xpath_query)).evaluate(doc, XPathConstants.NODESET);
+
 		
 		return node;
 		
 	}
 	
+	/**Hilfsmethode. Speichert (transformiert) das veränderte doc an der Stelle targetPath.
+	 * 
+	 * 
+	 * @param doc erwartet ein Dokument, welche sinnvollerweiße verändert wurde
+	 * @param targetPath der Speicherort
+	 */
 	private static void transform(Document doc, String targetPath) {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer;
@@ -615,6 +647,12 @@ public class Database{
 		
 	}
 	
+	/** Vergleich eine XML Datei mit einer XSD (XML Schema Definition) Datei.
+	 * 
+	 * @param xmlPath Pfad der XML Datei.
+	 * @param xsdPath Pfad der XSD Datei.
+	 * @return wahr, wenn die XML mit der XSD validiert. Ansonsten false.
+	 */
 	private static boolean validateAgainstXSD(String xmlPath, String xsdPath)
 	{
 		FileInputStream xml;
@@ -641,14 +679,32 @@ public class Database{
 		}
 	}
 	
+	/**Hilfmethode.
+	 * 
+	 * @param element, ein Element
+	 * @param string, das Tag welches wir erhalten wollen.
+	 * @return der Wert des Tags von element als String.
+	 */
 	private static String getElementTextContent(Element element, String string) {
 		return element.getElementsByTagName(string).item(0).getTextContent();
 	}
 
+	/**Hilfmethode.
+	 * 
+	 * @param element, ein Element
+	 * @param string, das Tag welches wir erhalten wollen.
+	 * @return der Wert des Tags von element als Integer.
+	 */
 	private static int getElementContent(Element element, String string) {
 		return Integer.parseInt(element.getElementsByTagName(string).item(0).getTextContent());
 	}
 
+	/**Hilfmethode.
+	 * 
+	 * @param element, ein Element
+	 * @param string, das Attribut welches wir erhalten wollen.
+	 * @return der Wert des Attributes von element als Integer.
+	 */
 	private static int getAttributes(Element element, String string) {
 		return Integer.parseInt(element.getAttributes().getNamedItem(string).getTextContent());
 	}
@@ -658,6 +714,8 @@ public class Database{
 	
 	/**
 	 * @deprecated use retrieveInventoryEntries instead.  
+	 * 
+	 * @return ArrayListe von allen Produkten.
 	 */
 	@Deprecated
 	public static ArrayList<Product> retrieveProducts() {
