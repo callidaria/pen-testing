@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <categories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="categories.xsd">
-  <category uid="1">
-    <name>Pens</name>
-  </category>
-<category uid="2">
-    <name>New category</name>
+  <category uid="0">
+    <name>Keine Kategorie</name>
   </category>
 </categories>
