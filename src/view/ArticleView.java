@@ -6,10 +6,13 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -26,14 +29,17 @@ public class ArticleView extends JFrame {
 		setLocationRelativeTo(null);
 		
 		//TextArea
-		JTextArea tasektion = new JTextArea("100");
-		JTextArea taregal = new JTextArea("101");
-		JTextArea taplatz = new JTextArea("102");
-		JTextArea taanzahl = new JTextArea("10");
-		JTextArea taadd = new JTextArea("");
-		JTextArea takategorie = new JTextArea("Buntstifte");
-		JTextArea tapreis = new JTextArea("0,99€");
-		JTextArea tagewicht = new JTextArea("10 Gramm");
+		JTextArea tasektion = new JTextArea("100",1,5);
+		JTextArea taregal = new JTextArea("101",1,5);
+		JTextArea taplatz = new JTextArea("102",1,5);
+		JTextArea taanzahl = new JTextArea("10",1,5);
+		JTextArea taadd = new JTextArea("0",1,5);
+		JTextArea takategorie = new JTextArea("Buntstifte",1,5);
+		JTextArea tapreis = new JTextArea("0,99€",1,5);
+		JTextArea tagewicht = new JTextArea("10 Gramm",1,5);
+		
+		
+		
 		
 		//Label
 		JLabel lgewicht = new JLabel("Gewicht:");
@@ -52,6 +58,53 @@ public class ArticleView extends JFrame {
 		JButton bsubtract = new JButton ("Subtract");
 		JButton bdelete = new JButton ("Delete Article");
 		JButton bsave = new JButton ("Save Changes");
+		
+		badd.addActionListener(new ActionListener() { 
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String eins = taadd.getText();
+				String zwei = taanzahl.getText();
+				int add = Integer.parseInt(eins);
+				int anzahl = Integer.parseInt(zwei);
+				
+				
+				System.out.println("contents = " + (anzahl+add));
+			}
+			
+		});
+		
+		bsubtract.addActionListener(new ActionListener() { 
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String eins = taadd.getText();
+				String zwei = taanzahl.getText();
+				int add = Integer.parseInt(eins);
+				int anzahl = Integer.parseInt(zwei);
+				
+				
+				System.out.println("contents = " + (anzahl-add));
+			}
+			
+		});
+		
+		bsave.addActionListener(new ActionListener() { 
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String sektion = tasektion.getText();
+				String regal = taregal.getText();
+				String platz = taplatz.getText();
+				String sanzahl = taanzahl.getText();
+				int anzahl = Integer.parseInt(sanzahl);
+				String kategorie = takategorie.getText();
+				String preis = tapreis.getText();
+				String gewicht = tagewicht.getText();
+				System.out.println("contents = " + sektion + regal + platz + anzahl + kategorie + preis + gewicht);
+			}
+			
+		});
 		
 		//Layout
 		//Container pane = getContentPane();

@@ -63,13 +63,45 @@ public class Front extends JFrame {
                 "Produktname",
                 "Anzahl"};
 		
+		
 		Object[][] data = {
-			    {new Integer(5), new Integer(5),
-			    	new Integer(5), "Roter Stift", new Integer(10000)},
-			    {new Integer(5), new Integer(5),
-				    	new Integer(5), "Blauer Stift", new Integer(500)},
-			    {new Integer(5), new Integer(5),
-					    	new Integer(5), "Grüner Stift", new Integer(3000)}
+			    {new Integer(5), new Integer(5), new Integer(5), "Roter Stift", new Integer(10000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Blauer Stift", new Integer(500)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)}
 		};
 		
 		JTable table = new JTable(data, columnNames);
@@ -131,11 +163,9 @@ public class Front extends JFrame {
 		pane.setLayout(new FlowLayout());
 	
 		pane.add(button);
-		
 		pane.add(suchen);
 		pane.add(ta);
 		pane.add(such);
-		pane.add(table.getTableHeader());
 		pane.add(scrollPane);
 		
 	}

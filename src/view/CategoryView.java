@@ -1,4 +1,5 @@
 package view;
+
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,25 +25,26 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class NewCategory extends JFrame {
-	public NewCategory() {
+public class CategoryView extends JFrame {
+	
+	public CategoryView() {
 		//GUI
-		setTitle("New Category");
+		setTitle("Kategorie Ansicht");
 		setSize(400,150);
 		setLocationRelativeTo(null);
-				
-				
-				
+		
+		
+		
 		//Label
 		JLabel lid = new JLabel("ID");
 		JLabel lname = new JLabel("Categoryname");
 		JLabel ldesc = new JLabel("Description");
-			
+		
 		//Textarea
 		JTextArea taid = new JTextArea(1,5);
 		JTextArea taname = new JTextArea(1,5);
 		JTextArea tadesc = new JTextArea(1,5);
-				
+		
 		//Button
 		JButton button = new JButton ("Save");
 		button.addActionListener(new ActionListener() { 
@@ -56,7 +58,7 @@ public class NewCategory extends JFrame {
 		});
 		
 		//Layout
-				
+		
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
 		pane.add(lid);
@@ -66,6 +68,7 @@ public class NewCategory extends JFrame {
 		pane.add(ldesc);
 		pane.add(tadesc);
 		pane.add(button);
-	
+		
 	}
+
 }
