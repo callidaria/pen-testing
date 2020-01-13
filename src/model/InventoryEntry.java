@@ -50,6 +50,27 @@ public class InventoryEntry{
 		return this.getID();
 	}
 	
+	public static String stringifyUID(int uid) {
+		//StringUID
+		String suid = Integer.toString(uid);
+		while (suid.length()<6) {
+			suid="0"+uid;
+		}
+		return suid;
+	}
+	
+	public String getStringifiedUID() {
+		String area = Integer.toString(this.getShelfSection());
+		String place = Integer.toString(this.getShelfPlace());
+		while (area.length()<3) {
+			area="0"+area;
+		}
+		while (place.length()<3) {
+			place="0"+place;
+		}
+		return area+place;
+	}
+	
 	public InventoryEntry(int shelfSection, int shelfPlace, Product product) {
 		this.shelfSection=shelfSection;
 		this.shelfPlace=shelfPlace;
@@ -115,7 +136,11 @@ public class InventoryEntry{
 	}
 	
 	static public int sectionPlaceToUID(int section, int place) {
-		String sid = ""+section+place;
+		String strPlace = Integer.toString(place);
+		while (strPlace.length()>3) {
+			strPlace="0"+strPlace;
+		}
+		String sid = ""+section+strPlace;
 		int iid = Integer.parseInt(sid);
 		return iid;
 	}

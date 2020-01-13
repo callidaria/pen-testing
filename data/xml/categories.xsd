@@ -8,7 +8,7 @@
                         <xs:sequence>
                             <xs:element name="name" type="xs:string"/>
                         </xs:sequence>
-						<xs:attribute name="uid" type="xs:integer" />
+						<xs:attribute name="uid" type="xs:nonNegativeInteger" />
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>

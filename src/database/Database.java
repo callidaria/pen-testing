@@ -173,7 +173,9 @@ public class Database{
 		
 			newWeight.appendChild(doc.createTextNode(Integer.toString(newIE.product.getWeight())));
 			
-			newPrize.appendChild(doc.createTextNode(Integer.toString(newIE.product.getPrize())));				
+			newPrize.appendChild(doc.createTextNode(Integer.toString(newIE.product.getPrize())));
+			
+			newCategoryId.appendChild(doc.createTextNode(Integer.toString(newIE.product.category.getUID())));
 			
 			
 			newEntry.appendChild(newName);
@@ -184,6 +186,88 @@ public class Database{
 			
 			entries.appendChild(newEntry);
 
+			// write the content into xml file
+			Database.transform(doc, DBPATH_IE);
+			
+		   } catch (IOException|SAXException ioe) {
+			System.out.println(ioe.getMessage());
+		   }
+	}
+	
+	public static void addTestInventoryEntries(int maxAreas, int maxPlaces,Boolean validate) throws Exception,CodedException{
+		String errorPreamble="Fehler beim Hinzufügen eines Inventareintrages.\n";
+		
+		
+		try {
+			Document doc = Database.buildDocument(DBPATH_IE);
+
+			// Get the root element
+			Node entries = doc.getFirstChild();
+			for (int i=0;i<=maxAreas && i<=999;i++) {
+				for (int n=0;n<=maxPlaces && n<=999;n++) {
+					String area = Integer.toString(i);
+					String place = Integer.toString(n);
+					while (area.length()<3) {
+						area="0"+area;
+					}
+					while (place.length()<3) {
+						place="0"+place;
+					}
+					Product newProduct = new Product("Produkt "+area+place,1,1,100,0);
+					InventoryEntry newIE = new InventoryEntry(i,n,newProduct);
+					if(validate) {
+						if(!newIE.validate()) {
+							throw new CodedException(errorPreamble+DatabaseErrors.inventoryEntryFailedValidation,1);
+						}
+						
+						if(Database.uidExists(newIE.getUID())){
+							throw new Exception(errorPreamble+DatabaseErrors.uidTaken(newIE.getUID()));
+						}
+						
+						if (Database.nameExists(newIE.product.getName()) != -1) {
+							throw new Exception(errorPreamble+DatabaseErrors.nameTaken(newIE.product.getName()));
+						}
+					}
+					
+					
+					Element newEntry = doc.createElement("entry");
+					
+					newEntry.setAttribute("area",Integer.toString(newIE.getShelfSection()));
+					newEntry.setAttribute("place",Integer.toString(newIE.getShelfPlace()));
+					
+					
+					Element newName = doc.createElement("name");
+					Element newCount = doc.createElement("count");
+					Element newWeight = doc.createElement("weight");
+					Element newPrize = doc.createElement("prize");
+					Element newCategoryId = doc.createElement("category_id");
+					
+					newName.appendChild(doc.createTextNode(newIE.product.getName()));
+					
+					newCount.appendChild(doc.createTextNode(Integer.toString(newIE.product.getCount())));
+				
+					newWeight.appendChild(doc.createTextNode(Integer.toString(newIE.product.getWeight())));
+					
+					newPrize.appendChild(doc.createTextNode(Integer.toString(newIE.product.getPrize())));
+					
+					newCategoryId.appendChild(doc.createTextNode(Integer.toString(newIE.product.category.getUID())));
+					
+					
+					newEntry.appendChild(newName);
+					newEntry.appendChild(newCount);
+					newEntry.appendChild(newWeight);
+					newEntry.appendChild(newPrize);
+					newEntry.appendChild(newCategoryId);
+					
+					entries.appendChild(newEntry);
+					
+					if(i % 100 ==0 || n % 100==0) {
+						System.out.println("Created InventoryEntry:"+area+place);
+					}
+					area=null;
+					place=null;
+				}
+			}
 			// write the content into xml file
 			Database.transform(doc, DBPATH_IE);
 			
@@ -209,6 +293,8 @@ public class Database{
 	
 	/** Ersetzt den Inventareintrag an UID durch newIE.
 	 * 
+	 * Eine der wenigen Funktionen die kein XPath benutzt, sondern alle Elemente im Dokument durchgeht.
+	 * 
 	 * @param UID Bestimmt den Inventareintrag, der ersetzt werden soll.
 	 * @param newIE der Inventareintrag der an der ausgewählten Stelle eingefügt wird.
 	 * @param force bestimmt ob, wenn ein anderer Eintrag an UID vorhanden ist, überschrieben werden soll.
@@ -225,26 +311,30 @@ public class Database{
 	 * @return Gibt den newIE zurück. (warum?)
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
-		if(!newIE.validate()) {
-			throw new Exception("@editInventoryEntry newInventoryEntry failed validation.");
-		}
-		
-		if(!Database.uidExists(UID)) {
-			throw new Exception("@editInventoryEntry UID doesn't exisit.");
-		}
-		if (newIE.getUID()!=UID) {
-			if(Database.uidExists(newIE.getUID())) {
-				if(force==true) {
-					throw new Exception("@editInventoryEntry newUID is taken.");
-				}
-				else {
-					System.out.println("@editInventoryEntry forced overwrite of "+newIE.getUID());
+		Boolean validate = false;
+		if(validate) {
+			if(!newIE.validate()) {
+				throw new Exception("@editInventoryEntry newInventoryEntry failed validation.");
+			}
+			
+			if(!Database.uidExists(UID)) {
+				throw new Exception("@editInventoryEntry UID doesn't exisit.");
+			}
+			if (newIE.getUID()!=UID) {
+				if(Database.uidExists(newIE.getUID())) {
+					if(force==true) {
+						throw new Exception("@editInventoryEntry newUID is taken.");
+					}
+					else {
+						System.out.println("@editInventoryEntry forced overwrite of "+newIE.getUID());
+					}
 				}
 			}
+			if (Database.nameExists(newIE.product.getName())!=UID && Database.nameExists(newIE.product.getName())!=-1) {
+				throw new Exception("@editInventoryEntry newName is taken.");
+			}
 		}
-		if (Database.nameExists(newIE.product.getName())!=UID && Database.nameExists(newIE.product.getName())!=-1) {
-			throw new Exception("@editInventoryEntry newName is taken.");
-		}
+		
 		try {
 
 			Document doc = Database.buildDocument(DBPATH_IE);
@@ -268,7 +358,7 @@ public class Database{
 						   Node subNode = nodeChilds.item(n);
 						   if ("name".equals(subNode.getNodeName())) {
 							   subNode.setTextContent(newIE.product.getName());
-							   //break;
+							   break;
 						   }
 					   }					   
 				   }
@@ -319,6 +409,9 @@ public class Database{
 				throw new Exception("Der Name ("+newValue+") wird bereits benutzt.");
 			}
 		}
+		if(!uidExists(UID)) {
+			throw new Exception("Die UID ("+UID+") exsitiert nicht."+DatabaseErrors.internalWarning);
+		}
 		Document doc = Database.buildDocument(DBPATH_IE);
 		Element node;
 		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
@@ -331,7 +424,7 @@ public class Database{
 				for (int i = 0; i < nodeChilds.getLength(); i++) {
 				   Node subNode = nodeChilds.item(i);
 				   if (subNode.getNodeName()==attribute) {
-					   System.out.println("SetAttribute ("+subNode.getNodeName()+"):"+subNode.getTextContent());
+					   
 					   subNode.setTextContent(newValue);
 					   break;
 				   }
@@ -342,14 +435,19 @@ public class Database{
 			}
 			
 			Database.transform(doc, DBPATH_IE);
+			System.out.println("SetAttribute ("+attribute+") @ ("+UID+"):"+newValue);
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
-		}
-			
-
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		} 
 		return;
 	}
 	
+	public static void deleteInventoryEntry(int UID) throws Exception{
+		Database.deleteInventoryEntry(UID,true);
+		return;
+	}
 	/** Löscht einen Inventareintrag mit der passenden UID, wenn die Menge bereits 0 ist.
 	 * @param UID bestimmt den Inventareintrag.
 	 * @param force wenn wahr, ignoriert Menge des Inventareintrages.
@@ -419,7 +517,7 @@ public class Database{
 		return categories;
 	}
 	public static int addCategory(Category category) throws Exception {
-		System.out.println("WARNING METHODE: addInventoryEntry IS WORK IN PROGRESS!\nYour database might become corrupted!");
+		System.out.println("WARNING METHODE: addCategory IS WORK IN PROGRESS!\nYour database might become corrupted!");
 		String errorPreamble="Fehler beim Hinzufügen eines Inventareintrages.\n";
 		int freeUID=-1;
 		if(!category.validate()) {
@@ -483,10 +581,15 @@ public class Database{
 		
 	}
 
-	/*
+	/* Diese Methode ermittelt den freien Platz in einem "Bereich".
+	 * Es dauert aber bei einer vollen Datenbank bis zu einer Minute. Daher wird eine in-ram Lösung entwickelt.
+	 * 
 	 * @param shelf Nummer des Regals
 	 * 
-	 * @return die Menge ein freiem Platz in dem Regal mit der Nummer shelf.*/
+	 * @return die Menge ein freiem Platz in dem Regal mit der Nummer shelf.
+	 * @deprecated bitte benutze eine Methode aus dem Controller / VirtualStorage.
+	 * */
+	@Deprecated
 	public static int freeSpace(int shelf) {
 		System.out.println("WARNING work in progress @freeSpace!");
 		
@@ -663,6 +766,7 @@ public class Database{
 	 */
 	private static boolean validateAgainstXSD(String xmlPath, String xsdPath)
 	{
+		System.out.println("This may take up to LONG TIME to validate.");
 		FileInputStream xml;
 		FileInputStream xsd;
 		try {
