@@ -1,10 +1,12 @@
+import controller.VirtualStorage;
+
 public class Main {
-	public static void main(String[] args) {
-		new DatabaseExamples();
-		System.out.println("\n---END OF EXAMPLE---\n");
-		view.Front app = new view.Front();
-		app.setVisible(true);
+	public static void main(String[] args) throws Exception {
+		VirtualStorage vs = new VirtualStorage();
+		for (int i = 0; i < vs.getAllEntries().size(); i++)
+			System.out.println(vs.getAllEntries().get(i));
+		
+		for (int i = 0; i < vs.getAllEntries().size(); i++)
+			System.out.println(vs.getAllEntries().get(i));
 	}
-	
-	
 }
