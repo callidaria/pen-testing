@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 import controller.VirtualStorage;
 
 import java.awt.BorderLayout;
+import java.awt.ComponentOrientation;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -23,6 +24,10 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JPanel;
+
+
 
 public class NewArticle extends JFrame {
 	
@@ -35,8 +40,7 @@ public class NewArticle extends JFrame {
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		//Textarea
-		JTextArea tsektion = new JTextArea(1,5);
-		JTextArea tplatz = new JTextArea(1,5);
+		JTextArea tkategorie = new JTextArea(1,5);
 		JTextArea tprodukt = new JTextArea(1,5);
 		JTextArea tanzahl = new JTextArea(1,5);
 		JTextArea tgewicht = new JTextArea(1,5);
@@ -44,8 +48,7 @@ public class NewArticle extends JFrame {
 		JTextArea tid = new JTextArea(1,5);
 		
 		//Label
-		JLabel lsektion = new JLabel("Sektion");
-		JLabel lplatz = new JLabel("Platz");
+		JLabel lkategorie = new JLabel("KategorieID");
 		JLabel lprodukt = new JLabel("Produktname");
 		JLabel lanzahl = new JLabel("Anzahl");
 		JLabel lgewicht = new JLabel("Gewicht");
@@ -57,8 +60,7 @@ public class NewArticle extends JFrame {
 		button.addActionListener(new ActionListener() { 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String ssektion = tsektion.getText();
-				String splatz = tplatz.getText();
+				String skategorie = tkategorie.getText();
 				String produkt = tprodukt.getText();
 				String sanzahl = tanzahl.getText();
 				String sgewicht = tgewicht.getText();
@@ -69,33 +71,75 @@ public class NewArticle extends JFrame {
 				int gewicht = Integer.parseInt(sgewicht);
 				int preis = Integer.parseInt(spreis);
 				int id = Integer.parseInt(sid);
-				int sektion = Integer.parseInt(ssektion);
-				int platz = Integer.parseInt(splatz);
+				int kategorie = Integer.parseInt(skategorie);
 				
-                //VirtualStorage.addProduct(produkt, anzahl, gewicht, preis, id, sektion, platz);
+				VirtualStorage vs = new VirtualStorage();
+                vs.addProduct(id, produkt, anzahl, gewicht, preis, kategorie);
 			}
 		});
 		
 
 		
 		Container pane = getContentPane();
-		pane.setLayout(new FlowLayout());
-		pane.add(lsektion);
-		pane.add(tsektion);
-		pane.add(lplatz);
-		pane.add(tplatz);
-		pane.add(lid);
-		pane.add(tid);
-		pane.add(lprodukt);
-		pane.add(tprodukt);
-		pane.add(lanzahl);
-		pane.add(tanzahl);
-		pane.add(lgewicht);
-		pane.add(tgewicht);
-		pane.add(lpreis);
-		pane.add(tpreis);
 		
-		pane.add(button);
+		
+		
+		pane.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+       
+        c.gridx = 0;
+        c.gridy = 0;
+		pane.add(lkategorie,c);
+		
+		c.gridx = 1;
+	    c.gridy = 0;
+		pane.add(tkategorie,c);
+		
+		c.gridx = 2;
+	    c.gridy = 0;
+		pane.add(lid,c);
+		
+		c.gridx = 3;
+	    c.gridy = 0;
+		pane.add(tid,c);
+		
+		c.gridx = 4;
+	    c.gridy = 0;
+		pane.add(lprodukt,c);
+		
+		c.gridx = 5;
+	    c.gridy = 0;
+		pane.add(tprodukt,c);
+		
+		c.gridx = 0;
+	    c.gridy = 1;
+		pane.add(lanzahl,c);
+		
+		c.gridx = 1;
+	    c.gridy = 1;
+		pane.add(tanzahl,c);
+		
+		c.gridx = 2;
+	    c.gridy = 1;
+		pane.add(lgewicht,c);
+		
+		c.gridx = 3;
+	    c.gridy = 1;
+		pane.add(tgewicht,c);
+		
+		c.gridx = 4;
+	    c.gridy = 1;
+		pane.add(lpreis,c);
+		
+		c.gridx = 5;
+	    c.gridy = 1;
+		pane.add(tpreis,c);
+		
+		c.ipadx=40;
+		c.gridwidth = 2;
+		c.gridx = 2;
+	    c.gridy = 2;
+		pane.add(button,c);
 	
 	}
 	

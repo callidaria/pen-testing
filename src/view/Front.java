@@ -56,11 +56,11 @@ public class Front extends JFrame {
 		JTextArea ta = new JTextArea(1,5);
 		
 		//Table
-		String[] columnNames = {"Produktname",
-                "Anzahl",
-                "Gewicht",
+		String[] columnNames = {"ID",
+				"Produktname",
                 "Preis",
-                "ID"};
+                "Gewicht",
+                "Anzahl"};
 		
 		VirtualStorage vs = new VirtualStorage();
         InventoryEntry ie = vs.getAllEntries().get(0);
