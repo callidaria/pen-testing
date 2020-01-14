@@ -27,7 +27,7 @@ public class Front extends JFrame {
 	{	
 		//GUI
 		setTitle("Bestandsübersicht");
-		setSize(400,220);
+		setSize(500,600);
 		setLocationRelativeTo(null);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
@@ -41,13 +41,15 @@ public class Front extends JFrame {
 				NewArticle neu = new NewArticle();
 				neu.setVisible(true);
 			}
-			
 		});
+		
+		JButton such = new JButton ("Los!");
+		
 		//Label
 		JLabel suchen = new JLabel("Suchen:");
 		
 		//Textarea
-		JTextArea ta = new JTextArea("Bitte eingeben!");
+		JTextArea ta = new JTextArea(1,5);
 		
 		//Table
 		String[] columnNames = {"Bereich",
@@ -56,13 +58,45 @@ public class Front extends JFrame {
                 "Produktname",
                 "Anzahl"};
 		
+		
 		Object[][] data = {
-			    {new Integer(5), new Integer(5),
-			    	new Integer(5), "Roter Stift", new Integer(10000)},
-			    {new Integer(5), new Integer(5),
-				    	new Integer(5), "Blauer Stift", new Integer(500)},
-			    {new Integer(5), new Integer(5),
-					    	new Integer(5), "Grüner Stift", new Integer(3000)}
+			    {new Integer(5), new Integer(5), new Integer(5), "Roter Stift", new Integer(10000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Blauer Stift", new Integer(500)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
+			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)}
 		};
 		
 		JTable table = new JTable(data, columnNames);
@@ -123,11 +157,11 @@ public class Front extends JFrame {
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
 	
+		pane.add(button);
 		pane.add(suchen);
 		pane.add(ta);
-		pane.add(table.getTableHeader());
-		pane.add(table);
-		pane.add(button);
+		pane.add(such);
+		pane.add(scrollPane);
 		
 	}
 	

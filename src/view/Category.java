@@ -29,7 +29,7 @@ public class Category extends JFrame {
 	public Category() {
 		//GUI
 		setTitle("Kategorie");
-		setSize(300,200);
+		setSize(500,600);
 		setLocationRelativeTo(null);
 		
 		//Menubar
@@ -56,9 +56,15 @@ public class Category extends JFrame {
 				NewCategory neu = new NewCategory();
 				neu.setVisible(true);
 			}
-		});	
+		});
 		
+		JButton such = new JButton ("Los!");
 		
+		//Textarea
+		JTextArea ta = new JTextArea(1,5);
+		
+		//Label
+		JLabel suchen = new JLabel("Suchen:");
 		
 		//Table
 		String[] columnNames = {"ID",
@@ -75,7 +81,18 @@ public class Category extends JFrame {
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);	
-			
+		
+		table.addMouseListener(new MouseAdapter(){
+			 public void mousePressed(MouseEvent mouseEvent) {
+			        JTable table =(JTable) mouseEvent.getSource();
+			        Point point = mouseEvent.getPoint();
+			        int row = table.rowAtPoint(point);
+			        if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+			        	CategoryView category = new CategoryView();
+						category.setVisible(true);
+			        }
+			    }	
+		});
 			
 		//Layout
 		menu.add(datei);
@@ -85,9 +102,11 @@ public class Category extends JFrame {
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
 		
-		pane.add(table.getTableHeader());
-		pane.add(table);
 		pane.add(button);
+		pane.add(suchen);
+		pane.add(ta);
+		pane.add(such);
+		pane.add(scrollPane);
 		
 		
 	}

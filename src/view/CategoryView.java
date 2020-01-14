@@ -19,53 +19,56 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class NewArticle extends JFrame {
+public class CategoryView extends JFrame {
 	
-	public NewArticle() {
-		
+	public CategoryView() {
 		//GUI
-		setTitle("New Article");
-		setSize(500,100);
+		setTitle("Kategorie Ansicht");
+		setSize(400,150);
 		setLocationRelativeTo(null);
-		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		//Textarea
-		JTextArea tregal = new JTextArea(1,5);
-		JTextArea tplatz = new JTextArea(1,5);
-		JTextArea tprodukt = new JTextArea(1,5);
-		JTextArea tanzahl = new JTextArea(1,5);
+		
 		
 		//Label
-		JLabel lregal = new JLabel("Regal");
-		JLabel lplatz = new JLabel("Platz");
-		JLabel lprodukt = new JLabel("Produktname");
-		JLabel lanzahl = new JLabel("Anzahl");
+		JLabel lid = new JLabel("ID");
+		JLabel lname = new JLabel("Categoryname");
+		JLabel ldesc = new JLabel("Description");
+		
+		//Textarea
+		JTextArea taid = new JTextArea(1,5);
+		JTextArea taname = new JTextArea(1,5);
+		JTextArea tadesc = new JTextArea(1,5);
 		
 		//Button
 		JButton button = new JButton ("Save");
 		button.addActionListener(new ActionListener() { 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String eins = tregal.getText();
-                System.out.println("contents = " + eins);
+				String id = taid.getText();
+				String name = taname.getText();
+				String desc = tadesc.getText();
+		        System.out.println("contents = " + id + name + desc);
 			}
 		});
 		
+		//Layout
+		
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
-		pane.add(lregal);
-		pane.add(tregal);
-		pane.add(lplatz);
-		pane.add(tplatz);
-		pane.add(lprodukt);
-		pane.add(tprodukt);
-		pane.add(lanzahl);
-		pane.add(tanzahl);
+		pane.add(lid);
+		pane.add(taid);
+		pane.add(lname);
+		pane.add(taname);
+		pane.add(ldesc);
+		pane.add(tadesc);
 		pane.add(button);
-	
+		
 	}
-	
+
 }
