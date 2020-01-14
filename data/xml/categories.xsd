@@ -8,17 +8,17 @@
                         <xs:sequence>
                             <xs:element name="name" type="xs:string"/>
                         </xs:sequence>
-						<xs:attribute name="uid" type="xs:integer" />
+						<xs:attribute name="uid" type="xs:nonNegativeInteger" />
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
         </xs:complexType>
         <xs:unique name="nameMustBeUnique">
-			<xs:selector xpath="entry/name"/>
+			<xs:selector xpath="category/name"/>
             <xs:field xpath="." />
 		</xs:unique>
-        <xs:unique name="sectionPlaceMustBeUnique">
-			<xs:selector xpath="entry" />
+        <xs:unique name="uidMustBeUnique">
+			<xs:selector xpath="category" />
 			<xs:field xpath="@uid" />
         </xs:unique>
     </xs:element>
