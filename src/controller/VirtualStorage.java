@@ -30,8 +30,10 @@ public class VirtualStorage {
 		invEntry = Database.retrieveInventoryEntries();
 	}
 	//TODO : errorcodes
-	public void addProduct(String name,int count,int weight,int prize,int cathid,int section,int place) throws Exception {
-		Database.addInventoryEntry(new InventoryEntry(section,place,new Product(name,count,weight,prize,cathid)));
+	public void addProduct(int UID, String name, int count, int weight, int prize, int categoryID) throws Exception {
+		int section = InventoryEntry.uidToSectionPlace(UID)[0];
+		int place = InventoryEntry.uidToSectionPlace(UID)[1];
+		Database.addInventoryEntry(new InventoryEntry(section,place,new Product(name,count,weight,prize,categoryID)));
 		loadVirtualStorage();
 	}
 	//TODO : error callback from database
