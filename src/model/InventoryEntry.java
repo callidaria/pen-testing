@@ -103,7 +103,7 @@ public class InventoryEntry{
 		 */
 		int[] sectionPlace= new int[2];
 		if((int) (Math.log10(UID) + 1)!=6){
-			return null;
+			return new int[] {-1,-1};
 		}
 		String stringUID = Integer.toString(UID);
 		String section=stringUID.substring(0, 3);
@@ -125,11 +125,7 @@ public class InventoryEntry{
 			return "InventoryEntry ("+this.getUID()+"):"+
 					"\n\tShelfSection :"+this.getShelfSection()+
 					"\n\tShelfPlace :"+this.getShelfPlace()+
-					"\n\t\tproduct_name:"+this.product.getName()+
-					"\n\t\tproduct_count:"+this.product.getCount()+
-					"\n\t\tproduct_weight:"+this.product.getWeight()+"g"+
-					"\n\t\tproduct_prize:"+this.product.getPrize()+"c"+
-					"\n\tposition:"+this.getID()+
+					"\n\t"+this.product+
 					"\n\tvalide:"+this.validate();
 		}
 		if(this.product.validate()) {

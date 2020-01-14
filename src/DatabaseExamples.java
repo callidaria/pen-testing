@@ -25,12 +25,15 @@ public class DatabaseExamples{
 		
 		
 		
-		ArrayList<InventoryEntry> inventoryEntry = Database.retrieveInventoryEntries();
-		for (int i=0;i<inventoryEntry.size();i++) {
-			System.out.println(inventoryEntry.get(i));
+		
+		ArrayList<Category> categories = Database.retrieveCategories();
+		ArrayList<InventoryEntry> inventoryEntries = Database.retrieveInventoryEntriesWithCategory(categories);
+		inventoryEntries.get(0).product.category.setName("NOT PENS");
+		for (int i=0;i<inventoryEntries.size();i++) {
+			System.out.println(inventoryEntries.get(i));
 		}
 		
-		Product pro = new Product("Pen 2", 12, 12, 99);
+		Product pro = new Product("Pen 2", 12, 12, 99, 1);
 		InventoryEntry ie = new InventoryEntry(100,100,pro);
 		System.out.println("Free Space: "+Database.freeSpace(100));
 		
@@ -41,23 +44,30 @@ public class DatabaseExamples{
 			Database.deleteInventoryEntry(100100, false);
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("Error: "+e.getMessage());
 		}
 
 		
-		ArrayList<Category> categories = Database.retrieveCategories();
+		
 		for (int i=0;i<categories.size();i++) {
 			System.out.println(categories.get(i));
 		}
 		
+		Category newCategory = new Category("New category");
+		try {
+			Database.addCategory(newCategory);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
 		SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 new TextAreaLogProgram().setVisible(true);
             }
         });
-		
+		*/
 	}
 }
