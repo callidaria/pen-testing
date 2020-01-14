@@ -11,6 +11,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
+import controller.*;
+import model.InventoryEntry;
+
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -19,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 
 public class Front extends JFrame {
@@ -52,52 +56,15 @@ public class Front extends JFrame {
 		JTextArea ta = new JTextArea(1,5);
 		
 		//Table
-		String[] columnNames = {"Bereich",
-                "Regal",
-                "Platz",
-                "Produktname",
-                "Anzahl"};
+		String[] columnNames = {"Produktname",
+                "Anzahl",
+                "Gewicht",
+                "Preis",
+                "ID"};
 		
-		
-		Object[][] data = {
-			    {new Integer(5), new Integer(5), new Integer(5), "Roter Stift", new Integer(10000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Blauer Stift", new Integer(500)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)},
-			    {new Integer(5), new Integer(5), new Integer(5), "Grüner Stift", new Integer(3000)}
-		};
+		VirtualStorage vs = new VirtualStorage();
+        InventoryEntry ie = vs.getAllEntries().get(0);
+        Object[][] data = {ie.toObjectArray()}; 
 		
 		JTable table = new JTable(data, columnNames);
 		
