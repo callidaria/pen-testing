@@ -17,7 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.xml.transform.TransformerException;
 
-import database.xml.Database;
+import database.Database;
 import model.InventoryEntry;
 import model.Product;
  

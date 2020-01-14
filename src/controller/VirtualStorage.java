@@ -2,7 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 
-import database.xml.Database;
+import database.Database;
 import model.InventoryEntry;
 import model.Product;
 
@@ -13,9 +13,9 @@ public class VirtualStorage {
 		loadVirtualStorage();
 	}
 	// optimize: delete from list??
-	public InventoryEntry getEntryByID(int id) {
+	public InventoryEntry getEntryByUID(int id) {
 		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getID()==id)
+			if (invEntry.get(i).getUID()==id)
 				return invEntry.get(i);
 		} return null;
 	}
@@ -23,7 +23,7 @@ public class VirtualStorage {
 	//TODO : filter functions
 	//TODO : sorting functions
 	public int changeAmountBy(int id,int val) throws Exception {
-		int nVal = getEntryByID(id).getProduct().getCount()+val;
+		int nVal = getEntryByUID(id).getProduct().getCount()+val;
 		return setAmount(id,nVal);
 	}
 	public void loadVirtualStorage() {

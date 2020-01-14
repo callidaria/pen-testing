@@ -79,7 +79,7 @@ public class Product {
 		this.weight=weight;
 		this.prize=prize;
 		this.categoryID=categoryID;
-		this.setCategory(new Category(1,"Keine Kategorie"));
+		this.setCategory(new Category(categoryID,"Kategorie nicht geladen"));
 	}
 	
 	public Product(String name, int count, int weight, int prize, int categoryID, Category category){

@@ -4,7 +4,5 @@ public class Main {
 		System.out.println("\n---END OF EXAMPLE---\n");
 		view.Front app = new view.Front();
 		app.setVisible(true);
-	}
-	
-	
+	}	
 }

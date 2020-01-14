@@ -1,5 +1,11 @@
-package database.xml;
+package database;
 
+/**
+ * Nebenklasse im database Packet. Hält wichtig statische Werte, wie zum Beispiel den Pfad zu den XML Dateien.
+ * 
+ * @author Freddy
+ *
+ */
 public class DatabaseSchema {
 	
 	//**Der relative Pfad von root zu den Datenbankdateien
@@ -18,8 +24,8 @@ public class DatabaseSchema {
 	static final String DBPATH_CAT_XSD="categories.xsd";
 	
 	public static String[] elements = new String[] {"name","count","weight","prize","category_id"};
-	public static String[] attributes = new String[] {"place","section"};
-	public static String[] idTypes = new String[] {"place","section"};
+	public static String[] attributes = new String[] {"place","area"};
+	public static String[] idTypes = new String[] {"place","area"};
 	public static String[] intTypes = new String[] {"count","weight","prize","category_id"};
 	
 	

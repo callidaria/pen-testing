@@ -7,13 +7,13 @@
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="name" type="xs:string"/>
-                            <xs:element name="count" type="xs:integer"/>
-                            <xs:element name="weight" type="xs:integer"/>
-							<xs:element name="prize" type="xs:integer"/>
-							<xs:element name="category_id" type="xs:integer"/>
+                            <xs:element name="count" type="xs:nonNegativeInteger"/>
+                            <xs:element name="weight" type="xs:nonNegativeInteger"/>
+							<xs:element name="prize" type="xs:nonNegativeInteger"/>
+							<xs:element name="category_id" type="xs:nonNegativeInteger"/>
                         </xs:sequence>
-						<xs:attribute name="section" type="xs:integer" />
-						<xs:attribute name="place" type="xs:integer" />
+						<xs:attribute name="area" type="shelfInt" />
+						<xs:attribute name="place" type="shelfInt" />
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
@@ -22,19 +22,16 @@
 			<xs:selector xpath="entry/name"/>
             <xs:field xpath="." />
 		</xs:unique>
-        <xs:unique name="sectionPlaceMustBeUnique">
+        <xs:unique name="areaPlaceMustBeUnique">
 			<xs:selector xpath="entry" />
-			<xs:field xpath="@section" />
+			<xs:field xpath="@area" />
             <xs:field xpath="@place" />
         </xs:unique>
-        
     </xs:element>
-
-    <xs:simpleType name="shelfType">
-        <xs:restriction base="xs:integer">
+    <xs:simpleType name="shelfInt">
+        <xs:restriction base="xs:nonNegativeInteger">
             <xs:minInclusive value="0"/>
             <xs:maxInclusive value="999"/>
         </xs:restriction>
     </xs:simpleType>
-    
 </xs:schema> 
