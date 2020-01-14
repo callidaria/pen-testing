@@ -60,16 +60,22 @@ public class Database{
 	static final String DBPATH_IE_XSD="inventoryEntries.xsd";
 	
 	//Dateiname von Kategorien	
-		static final String DBPATH_CAT="categories.xml";
+	static final String DBPATH_CAT="categories.xml";
 		
 	//Dateiname der Definitionsdatei von Kategorien
 	static final String DBPATH_CAT_XSD="categories.xsd";
+	
+	//Legt fest ob Eingaben validiert werden sollen.
+	static final Boolean DB_VALIDATE=false;
+	
+	//Testing with only one tranformerFactory instance
+	static TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	
 	/**Abfragen aller Inventareinträge aus der XML Datei unter DBPATH_IE
 	 *  
 	 * @return alle Inventareinträge aus der Datenbank als ArrayList. Die ArrayList ist unsortiert.
 	 * 
-	 * @deprecated bitte benutzte retrieveInventoryEntriesWithCategory
+	 * @deprecated Bitte benutzte retrieveInventoryEntriesWithCategory(), ansonsten wird den Inventareinträgen keine Kategorie zugewiesen.
 	 */
 	@Deprecated
 	public static ArrayList<InventoryEntry> retrieveInventoryEntries(){
@@ -107,7 +113,7 @@ public class Database{
 	}
 	
 	/**
-	 * Bin noch nicht so ganz zufrieden, aber funktioniert gut. Allerdings O(n*m);
+	 * Abfragen aller Inventareinträge aus der XML Datei unter DBPATH_IE. Und zuweisen der Kategorien zu jedem Inventareintrag.
 	 * 
 	 * @param categories Die List an Kategorie. Damit die Referenzen korrekt sind und keine Kategorie doppelt während der Laufzeit existiert.
 	 * @return alle Inventareintrag mit Kategorie.
@@ -141,13 +147,13 @@ public class Database{
 			throw new CodedException(errorPreamble+DatabaseErrors.inventoryEntryFailedValidation,1);
 		}
 		
-		if(Database.uidExists(newIE.getUID())){
-			throw new Exception(errorPreamble+DatabaseErrors.uidTaken(newIE.getUID()));
-		}
-		
-		
-		if (Database.nameExists(newIE.product.getName()) != -1) {
-			throw new Exception(errorPreamble+DatabaseErrors.nameTaken(newIE.product.getName()));
+		if(DB_VALIDATE) {
+			if(Database.uidExists(newIE.getUID())){
+				throw new Exception(errorPreamble+DatabaseErrors.uidTaken(newIE.getUID()));
+			}
+			if (Database.nameExists(newIE.product.getName()) != -1) {
+				throw new Exception(errorPreamble+DatabaseErrors.nameTaken(newIE.product.getName()));
+			}
 		}
 		
 		try {
@@ -311,12 +317,11 @@ public class Database{
 	 * @return Gibt den newIE zurück. (warum?)
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
-		Boolean validate = false;
-		if(validate) {
-			if(!newIE.validate()) {
-				throw new Exception("@editInventoryEntry newInventoryEntry failed validation.");
-			}
-			
+		if(!newIE.validate()) {
+			throw new Exception("@editInventoryEntry newInventoryEntry failed validation.");
+		}
+		
+		if(DB_VALIDATE){
 			if(!Database.uidExists(UID)) {
 				throw new Exception("@editInventoryEntry UID doesn't exisit.");
 			}
@@ -399,19 +404,23 @@ public class Database{
 		if(!verifiedAttribute){
 			throw new Exception("Attribute ("+attribute+") darf den Wert ("+newValue+") nicht haben.");
 		}
-		if(attribute=="UID") {
-			if(Database.uidExists(Integer.parseInt(newValue))) {
-				throw new Exception("Der Platz ("+newValue+") ist belegt.");
+		
+		if(DB_VALIDATE) {
+			if(attribute=="UID") {
+				if(Database.uidExists(Integer.parseInt(newValue))) {
+					throw new Exception("Der Platz ("+newValue+") ist belegt.");
+				}
+			}
+			if(attribute=="name") {
+				if(Database.nameExists(newValue)!=-1) {
+					throw new Exception("Der Name ("+newValue+") wird bereits benutzt.");
+				}
+			}
+			if(!uidExists(UID)) {
+				throw new Exception("Die UID ("+UID+") exsitiert nicht."+DatabaseErrors.internalWarning);
 			}
 		}
-		if(attribute=="name") {
-			if(Database.nameExists(newValue)!=-1) {
-				throw new Exception("Der Name ("+newValue+") wird bereits benutzt.");
-			}
-		}
-		if(!uidExists(UID)) {
-			throw new Exception("Die UID ("+UID+") exsitiert nicht."+DatabaseErrors.internalWarning);
-		}
+		
 		Document doc = Database.buildDocument(DBPATH_IE);
 		Element node;
 		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
@@ -522,10 +531,13 @@ public class Database{
 		int freeUID=-1;
 		if(!category.validate()) {
 			throw new Exception(errorPreamble+DatabaseErrors.inventoryEntryFailedValidation);
-		}		
-		if (Database.categoryExists(category.getName()) != -1) {
-			throw new Exception(errorPreamble+DatabaseErrors.nameTaken);
 		}
+		if(DB_VALIDATE) {
+			if (Database.categoryExists(category.getName()) != -1) {
+				throw new Exception(errorPreamble+DatabaseErrors.nameTaken);
+			}
+		}
+		
 		
 		try {
 			Document doc = Database.buildDocument(DBPATH_CAT);
@@ -738,11 +750,13 @@ public class Database{
 	 * @param targetPath der Speicherort
 	 */
 	private static void transform(Document doc, String targetPath) {
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		
+		TransformerFactory transformerFactory = Database.transformerFactory;
 		Transformer transformer;
 		try {
 			transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			DOMSource source = new DOMSource(doc);
@@ -766,7 +780,7 @@ public class Database{
 	 */
 	private static boolean validateAgainstXSD(String xmlPath, String xsdPath)
 	{
-		System.out.println("This may take up to LONG TIME to validate.");
+		
 		FileInputStream xml;
 		FileInputStream xsd;
 		try {
@@ -782,6 +796,7 @@ public class Database{
 	        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	        Schema schema = factory.newSchema(new StreamSource(xsd));
 	        Validator validator = schema.newValidator();
+	        System.out.println("Validating ("+xmlPath+") against ("+xsdPath+").\nThis may take a very long time with a big XML File to validate.");
 	        validator.validate(new StreamSource(xml));
 	        return true;
 	    }
