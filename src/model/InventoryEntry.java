@@ -240,10 +240,16 @@ public class InventoryEntry{
 	 */
 	public Object[] toObjectArray() {
 		if (!this.validate()) {
-			return null;
+			return new  Object[] {null,null,null,null,null,null};
 		}
-		
-		Object[] returnArray = { this.getShelfSection(), this.getShelfPlace(), this.product, this.product.getCategoryID()};
+		Object[] returnArray = {
+				this.getStringifiedUID(),
+				this.product.getName(),
+				this.product.getCount(),
+				this.product.getWeight(),
+				this.product.getPrize(),
+				this.product.category.getName()
+				};
 		return returnArray;
 	}
 }

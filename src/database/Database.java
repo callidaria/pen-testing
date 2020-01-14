@@ -318,7 +318,7 @@ public class Database{
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE,Boolean force) throws Exception{
 		if(!newIE.validate()) {
-			throw new Exception("@editInventoryEntry newInventoryEntry failed validation.");
+			throw new Exception("newInventoryEntry failed validation.");
 		}
 		
 		if(DB_VALIDATE){
@@ -398,7 +398,7 @@ public class Database{
 		boolean inElements = Arrays.stream(DatabaseSchema.elements).anyMatch(attribute::equals);
 		boolean inAttributes = Arrays.stream(DatabaseSchema.attributes).anyMatch(attribute::equals);
 		if(!inElements&&!inAttributes) {
-			throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist.");
+			throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist."+DatabaseErrors.internalWarning);
 		}
 		boolean verifiedAttribute = DatabaseSchema.verifyAttribute(attribute, newValue);
 		if(!verifiedAttribute){
@@ -640,7 +640,9 @@ public class Database{
 	 * @param name, der zu prüfende Name.
 	 * 
 	 * @return -1, wenn nicht exisitert, ansonsten UID wo der Name existiert.
+	 * @deprecated bitte benutze eine Methode aus dem Controller / VirtualStorage.
 	 * */
+	@Deprecated
 	public static int nameExists(String name) {
 		try {
 	        Document doc = Database.buildDocument("inventoryEntries.xml");
@@ -663,7 +665,9 @@ public class Database{
 	 * @param uid, die zu prüfende UID.
 	 * 
 	 * @return true, wenn exisitert, ansonsten false.
+	 * @deprecated bitte benutze eine Methode aus dem Controller / VirtualStorage.
 	 * */
+	@Deprecated
 	public static boolean uidExists(int uid) {
 		try {
 	        Document xmlDocument = Database.buildDocument("inventoryEntries.xml");
