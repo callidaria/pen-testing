@@ -874,7 +874,7 @@ public class Database{
 				System.out.println("\tname:"+name);
 				System.out.println("\tcount:"+count);
 				*/
-				Product position = new Product(name,count,weight,prize);
+				Product position = new Product(name,count,weight,prize,0);
 				inventoryEntries.add(position);
 			}
 		}

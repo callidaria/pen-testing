@@ -1,5 +1,5 @@
-/**Das Packet beinhaltet die wichtigsten Basisklassen für unsere Funktion.
- * Diese Basisklassen, werden als Repressentation von den in unser Datenbank gehaltenen Objekte.
+/**Das Packet beinhaltet die wichtigsten Basisklassen für unsere Anwendung.
+ * Diese Basisklassen sind die Repressentation von den in unser Datenbank gehaltenen Einträge.
  * 
  */
 package model;

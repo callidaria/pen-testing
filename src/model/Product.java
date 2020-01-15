@@ -2,55 +2,107 @@ package model;
 
 import java.util.ArrayList;
 
+/**Die Produkt-Klasse ist Teil der Basisklasse Inventareintrag.
+ * Produkte represäntieren ein Objekt welches an der Stelle des Inventareintrags gelagert werden.
+ * Das Produkt ist eine eigenes Objekt um die agilität der Anwendung zu erhöhen.
+ * Durch die Trennung des Eintrages und des Produktes, wäre ein einfacher wechsel auf ein 1-n Beziehung,
+ * zwischen Platz und Produkt möglich gewesen.
+ * 
+ * @author Freddy
+ *
+ */
 public class Product {
-	@Deprecated
-	private int id;
+
+	//Alle Attribute eines Objektes Produkt
 	private String name;
 	private Integer weight;
 	private Integer prize;
 	private Integer count;
 	private Integer categoryID;
-	public Category category;
 	
-	@Deprecated
-	public int getId() {
-		return id;
-	}
-	@Deprecated
-	public void setId(int id) {
-		this.id = id;
-	}
+	//Kategorie ist ein eine mit Hilfe der categoryID zugewiesene Klasse. Es handelt sich dabei um eine Aggregation und keine Komposition.
+	public Category category;
+
+	/**Getter/Setter-Methode
+	 * 
+	 * @return Name des Produktes
+	 */
 	public String getName() {
 		return name;
 	}
+	
+	/**Getter/Setter-Methode
+	 * 
+	 * @param name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	/**Getter/Setter-Methode
+	 * 
+	 * @return Gewicht des Produktes
+	 */
 	public int getWeight() {
 		return weight;
 	}
-	public int getCategoryID() {
-		return categoryID;
-	}
-	public void setCategoryID(int categoryID) {
-		this.categoryID = categoryID;
-	}
+	
+	/**
+	 * 
+	 * @param weight
+	 */
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getPrize() {
 		return prize;
 	}
+	
+	/**
+	 * 
+	 * @param prize
+	 */
 	public void setPrize(int prize) {
 		this.prize = prize;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getCount() {
 		return count;
 	}
+	
+	/**
+	 * 
+	 * @param count
+	 */
 	public void setCount(int count) {
 		this.count = count;
 	}
 	
+	/**Getter/Setter-Methode
+	 * 
+	 * @return KategorieID, eine künstlich erzeugter Identifier
+	 */
+	public int getCategoryID() {
+		return categoryID;
+	}
+	
+	/**
+	 * Getter/Setter-Methode
+	 * @param categoryID
+	 */
+	public void setCategoryID(int categoryID) {
+		this.categoryID = categoryID;
+		this.setCategory(new Category(categoryID,"Kategorie nicht geladen"));
+	}
 	
 	public void setCategory(Category category) {
 		this.categoryID=category.getUID();
@@ -58,20 +110,6 @@ public class Product {
 	}
 	
 	
-	@Deprecated
-	public Product(int id, String name, int count){
-		this.id=id;
-		this.name=name;
-		this.count=count;
-	}
-	
-	@Deprecated
-	public Product(String name, int count, int weight, int prize){
-		this.name=name;
-		this.count=count;
-		this.weight=weight;
-		this.prize=prize;
-	}
 	
 	public Product(String name, int count, int weight, int prize, int categoryID){
 		this.name=name;

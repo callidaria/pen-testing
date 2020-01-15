@@ -107,7 +107,7 @@ public class TextAreaLogProgram extends JFrame {
                 // clears the text area
             	
     			try {
-    				Product newProduct = new Product("Radiergummi",1,420,100);
+    				Product newProduct = new Product("Radiergummi",1,1,1,0);
         			InventoryEntry newInventoryEntry = new InventoryEntry(100,100,newProduct);
     				Database.addInventoryEntry(newInventoryEntry);
     				standardOut.println("Product (Radiergummi) added");
