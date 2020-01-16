@@ -67,9 +67,9 @@ public class InventoryView extends JFrame {
 		//Table
 		String[] columnNames = {"ID",
 				"Produktname",
-                "Preis",
-                "Gewicht",
                 "Anzahl",
+                "Gewicht",
+                "Preis",
                 "Kategorie"};
 		
 		

@@ -36,7 +36,7 @@ public class NewArticleView extends JFrame {
 	public NewArticleView() {
 		
 		//GUI
-		setTitle("New Article");
+		setTitle("Neuer Artikel");
 		setSize(500,100);
 		setLocationRelativeTo(null);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -58,7 +58,7 @@ public class NewArticleView extends JFrame {
 		JLabel lid = new JLabel("ID");
 		
 		//Button
-		JButton button = new JButton ("Save");
+		JButton button = new JButton ("Hinzufügen");
 		button.addActionListener(new ActionListener() { 
 			@Override
 			public void actionPerformed(ActionEvent e) {

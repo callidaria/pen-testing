@@ -2,19 +2,13 @@
 <entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="inventoryEntries.xsd">
 
 <entry area="0" place="0">
-    <name>Produkt 000000</name>
-    <count>1</count>
-    <weight>1</weight>
-    <prize>100</prize>
+    <name>Produkt bla</name>
+    <count>54</count>
+    <weight>12</weight>
+    <prize>101</prize>
     <category_id>0</category_id>
   </entry>
-  <entry area="0" place="1">
-    <name>Produkt 000001</name>
-    <count>1</count>
-    <weight>1</weight>
-    <prize>100</prize>
-    <category_id>0</category_id>
-  </entry>
+  
   <entry area="0" place="2">
     <name>Produkt 000002</name>
     <count>1</count>
@@ -87,9 +81,9 @@
   </entry>
   <entry area="0" place="12">
     <name>Produkt 000012</name>
-    <count>1</count>
-    <weight>1</weight>
-    <prize>100</prize>
+    <count>15</count>
+    <weight>10</weight>
+    <prize>1000</prize>
     <category_id>0</category_id>
   </entry>
   <entry area="0" place="13">
@@ -77000,5 +76994,33 @@
     <weight>1</weight>
     <prize>100</prize>
     <category_id>0</category_id>
+  </entry>
+<entry area="-1" place="-1">
+    <name>5</name>
+    <count>2</count>
+    <weight>4</weight>
+    <prize>6</prize>
+    <category_id>1</category_id>
+  </entry>
+<entry area="0" place="12">
+    <name>Small Pen</name>
+    <count>1000</count>
+    <weight>10</weight>
+    <prize>15</prize>
+    <category_id>121212</category_id>
+  </entry>
+<entry area="998" place="877">
+    <name>Filzer</name>
+    <count>20</count>
+    <weight>2</weight>
+    <prize>33</prize>
+    <category_id>10</category_id>
+  </entry>
+<entry area="0" place="999">
+    <name>Eins</name>
+    <count>11</count>
+    <weight>14</weight>
+    <prize>2</prize>
+    <category_id>1</category_id>
   </entry>
 </entries>

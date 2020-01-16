@@ -8,12 +8,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -48,7 +50,7 @@ public class CategoriesView extends JFrame {
 		});	
 		
 		//Button
-		JButton button = new JButton ("New Category");
+		JButton button = new JButton ("Neue Kategorie erstellen");
 		button.addActionListener(new ActionListener() { 
 		
 			@Override
@@ -58,13 +60,13 @@ public class CategoriesView extends JFrame {
 			}
 		});
 		
-		JButton such = new JButton ("Los!");
+		JButton bsuch = new JButton ("Los!");
 		
 		//Textarea
-		JTextArea ta = new JTextArea(1,5);
+		JTextArea tasuchen = new JTextArea(1,5);
 		
 		//Label
-		JLabel suchen = new JLabel("Suchen:");
+		JLabel lsuchen = new JLabel("Suchen:");
 		
 		//Table
 		String[] columnNames = {"ID",
@@ -95,18 +97,39 @@ public class CategoriesView extends JFrame {
 		});
 			
 		//Layout
+		Container container = getContentPane();
+		
+		container.setLayout(new BorderLayout());
+		container.setPreferredSize(new Dimension(1280,720));
+		
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new FlowLayout());
+		topPanel.add(lsuchen);
+		topPanel.add(tasuchen);
+		topPanel.add(bsuch);
+		
+		JPanel rightPanel = new JPanel();
+		rightPanel.setPreferredSize(new Dimension(100, 100));
+		
+		JPanel leftPanel = new JPanel();
+		leftPanel.setPreferredSize(new Dimension(100, 100));
+		
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setLayout(new FlowLayout());
+		bottomPanel.add(button);
+		
+		container.add(topPanel,BorderLayout.PAGE_START);
+		container.add(leftPanel,BorderLayout.LINE_START);
+		container.add(scrollPane,BorderLayout.CENTER);
+		container.add(rightPanel,BorderLayout.LINE_END);
+		container.add(bottomPanel,BorderLayout.PAGE_END);
+		
+		
 		menu.add(datei);
 		datei.add(bestand);
 		setJMenuBar (menu);
 		
-		Container pane = getContentPane();
-		pane.setLayout(new FlowLayout());
 		
-		pane.add(button);
-		pane.add(suchen);
-		pane.add(ta);
-		pane.add(such);
-		pane.add(scrollPane);
 		
 		
 	}
