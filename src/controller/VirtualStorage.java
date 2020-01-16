@@ -97,11 +97,13 @@ public class VirtualStorage {
 	public void loadCathegoryStorage() {
 		cathEntry = Database.retrieveCategories();
 	}
-	public int addProduct(String name,int count,int weight,int prize,int cathid,int section,int place) throws Exception {
+    public int addProduct(int UID, String name, int count, int weight, int prize, int categoryID) throws Exception {
+        int section = InventoryEntry.uidToSectionPlace(UID)[0];
+        int place = InventoryEntry.uidToSectionPlace(UID)[1];
 		for (int i=0;i<invEntry.size();i++) {
 			if (invEntry.get(i).getProduct().getName()==name) return -1;
 			else if (section==invEntry.get(i).getShelfSection()&&place==invEntry.get(i).getShelfPlace()) return -2;
-		} Database.addInventoryEntry(new InventoryEntry(section,place,new Product(name,count,weight,prize,cathid)));
+		} Database.addInventoryEntry(new InventoryEntry(section,place,new Product(name,count,weight,prize,categoryID)));
 		loadVirtualStorage();
 		return 0;
 	}
@@ -124,7 +126,7 @@ public class VirtualStorage {
 		loadCathegoryStorage();
 		return 0;
 	}
-	public void removeCathegory(int id) {
+	public void removeCathegory(int id) throws Exception{
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<invEntry.size();i++) {
 			if (invEntry.get(i).getProduct().getCategoryID()!=id) nie.add(invEntry.get(i));
@@ -160,4 +162,20 @@ public class VirtualStorage {
 	}
 
 	public List<InventoryEntry> getAllEntries() { return invEntry; }
+
+    
+    public Object[][] getObjectArray() {
+        List <InventoryEntry> ie = getAllEntries();
+        
+        List<Object[]> arrayList = new ArrayList<Object[]>();
+        for(int i=0;ie.size()>i;i++) {
+            arrayList.add(ie.get(i).toObjectArray());
+        }
+        arrayList.get(0);
+        Object[][] objectArray = new Object[ie.size()+10][10];
+        for (int i=0;arrayList.size()>i;i++) {
+            objectArray[i]=arrayList.get(i);
+        }
+        return objectArray;
+    }
 }
