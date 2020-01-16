@@ -75,4 +75,21 @@ public class VirtualStorage {
 	//TODO : shelf and place setters
 	
 	public ArrayList<InventoryEntry> getAllEntries() { return inventoryEntries; }
+	
+	
+	public Object[][] getObjectArray() {
+		ArrayList <InventoryEntry> ie = getAllEntries();
+        
+        ArrayList<Object[]> arrayList = new ArrayList<Object[]>();
+        for(int i=0;ie.size()>i;i++) {
+        	arrayList.add(ie.get(i).toObjectArray());
+        	
+        }
+        arrayList.get(0);
+        Object[][] objectArray = new Object[ie.size()+10][10];
+        for (int i=0;arrayList.size()>i;i++) {
+        	objectArray[i]=arrayList.get(i);
+        }
+        return objectArray;
+	}
 }

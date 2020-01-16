@@ -24,8 +24,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class NewCategory extends JFrame {
-	public NewCategory() {
+public class NewCategoryView extends JFrame {
+	public NewCategoryView() {
 		//GUI
 		setTitle("New Category");
 		setSize(400,150);

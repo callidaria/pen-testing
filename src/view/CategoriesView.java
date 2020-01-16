@@ -25,8 +25,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class Category extends JFrame {
-	public Category() {
+public class CategoriesView extends JFrame {
+	public CategoriesView() {
 		//GUI
 		setTitle("Kategorie");
 		setSize(500,600);
@@ -41,7 +41,7 @@ public class Category extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Front bestand = new Front();
+				InventoryView bestand = new InventoryView();
 				bestand.setVisible(true);
 			
 			}	
@@ -53,7 +53,7 @@ public class Category extends JFrame {
 		
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				NewCategory neu = new NewCategory();
+				NewCategoryView neu = new NewCategoryView();
 				neu.setVisible(true);
 			}
 		});

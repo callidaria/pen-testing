@@ -29,9 +29,11 @@ import javax.swing.JPanel;
 
 
 
-public class NewArticle extends JFrame {
+public class NewArticleView extends JFrame {
 	
-	public NewArticle() {
+	private InventoryView inventoryView;
+
+	public NewArticleView() {
 		
 		//GUI
 		setTitle("New Article");
@@ -76,6 +78,8 @@ public class NewArticle extends JFrame {
 				VirtualStorage vs = new VirtualStorage();
                 try {
 					vs.addProduct(id, produkt, anzahl, gewicht, preis, kategorie);
+					inventoryView.refresh();
+					setVisible(false);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -146,6 +150,14 @@ public class NewArticle extends JFrame {
 	    c.gridy = 2;
 		pane.add(button,c);
 	
+	}
+
+	public void setInventoryView(InventoryView inventoryView) {
+		this.inventoryView = inventoryView;
+	}
+
+	public void setFrameVisible(boolean b) {
+		setVisible(b);
 	}
 	
 }

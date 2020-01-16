@@ -30,11 +30,15 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 
-public class Front extends JFrame {
+public class InventoryView extends JFrame {
 
-	public Front()
-	{	
-		//GUI
+	private NewArticleView newArticleView;
+	private Object[][] data;
+	VirtualStorage vs = new VirtualStorage();
+
+	public InventoryView()
+	{
+		setContentPane(new JPanel());
 		setTitle("Bestandsübersicht");
 		setSize(1280,720);
 		setLocationRelativeTo(null);
@@ -47,8 +51,8 @@ public class Front extends JFrame {
 		
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				NewArticle neu = new NewArticle();
-				neu.setVisible(true);
+				refresh();
+				newArticleView.setFrameVisible(true);
 			}
 		});
 		
@@ -68,22 +72,9 @@ public class Front extends JFrame {
                 "Anzahl",
                 "Kategorie"};
 		
-		VirtualStorage vs = new VirtualStorage();
-        ArrayList <InventoryEntry> ie = vs.getAllEntries();
+		
         
-        
-        ArrayList<Object[]> arrayList = new ArrayList<Object[]>();
-        for(int i=0;ie.size()>i;i++) {
-        	arrayList.add(ie.get(i).toObjectArray());
-        	
-        }
-        arrayList.get(0);
-        Object[][] objectArray = new Object[ie.size()+10][10];
-        for (int i=0;arrayList.size()>i;i++) {
-        	objectArray[i]=arrayList.get(i);
-        }
-        System.out.println(objectArray[0][1]);
-        Object[][] data = objectArray;
+        data = vs.getObjectArray();
         
 		JTable table = new JTable(data, columnNames) {
 			/** Verhindert das Zellen bearbeitbar sind.
@@ -129,7 +120,7 @@ public class Front extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Category cat = new Category();
+				CategoriesView cat = new CategoriesView();
 				cat.setVisible(true);
 			}
 			
@@ -180,20 +171,19 @@ public class Front extends JFrame {
 		container.add(leftPanel,BorderLayout.LINE_START);
 		container.add(scrollPane,BorderLayout.CENTER);
 		container.add(rightPanel,BorderLayout.LINE_END);
-		container.add(bottomPanel,BorderLayout.PAGE_END);
-		
+		container.add(bottomPanel,BorderLayout.PAGE_END);	
 	}
 	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				Front m = new Front();
-				m.setMinimumSize(new Dimension(600, 200));
-				m.setVisible(true);
-			}
-		});
-	}	
+	public void refresh() {
+		vs.loadVirtualStorage();
+		System.out.println("Heureka, jetzt wird die Tabelle refreshed oder auch nicht D:");
+		return;
+	}
+	
+	public void setNewArticleView(NewArticleView articleView) {
+		newArticleView = articleView;
+		System.out.println("Connected Frames");
+	}
+	
 	
 }

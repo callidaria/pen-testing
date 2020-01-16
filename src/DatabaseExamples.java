@@ -6,7 +6,6 @@ import model.Category;
 import model.CodedException;
 import model.InventoryEntry;
 import model.Product;
-import view.TextAreaLogProgram;
 
 public class DatabaseExamples{
 	public DatabaseExamples() {		
