@@ -74,7 +74,12 @@ public class NewArticle extends JFrame {
 				int kategorie = Integer.parseInt(skategorie);
 				
 				VirtualStorage vs = new VirtualStorage();
-                vs.addProduct(id, produkt, anzahl, gewicht, preis, kategorie);
+                try {
+					vs.addProduct(id, produkt, anzahl, gewicht, preis, kategorie);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		

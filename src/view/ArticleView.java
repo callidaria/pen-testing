@@ -16,13 +16,21 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import controller.VirtualStorage;
+import model.InventoryEntry;
+
 public class ArticleView extends JFrame {
 	
 	final static boolean shouldFill = true;
 	final static boolean shouldWeightX = true;
 	final static boolean RIGHT_TO_LEFT = false;
 	
-	public ArticleView() {
+	public ArticleView(int UID) {
+		VirtualStorage vs = new VirtualStorage();
+		InventoryEntry thisArticle = vs.getEntryByUID(UID);
+		
+		System.out.println(thisArticle);
+		
 		//GUI
 		setTitle("ArticleView");
 		setSize(350,280);
@@ -46,8 +54,7 @@ public class ArticleView extends JFrame {
 		JLabel lpreis = new JLabel("Preis:");
 		JLabel lkategorie = new JLabel("Kategorie:");
 		JLabel lsektion = new JLabel("Sektion:");
-		JLabel lregal = new JLabel("Regal:    ");
-		JLabel lplatz = new JLabel("Platz:     ");
+		JLabel lplatz = new JLabel("Platznummer:     ");
 		JLabel lanzahl = new JLabel("Anzahl:  ");
 		JLabel ladd = new JLabel("Add/Delete:");
 		
@@ -137,28 +144,14 @@ public class ArticleView extends JFrame {
         c.gridwidth = 1;
         
         
-        c.gridx = 0;
-        c.gridy = 1;
-        pane.add(lsektion, c);
- 
-        c.gridx = 1;
-        c.gridy = 1;
-        pane.add(lregal, c);
+
 
    
-        c.gridx = 2;
+        c.gridx = 0;
         c.gridy = 1;
         pane.add(lplatz, c);
         
         c.gridx = 0;
-        c.gridy = 2;
-        pane.add(tasektion, c);
-        
-        c.gridx = 1;
-        c.gridy = 2;
-        pane.add(taregal, c);
-        
-        c.gridx = 2;
         c.gridy = 2;
         pane.add(taplatz, c);
         

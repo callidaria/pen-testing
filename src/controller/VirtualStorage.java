@@ -3,20 +3,22 @@ package controller;
 import java.util.ArrayList;
 
 import database.Database;
+import model.Category;
 import model.InventoryEntry;
 import model.Product;
 
 public class VirtualStorage {
-	ArrayList<InventoryEntry> invEntry;
+	ArrayList<InventoryEntry> inventoryEntries;
+	ArrayList<Category> categories;
 	
 	public VirtualStorage() {
 		loadVirtualStorage();
 	}
 	// optimize: delete from list??
 	public InventoryEntry getEntryByUID(int id) {
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getUID()==id)
-				return invEntry.get(i);
+		for (int i=0;i<inventoryEntries.size();i++) {
+			if (inventoryEntries.get(i).getUID()==id)
+				return inventoryEntries.get(i);
 		} return null;
 	}
 	//TODO : levinson search
@@ -27,7 +29,8 @@ public class VirtualStorage {
 		return setAmount(id,nVal);
 	}
 	public void loadVirtualStorage() {
-		invEntry = Database.retrieveInventoryEntries();
+		categories = Database.retrieveCategories();
+		inventoryEntries = Database.retrieveInventoryEntriesWithCategory(categories);
 	}
 	//TODO : errorcodes
 	public void addProduct(int UID, String name, int count, int weight, int prize, int categoryID) throws Exception {
@@ -43,8 +46,8 @@ public class VirtualStorage {
 	}
 	//TODO : cathegory functions
 	public int setName(int id,String name) throws Exception {
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getProduct().getName().equals(name))
+		for (int i=0;i<inventoryEntries.size();i++) {
+			if (inventoryEntries.get(i).getProduct().getName().equals(name))
 				return -1;
 		}
 		Database.editAttributeOfInventoryEntry(id,"name",name);
@@ -71,5 +74,5 @@ public class VirtualStorage {
 	}
 	//TODO : shelf and place setters
 	
-	public ArrayList<InventoryEntry> getAllEntries() { return invEntry; }
+	public ArrayList<InventoryEntry> getAllEntries() { return inventoryEntries; }
 }

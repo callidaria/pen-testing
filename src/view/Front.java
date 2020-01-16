@@ -1,5 +1,6 @@
 package view;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -7,13 +8,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 
 import controller.*;
 import model.InventoryEntry;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -31,13 +35,13 @@ public class Front extends JFrame {
 	{	
 		//GUI
 		setTitle("Bestandsübersicht");
-		setSize(500,600);
+		setSize(1280,720);
 		setLocationRelativeTo(null);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		
 		//Button
-		JButton button = new JButton ("New Article");
+		JButton button = new JButton ("Neuen Inventareintrag erstellen");
 		button.addActionListener(new ActionListener() { 
 		
 			@Override
@@ -53,23 +57,48 @@ public class Front extends JFrame {
 		JLabel suchen = new JLabel("Suchen:");
 		
 		//Textarea
-		JTextArea ta = new JTextArea(1,5);
+		JTextArea ta = new JTextArea(1,50);
 		
 		//Table
 		String[] columnNames = {"ID",
 				"Produktname",
                 "Preis",
                 "Gewicht",
-                "Anzahl"};
+                "Anzahl",
+                "Kategorie"};
 		
 		VirtualStorage vs = new VirtualStorage();
-        InventoryEntry ie = vs.getAllEntries().get(0);
-        Object[][] data = {ie.toObjectArray()}; 
-		
-		JTable table = new JTable(data, columnNames);
+        ArrayList <InventoryEntry> ie = vs.getAllEntries();
+        
+        
+        ArrayList<Object[]> arrayList = new ArrayList<Object[]>();
+        for(int i=0;ie.size()>i;i++) {
+        	arrayList.add(ie.get(i).toObjectArray());
+        	
+        }
+        arrayList.get(0);
+        Object[][] objectArray = new Object[100000][10];
+        for (int i=0;arrayList.size()>i;i++) {
+        	objectArray[i]=arrayList.get(i);
+        }
+        System.out.println(objectArray[0][1]);
+        Object[][] data = objectArray;
+        
+		JTable table = new JTable(data, columnNames) {
+			/** Verhindert das Zellen bearbeitbar sind.
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public boolean isCellEditable(int row, int column) {                
+	            return false;               
+			};
+		};
 		
 		JScrollPane scrollPane = new JScrollPane(table);
+		//scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		table.setFillsViewportHeight(true);
+		table.setRowHeight(26);
 		
 		table.addMouseListener(new MouseAdapter(){
 			 public void mousePressed(MouseEvent mouseEvent) {
@@ -77,7 +106,10 @@ public class Front extends JFrame {
 			        Point point = mouseEvent.getPoint();
 			        int row = table.rowAtPoint(point);
 			        if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-			        	ArticleView article = new ArticleView();
+			        	int column = 0;
+			        	int UID = Integer.parseInt((String) table.getValueAt(row, column));
+			        	System.out.println("Select UID:"+UID);
+			        	ArticleView article = new ArticleView(UID);
 						article.setVisible(true);
 			        }
 			    }	
@@ -89,7 +121,7 @@ public class Front extends JFrame {
 		//Menubar
 		JMenuBar menu = new JMenuBar();
 		JMenu datei = new JMenu("Menü");
-		JMenu submenu = new JMenu("Submenü");
+		//JMenu submenu = new JMenu("Submenü");
 		JMenuItem category = new JMenuItem("Kategorien");
 		JMenuItem zwei = new JMenuItem("Punkt 2");
 		category.addActionListener(new ActionListener() { 
@@ -112,23 +144,33 @@ public class Front extends JFrame {
 		});
 		
 		
-		submenu.add(zwei);
+		//submenu.add(zwei);
 		datei.add(category);
-		datei.addSeparator();
-		datei.add(submenu);
+		//datei.addSeparator();
+		//datei.add(submenu);
 		menu.add(datei);
 		setJMenuBar (menu);
 		
 		
 		//Layout
-		Container pane = getContentPane();
-		pane.setLayout(new FlowLayout());
+		Container container = getContentPane();
+		container.setLayout(new BorderLayout());
 	
-		pane.add(button);
-		pane.add(suchen);
-		pane.add(ta);
-		pane.add(such);
-		pane.add(scrollPane);
+		
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new FlowLayout());
+		topPanel.add(button);
+		topPanel.add(suchen);
+		topPanel.add(ta);
+		topPanel.add(such);
+		
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setLayout(new FlowLayout());
+		bottomPanel.add(button);
+		
+		container.add(topPanel,BorderLayout.PAGE_START);
+		container.add(scrollPane,BorderLayout.CENTER);
+		container.add(bottomPanel,BorderLayout.PAGE_END);
 		
 	}
 	
