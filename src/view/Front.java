@@ -19,6 +19,7 @@ import model.InventoryEntry;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Point;
@@ -57,7 +58,7 @@ public class Front extends JFrame {
 		JLabel suchen = new JLabel("Suchen:");
 		
 		//Textarea
-		JTextArea ta = new JTextArea(1,50);
+		JTextArea ta = new JTextArea(1,40);
 		
 		//Table
 		String[] columnNames = {"ID",
@@ -77,7 +78,7 @@ public class Front extends JFrame {
         	
         }
         arrayList.get(0);
-        Object[][] objectArray = new Object[100000][10];
+        Object[][] objectArray = new Object[ie.size()+10][10];
         for (int i=0;arrayList.size()>i;i++) {
         	objectArray[i]=arrayList.get(i);
         }
@@ -154,8 +155,9 @@ public class Front extends JFrame {
 		
 		//Layout
 		Container container = getContentPane();
+		
 		container.setLayout(new BorderLayout());
-	
+		container.setPreferredSize(new Dimension(1280,720));
 		
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new FlowLayout());
@@ -164,12 +166,20 @@ public class Front extends JFrame {
 		topPanel.add(ta);
 		topPanel.add(such);
 		
+		JPanel rightPanel = new JPanel();
+		rightPanel.setPreferredSize(new Dimension(100, 100));
+		
+		JPanel leftPanel = new JPanel();
+		leftPanel.setPreferredSize(new Dimension(100, 100));
+		
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new FlowLayout());
 		bottomPanel.add(button);
 		
 		container.add(topPanel,BorderLayout.PAGE_START);
+		container.add(leftPanel,BorderLayout.LINE_START);
 		container.add(scrollPane,BorderLayout.CENTER);
+		container.add(rightPanel,BorderLayout.LINE_END);
 		container.add(bottomPanel,BorderLayout.PAGE_END);
 		
 	}
@@ -180,6 +190,7 @@ public class Front extends JFrame {
 			@Override
 			public void run() {
 				Front m = new Front();
+				m.setMinimumSize(new Dimension(600, 200));
 				m.setVisible(true);
 			}
 		});
