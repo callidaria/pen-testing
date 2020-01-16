@@ -1,9 +1,12 @@
-import javax.swing.text.View;
+import controller.VirtualStorage;
 
 public class Main {
 	public static void main(String[] args) {
-		//new DatabaseExamples();
-		System.out.println("\n---END OF EXAMPLE---\n");
-		new view.Main();
-	}	
+		VirtualStorage vs = new VirtualStorage();
+		for(int i=0;i<vs.getAllEntries().size();i++)
+			System.out.println(vs.getAllEntries().get(i));
+		vs.filterByID(10500, 10599);
+		for(int i=0;i<vs.getAllEntries().size();i++)
+			System.out.println(vs.getAllEntries().get(i));
+	}
 }
