@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 public class NewArticleView extends JFrame {
 	
 	private InventoryView inventoryView;
+	private VirtualStorage vs;
 
 	public NewArticleView() {
 		
@@ -158,6 +159,9 @@ public class NewArticleView extends JFrame {
 
 	public void setFrameVisible(boolean b) {
 		setVisible(b);
+	}
+	public void setVirtualStorage(VirtualStorage vs) {
+		this.vs = vs;
 	}
 	
 }

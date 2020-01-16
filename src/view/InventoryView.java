@@ -13,8 +13,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+
+import org.xml.sax.SAXException;
 
 import controller.*;
+import database.Database;
 import model.InventoryEntry;
 
 import java.awt.BorderLayout;
@@ -35,9 +39,12 @@ public class InventoryView extends JFrame {
 	private NewArticleView newArticleView;
 	private Object[][] data;
 	VirtualStorage vs = new VirtualStorage();
+	private ArticleView articleView;
 
 	public InventoryView()
 	{
+		
+		
 		setContentPane(new JPanel());
 		setTitle("Bestandsübersicht");
 		setSize(1280,720);
@@ -98,11 +105,17 @@ public class InventoryView extends JFrame {
 			        Point point = mouseEvent.getPoint();
 			        int row = table.rowAtPoint(point);
 			        if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-			        	int column = 0;
-			        	int UID = Integer.parseInt((String) table.getValueAt(row, column));
-			        	System.out.println("Select UID:"+UID);
-			        	ArticleView article = new ArticleView(UID);
-						article.setVisible(true);
+			        	SwingUtilities.invokeLater(new Runnable() {
+			                @Override
+			                public void run() {
+			                	int column = 0;
+					        	int UID = Integer.parseInt((String) table.getValueAt(row, column));
+					        	System.out.println("Select UID:"+UID);
+					        	articleView.setVisible(true);
+								articleView.ShowArticleView(UID);
+			                }
+			            });
+			        	
 			        }
 			    }	
 		});
@@ -111,12 +124,12 @@ public class InventoryView extends JFrame {
 		
 		
 		//Menubar
-		JMenuBar menu = new JMenuBar();
-		JMenu datei = new JMenu("Menü");
+		JMenuBar menuBar = new JMenuBar();
+		JMenu menu = new JMenu("Menü");
 		//JMenu submenu = new JMenu("Submenü");
-		JMenuItem category = new JMenuItem("Kategorien");
-		JMenuItem zwei = new JMenuItem("Punkt 2");
-		category.addActionListener(new ActionListener() { 
+		JMenuItem menuCategory = new JMenuItem("Kategorien");
+		JMenuItem menuValidate = new JMenuItem("DB Validieren");
+		menuCategory.addActionListener(new ActionListener() { 
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -126,22 +139,29 @@ public class InventoryView extends JFrame {
 			
 		});
 		
-		zwei.addActionListener(new ActionListener() { 
+		menuValidate.addActionListener(new ActionListener() { 
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(),"Hier könnte ihre Nachricht stehen","�berschrift", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(getContentPane(),"Das Validieren ist für den Administrator gemacht. Achtung! Das Validieren der Datenbank kann bei einem großen Datensatz sehr lange dauern. Wir reden von ca einer Stunde bei einer vollen Datenbank!","Datenbankvalidierung gestartet", JOptionPane.INFORMATION_MESSAGE);
+				boolean valide=false;
+				try {
+					valide = Database.validate();
+				} catch (SAXException e1) {
+					JOptionPane.showMessageDialog(getContentPane(),"Datenbank nicht valide und eventuell korrumpiert. Bitte wenden Sie sich an einen Admin. Fehlermeldung:\n"+e1.getMessage(),"DB Validierungsstatus", JOptionPane.INFORMATION_MESSAGE);
+				}
+				JOptionPane.showMessageDialog(getContentPane(),"Datenbank Validierungsstatus: "+valide,"DB Validierungsstatus", JOptionPane.INFORMATION_MESSAGE);
 			}
 			
 		});
 		
 		
 		//submenu.add(zwei);
-		datei.add(category);
-		//datei.addSeparator();
-		//datei.add(submenu);
-		menu.add(datei);
-		setJMenuBar (menu);
+		menu.add(menuCategory);
+		menu.addSeparator();
+		menu.add(menuValidate);
+		menuBar.add(menu);
+		setJMenuBar (menuBar);
 		
 		
 		//Layout
@@ -183,6 +203,14 @@ public class InventoryView extends JFrame {
 	public void setNewArticleView(NewArticleView articleView) {
 		newArticleView = articleView;
 		System.out.println("Connected Frames");
+	}
+	
+	public void setVirtualStorage(VirtualStorage vs) {
+		this.vs = vs;
+	}
+
+	public void setArticleView(ArticleView articleView) {
+		this.articleView = articleView;
 	}
 	
 	

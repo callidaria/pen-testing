@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,23 +25,28 @@ public class ArticleView extends JFrame {
 	final static boolean shouldFill = true;
 	final static boolean shouldWeightX = true;
 	final static boolean RIGHT_TO_LEFT = false;
+	private VirtualStorage vs;
 	
-	public ArticleView(int UID) {
-		VirtualStorage vs = new VirtualStorage();
+	public ArticleView() {
+		
+		
+	}
+	
+	public void ShowArticleView(int UID) {
+		setContentPane(new JPanel());
 		InventoryEntry thisArticle = vs.getEntryByUID(UID);
 		
 		
 		
 		//GUI
 		setTitle(thisArticle.product.getName());
-		setSize(350,280);
+		setSize(480,360);
 		setLocationRelativeTo(null);
 		
 		
 		
 		//TextArea
-		JTextArea tasektion = new JTextArea(Integer.toString(thisArticle.getShelfSection()),1,5);
-		JTextArea taplatz = new JTextArea(Integer.toString(thisArticle.getShelfPlace()),1,5);
+		JTextArea taplatz = new JTextArea(thisArticle.getStringifiedUID(),1,20);
 		JTextArea taanzahl = new JTextArea(Integer.toString(thisArticle.product.getCount()),1,5);
 		JTextArea taadd = new JTextArea("0",1,5);
 		JTextArea takategorie = new JTextArea(Integer.toString(thisArticle.product.getCategoryID()),1,5);
@@ -51,18 +57,17 @@ public class ArticleView extends JFrame {
 		
 		
 		//Label
-		JLabel lgewicht = new JLabel("Gewicht:");
+		JLabel lgewicht = new JLabel("Gewicht in 1/10 gramm:");
 		JLabel lpreis = new JLabel("Preis:");
 		JLabel lkategorie = new JLabel("Kategorie:");
-		JLabel lsektion = new JLabel("Sektion:");
-		JLabel lplatz = new JLabel("Platznummer:     ");
-		JLabel lanzahl = new JLabel("Anzahl:  ");
-		JLabel ladd = new JLabel("Add/Delete:");
+		JLabel lplatz = new JLabel("Platznummer:");
+		JLabel lanzahl = new JLabel("Anzahl:");
+		JLabel ladd = new JLabel("+/˗:");
 		JLabel product = new JLabel("Name:");
 		
 		//button
-		JButton badd = new JButton ("Add");
-		JButton bsubtract = new JButton ("Subtract");
+		JButton badd = new JButton ("＋");
+		JButton bsubtract = new JButton ("˗");
 		JButton bdelete = new JButton ("Artikel Löschen");
 		JButton bsave = new JButton ("Änderungen Speichern");
 		
@@ -72,10 +77,13 @@ public class ArticleView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					vs.deleteProduct(UID);
+					
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}				
+				}
+				JOptionPane.showMessageDialog(getContentPane(),"Hier könnte ihre Nachricht stehen","Artikel gelöscht", JOptionPane.INFORMATION_MESSAGE);
+				setVisible(false);
 			}
 			
 			
@@ -107,6 +115,7 @@ public class ArticleView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Date start = new Date();
 				String eins = taadd.getText();
 				String zwei = taanzahl.getText();
 				int add = Integer.parseInt(eins);
@@ -116,11 +125,18 @@ public class ArticleView extends JFrame {
 				taadd.setText("0");
 				taanzahl.setText(Integer.toString(sum));
 				try {
+					
+
 					vs.changeAmountBy(UID, -add);
+					
+					
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				Date end = new Date();
+				System.out.println("Time:");
+				System.out.println(end.getTime()-start.getTime());
 			}
 			
 		});
@@ -129,8 +145,6 @@ public class ArticleView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String ssektion = tasektion.getText();
-				int sektion = Integer.parseInt(ssektion);
 				
 				String splatz = taplatz.getText();
 				int platz = Integer.parseInt(splatz);
@@ -222,13 +236,6 @@ public class ArticleView extends JFrame {
         c.gridy = 2;
         pane.add(taplatz, c);
         
-        c.gridx = 2;
-        c.gridy = 1;
-        pane.add(lsektion, c);
-        
-        c.gridx = 2;
-        c.gridy = 2;
-        pane.add(tasektion, c);
         
        
         c.gridx = 0;
@@ -304,6 +311,10 @@ public class ArticleView extends JFrame {
         c.gridx = 0;
         c.gridy = 8;
         pane.add(bsave, c);
+        setContentPane(pane);
+	}
+	public void setVirtualStorage(VirtualStorage vs) {
+		this.vs = vs;
 		
 	}
 }

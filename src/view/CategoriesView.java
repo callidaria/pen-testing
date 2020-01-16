@@ -13,6 +13,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
+import controller.VirtualStorage;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -28,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class CategoriesView extends JFrame {
+	private VirtualStorage vs;
 	public CategoriesView() {
 		//GUI
 		setTitle("Kategorie");
@@ -133,6 +136,8 @@ public class CategoriesView extends JFrame {
 		
 		
 	}
-	
+	public void setVirtualStorage(VirtualStorage vs) {
+		this.vs = vs;
+	}
 	
 }
