@@ -9,24 +9,29 @@ package model;
  */
 public class InventoryEntry{
 
-	//Die ersten 3 Zahlen der Platznummer
+	/** Die Regalnummer. Die ersten 3 Zahlen der Platznummer.
+	 */
 	private Integer shelfSection;
 	
-	//Die letzten 3 Zahlen der Platznummer
+	/**
+	 * Die Regalplatznummer. Die letzten 3 Zahlen der Platznummer.
+	 */
 	private Integer shelfPlace;
 	
-	//Das Produkt, welches an diesem Platz gelagert wird.
+	/**
+	 * Das Produkt, welches an dem Platz diese EintragesS gelagert wird.
+	 */
 	public Product product;
 	
-	/**
+	/**Getter/Setter-Methode
 	 * 
-	 * @return die UID (gesamte Platznummer)
+	 * @return die UID (gesamte Platznummer) ohne führende Nullen.
 	 */
 	public int getUID() {
 		return InventoryEntry.sectionPlaceToUID(shelfSection, shelfPlace);
 	}
 	
-	/**
+	/**Damit wir Zahlen mit führenden Nullen darstellen können, gibt es diese getStrigifiedUID Methode.
 	 * 
 	 * @return die UID mit führenden Nullen (z.B. 001001)
 	 */
@@ -42,7 +47,7 @@ public class InventoryEntry{
 		return area+place;
 	}
 	
-	/**
+	/**Getter/Setter-Methode
 	 * 
 	 * @return die ersten 3 Zahlen der gesamten Platznummer aka. Regalnummer.
 	 */
@@ -50,7 +55,8 @@ public class InventoryEntry{
 		return shelfSection;
 	}
 	
-	/**Weißt shelfSection neu zu.
+	/**Getter/Setter-Methode
+	 * Weist shelfSection neu zu.
 	 * 
 	 * @param shelfSection
 	 */
@@ -66,7 +72,7 @@ public class InventoryEntry{
 		return shelfPlace;
 	}
 	
-	/**Weißt shelfPlace neu zu.
+	/**Weist shelfPlace neu zu.
 	 * 
 	 * @param shelfPlace
 	 */
@@ -74,7 +80,8 @@ public class InventoryEntry{
 		this.shelfPlace = shelfPlace;
 	}
 	
-	/**Optional, da Produkt public ist.
+	/**Getter/Setter-Methode
+	 * Optional, da Produkt public ist.
 	 * 
 	 * @return das zugewiesen Produkt
 	 */
@@ -82,7 +89,8 @@ public class InventoryEntry{
 		return product;
 	}
 	
-	/**
+	/**Getter/Setter-Methode
+	 * Optional, da Produkt public ist.
 	 * 
 	 * @param product, wenn dem Inventareintrag ein anderes Produkt zugeordnet werden soll.
 	 */
@@ -99,7 +107,7 @@ public class InventoryEntry{
 		//StringUID
 		String suid = Integer.toString(uid);
 		while (suid.length()<6) {
-			suid="0"+uid;
+			suid="0"+suid;
 		}
 		return suid;
 	}
@@ -164,18 +172,26 @@ public class InventoryEntry{
 		String stringUID = Integer.toString(UID);
 		
 		int stringLength = stringUID.length();
+		String section;
+		String place;
 		
-		//Die gelieferte UID, sollte mindestens 4 Zahlen (z.B. "00"1000) haben und nicht mehr als 6 Zeichen
-		if(stringLength>6||stringLength<4){
-			return new int[] {-1,-1};
+		//Die gelieferte UID, sollte mindestens 0 sein und nicht mehr als 999999 Zeichen
+		if(UID>999999||UID<0) {
+			return new int[] {-1,-1};	
 		}
-		
-		//Alle Zeichen vor den letzten 3.
-		String section=stringUID.substring(0, stringLength - 3);
-		
-		//Die letzten 3 Zeichen.
-		String place=stringUID.substring(stringLength - 3, stringLength);
-		
+		//Wenn die Zahl weniger als 4 Zeichen hat, dann ist die Regalnummer 0
+		else if(stringLength<4){
+			section = "000";
+			place = stringUID;
+		}
+		//Ansonsten sind die letzten 3 Zeichen, die Regalplatznummer und alles davor die Regalnummer
+		else {
+			//Alle Zeichen vor den letzten 3.
+			section=stringUID.substring(0, stringLength - 3);
+			
+			//Die letzten 3 Zeichen.
+			place=stringUID.substring(stringLength - 3, stringLength);
+		}		
 		//System.out.println("uidToSectionPlace("+UID+"): "+section+"|"+place);
 		//Regalnummer
 		sectionPlace[0]=Integer.parseInt(section);
@@ -193,19 +209,22 @@ public class InventoryEntry{
 	 */
 	static public int sectionPlaceToUID(int section, int place) {
 		String strPlace = Integer.toString(place);
-		//Unsere Lösung für führende Nullen, verhindert dass die Regalnummer 0 ist.
-		if(section<1||place<0) {
+		//Regalnummer und Regalplatznummer müssen positiv und kleiner als 1000 sein.
+		if(section<0||place<0||section>999||place>999) {
 			return -1;
 		}
 		while (strPlace.length()<3) {
 			strPlace="0"+strPlace;
 		}
+		//StringID
 		String sid = ""+section+strPlace;
+		//IntegerID
 		int iid = Integer.parseInt(sid);
 		return iid;
 	}
 	
-	/**
+	/**Eine toString() Methode um ein Inventareintrag per print auszugeben.
+	 * 
 	 * @return den Inventareintrag als lesbarer Stirng für die Konsole.
 	 */
 	public String toString() {
@@ -234,7 +253,7 @@ public class InventoryEntry{
 		
     }
 	
-	/**
+	/** Gibt den Inventareintrag als Object Array zurück. Insbesonders für das Frontend wichtig, z.B. Daten für eine JTable.
 	 * 
 	 * @return Inventareintrag als Object Array, fürs Frontend eventuell.
 	 */
