@@ -137,24 +137,39 @@ public class ArticleView extends JFrame {
 				
 				String sanzahl = taanzahl.getText();
 				int anzahl = Integer.parseInt(sanzahl);
-				try {vs.setAmount(UID, anzahl);} catch (Exception e2) {
+				try {
+					vs.setAmount(UID, anzahl);
+					if (anzahl<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Anzahl eingeben","", JOptionPane.INFORMATION_MESSAGE);
+				} 
+				catch (Exception e2) 
+				{
 					// TODO Auto-generated catch block
-					e2.printStackTrace();}
-				
+					e2.printStackTrace();
+				}
 				
 				String kategorie = takategorie.getText();
 				
 				String spreis = tapreis.getText();
 				int preis = Integer.parseInt(spreis);
-				try {vs.setPrize(UID, preis);} catch (Exception e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();}
+				try {
+					vs.setPrize(UID, preis);
+					if (preis<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Preis eingeben","", JOptionPane.INFORMATION_MESSAGE);
+				} 
+				catch (Exception e2) {
+			
+					e2.printStackTrace();
+				}
 				
 				String sgewicht = tagewicht.getText();
 				int gewicht = Integer.parseInt(sgewicht);
-				try {vs.setWeight(UID, gewicht);} catch (Exception e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();}
+				try {
+					vs.setWeight(UID, gewicht);
+					if (gewicht < 0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Gewicht eingeben","", JOptionPane.INFORMATION_MESSAGE); 
+				} 
+				catch (Exception e2) {
+					JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben","", JOptionPane.INFORMATION_MESSAGE);
+					e2.printStackTrace();
+				}
 				
 				String name =taproduct.getText();
 				try {vs.setName(UID, name);} catch (Exception e1) {
