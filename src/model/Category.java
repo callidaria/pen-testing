@@ -33,5 +33,15 @@ public class Category {
 		}
 		return true;
 	}
+	public Object[] toObjectArray() {
+		if (!this.validate()) {
+			return new  Object[] {null,null};
+		}
+		Object[] returnArray = {
+				this.getUID(),
+				this.getName(),
+				};
+		return returnArray;
+	}
 	
 }
