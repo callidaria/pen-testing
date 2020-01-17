@@ -1,5 +1,7 @@
 package view;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -13,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -68,8 +71,8 @@ public class InventoryView extends JFrame {
 		
 		
 		//Button
-		JButton button = new JButton ("Neuen Inventareintrag erstellen");
-		button.addActionListener(new ActionListener() { 
+		JButton bNewIE = new JButton ("Neuen Inventareintrag erstellen");
+		bNewIE.addActionListener(new ActionListener() { 
 		
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -78,29 +81,57 @@ public class InventoryView extends JFrame {
 			}
 		});
 		
-		JButton such = new JButton ("Los!");
-		JButton refresh = new JButton ("Aktualisieren");
+		JButton bSearch = new JButton ("Los!");
+		JButton bRefresh = new JButton ("Aktualisieren");
 		//Label
-		JLabel suchen = new JLabel("Suchen:");
+		JLabel lSearch = new JLabel("Suchen:");
 		
 		//Textarea
-		JTextArea ta = new JTextArea(1,40);
+		JTextField taSearch = new JTextField(40);
+		taSearch.setPreferredSize(new Dimension(40,30));
 	
+		Action startSearch = new AbstractAction()
+		{
+		    @Override
+		    public void actionPerformed(ActionEvent e)
+		    {
+		        System.out.println("Search ("+selectedSearch+"):"+taSearch.getText());
+		        //vs.search(mode,string);
+		        refresh();
+		    }
+		};
 		
-
+		taSearch.addActionListener(startSearch);
+		bSearch.addActionListener(startSearch);
 		
 		
         
         data = vs.getInventoryEntryObjectArray();
         
        tableModel = new DefaultTableModel(data, columnNames) {
-            @Override
+		private static final long serialVersionUID = 1L;
+			@Override
             public boolean isCellEditable(int row, int column)
             {
                 return false;
             }
+            public Class<?> getColumnClass( int column ) {
+                switch( column ){
+                    case 0: return String.class;
+                    case 1: return String.class;
+                    case 2: return Integer.class;
+                    case 3: return Integer.class;
+                    case 4: return Integer.class;
+                    case 5: return String.class;
+                    default: return Object.class;
+                }
+            }
+            
         };
 		table = new JTable(tableModel);
+		table.setAutoCreateRowSorter(true);
+		
+		table.getTableHeader().setReorderingAllowed(false);
 		//table.removeColumn(table.getColumnModel().getColumn(5));
 		JScrollPane scrollPane = new JScrollPane(table);
 		//scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -112,11 +143,12 @@ public class InventoryView extends JFrame {
 			        JTable table =(JTable) mouseEvent.getSource();
 			        Point point = mouseEvent.getPoint();
 			        int row = table.rowAtPoint(point);
-			        if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+			        int column = 0;
+			        if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1 && table.getValueAt(row, column)!=null) {
 			        	SwingUtilities.invokeLater(new Runnable() {
 			                @Override
 			                public void run() {
-			                	int column = 0;
+			                	
 					        	int UID = Integer.parseInt((String) table.getValueAt(row, column));
 					        	System.out.println("Select UID:"+UID);
 					        	articleView.setVisible(true);
@@ -171,7 +203,7 @@ public class InventoryView extends JFrame {
 			
 		});
 		
-		refresh.addActionListener(new ActionListener() {
+		bRefresh.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -195,15 +227,16 @@ public class InventoryView extends JFrame {
 		
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new FlowLayout());
+		topPanel.add(lSearch);
 		topPanel.add(searchSelector);
-		topPanel.add(button);
-		topPanel.add(suchen);
-		topPanel.add(ta);
-		topPanel.add(such);
+		topPanel.add(bNewIE);
+		
+		topPanel.add(taSearch);
+		topPanel.add(bSearch);
 		
 		JPanel rightPanel = new JPanel();
 		rightPanel.setPreferredSize(new Dimension(100, 100));
-		rightPanel.add(refresh);
+		rightPanel.add(bRefresh);
 		
 		JPanel leftPanel = new JPanel();
 		leftPanel.setPreferredSize(new Dimension(100, 100));
@@ -211,7 +244,7 @@ public class InventoryView extends JFrame {
 		
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new FlowLayout());
-		bottomPanel.add(button);
+		bottomPanel.add(bNewIE);
 		
 		container.add(topPanel,BorderLayout.PAGE_START);
 		container.add(leftPanel,BorderLayout.LINE_START);
@@ -221,6 +254,7 @@ public class InventoryView extends JFrame {
 	}
 	
 	public void refresh() {
+		//vs.loadVirtualStorage();
 	 	tableModel.setDataVector(vs.getInventoryEntryObjectArray(),columnNames);
 		tableModel.fireTableDataChanged();
 		return;

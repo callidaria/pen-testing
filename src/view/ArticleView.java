@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import controller.VirtualStorage;
 import model.Category;
@@ -53,9 +54,9 @@ public class ArticleView extends JFrame {
 		
 		
 		//TextArea
-		JTextArea taplatz = new JTextArea(thisArticle.getStringifiedUID(),1,20);
-		JTextArea taanzahl = new JTextArea(Integer.toString(thisArticle.product.getCount()),1,5);
-		JTextArea taadd = new JTextArea("0",1,5);
+		JTextField taplatz = new JTextField(thisArticle.getStringifiedUID(),20);
+		JTextField taanzahl = new JTextField(Integer.toString(thisArticle.product.getCount()),5);
+		JTextField taadd = new JTextField("0",5);
 		
 		SelectionItem[] searchSelectables = categoriesToItem();
 
@@ -68,9 +69,9 @@ public class ArticleView extends JFrame {
 				System.out.println(item.getId()+":"+item.getName());
 			}
 		});
-		JTextArea tapreis = new JTextArea(Integer.toString(thisArticle.product.getPrize()),1,5);
-		JTextArea tagewicht = new JTextArea(Integer.toString(thisArticle.product.getWeight()),1,5);
-		JTextArea taproduct = new JTextArea(thisArticle.product.getName(),1,5);
+		JTextField tapreis = new JTextField(Integer.toString(thisArticle.product.getPrize()),5);
+		JTextField tagewicht = new JTextField(Integer.toString(thisArticle.product.getWeight()),5);
+		JTextField taproduct = new JTextField(thisArticle.product.getName(),5);
 		
 		
 		
@@ -183,18 +184,18 @@ public class ArticleView extends JFrame {
 				
 				InventoryEntry editedIE = new InventoryEntry(uid, new Product(name, anzahl, gewicht, preis, kategorie_id));
 				
-				if (anzahl<=0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Anzahl eingeben","", JOptionPane.INFORMATION_MESSAGE);
+				if (anzahl<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Anzahl eingeben","", JOptionPane.INFORMATION_MESSAGE);
 			
 			
 			
 			
 			
-				if (preis<=0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Preis eingeben","", JOptionPane.INFORMATION_MESSAGE);
+				if (preis<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Preis eingeben","", JOptionPane.INFORMATION_MESSAGE);
 			
 			
 			
 			
-				if (gewicht <= 0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Gewicht eingeben","", JOptionPane.INFORMATION_MESSAGE); 
+				if (gewicht < 0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Gewicht eingeben","", JOptionPane.INFORMATION_MESSAGE); 
 				try {
 					vs.replaceInventoryEntry(thisArticle.getUID(),editedIE);
 					int close = JOptionPane.showConfirmDialog(getContentPane(), "Änderung gespeichert.\n Schließen?","Änderung gespeichert",JOptionPane.YES_NO_OPTION);

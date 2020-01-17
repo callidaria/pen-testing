@@ -58,14 +58,16 @@ public class CategoryView extends JFrame {
 		taname.setText(thisCategory.getName());
 		
 		//Button
-		JButton button = new JButton ("Save");
-		button.addActionListener(new ActionListener() { 
+		JButton bSave = new JButton ("Speichern");
+		bSave.addActionListener(new ActionListener() { 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = taname.getText();
 		        System.out.println("contents = " + name);
 			}
 		});
+		
+		JButton bDelete = new JButton ("Löschen");
 		
 		//Layout
 		
@@ -92,9 +94,13 @@ public class CategoryView extends JFrame {
         c.gridy = 2;
 		pane.add(taname,c);
 		
+		c.gridx = 0;
+        c.gridy = 4;
+		pane.add(bDelete,c);
+		
 		c.gridx = 1;
         c.gridy = 4;
-		pane.add(button,c);
+		pane.add(bSave,c);
 	}
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;

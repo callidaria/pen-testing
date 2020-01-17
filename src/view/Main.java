@@ -25,6 +25,7 @@ public class Main {
 		inventoryView.setVirtualStorage(MainVirtualStorage);
 		articleView.setVirtualStorage(MainVirtualStorage);
 		categoriesView.setVirtualStorage(MainVirtualStorage);
+		newArticleView.setVirtualStorage(MainVirtualStorage);
 		
 		loadingView.setInventoryView(inventoryView);
 		inventoryView.setNewArticleView(newArticleView);

@@ -10,7 +10,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import controller.VirtualStorage;
 
@@ -22,6 +22,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -43,44 +44,49 @@ public class NewArticleView extends JFrame {
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		//Textarea
-		JTextArea tkategorie = new JTextArea(1,5);
-		JTextArea tprodukt = new JTextArea(1,5);
-		JTextArea tanzahl = new JTextArea(1,5);
-		JTextArea tgewicht = new JTextArea(1,5);
-		JTextArea tpreis = new JTextArea(1,5);
-		JTextArea tid = new JTextArea(1,5);
+		JTextField tKategorie = new JTextField(20);
+		JTextField tName = new JTextField(20);
+		JTextField tAnzahl = new JTextField(20);
+		JTextField tGewicht = new JTextField(20);
+		JTextField tPreis = new JTextField(20);
+		JTextField tUid = new JTextField(20);
 		
 		//Label
-		JLabel lkategorie = new JLabel("KategorieID");
-		JLabel lprodukt = new JLabel("Produktname");
-		JLabel lanzahl = new JLabel("Anzahl");
-		JLabel lgewicht = new JLabel("Gewicht");
-		JLabel lpreis = new JLabel("Preis");
-		JLabel lid = new JLabel("ID");
+		JLabel lKategorie = new JLabel("KategorieID:");
+		JLabel lName = new JLabel("Produktname:");
+		JLabel lAnzahl = new JLabel("Anzahl:");
+		JLabel lGewicht = new JLabel("Gewicht:");
+		JLabel lPreis = new JLabel("Preis:");
+		JLabel lUid = new JLabel("ID:");
 		
 		//Button
-		JButton button = new JButton ("Hinzufügen");
-		button.addActionListener(new ActionListener() { 
+		JButton bAdd = new JButton ("Hinzufügen");
+		bAdd.addActionListener(new ActionListener() { 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String skategorie = tkategorie.getText();
-				String produkt = tprodukt.getText();
-				String sanzahl = tanzahl.getText();
-				String sgewicht = tgewicht.getText();
-				String spreis = tpreis.getText();
-				String sid = tid.getText();
+				String skategorie = tKategorie.getText();
+				String produkt = tName.getText();
+				String sanzahl = tAnzahl.getText();
+				String sgewicht = tGewicht.getText();
+				String spreis = tPreis.getText();
+				String sid = tUid.getText();
 				
 				int anzahl = Integer.parseInt(sanzahl);
 				int gewicht = Integer.parseInt(sgewicht);
 				int preis = Integer.parseInt(spreis);
 				int id = Integer.parseInt(sid);
 				int kategorie = Integer.parseInt(skategorie);
-				
-				VirtualStorage vs = new VirtualStorage();
                 try {
-					vs.addProduct(id, produkt, anzahl, gewicht, preis, kategorie);
-					inventoryView.refresh();
-					setVisible(false);
+					int adding=vs.addProduct(id, produkt, anzahl, gewicht, preis, kategorie);
+					if(adding==0) {
+						JOptionPane.showMessageDialog(getContentPane(),"Erfolgreich","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
+						inventoryView.refresh();
+						setVisible(false);
+					}else {
+						JOptionPane.showMessageDialog(getContentPane(),"Fehler","Fehler", JOptionPane.INFORMATION_MESSAGE);
+						
+					}
+					
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -96,61 +102,63 @@ public class NewArticleView extends JFrame {
 		
 		pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-       
+        c.insets = new Insets(10,5,0,5);
         c.gridx = 0;
         c.gridy = 0;
-		pane.add(lkategorie,c);
+		pane.add(lKategorie,c);
 		
 		c.gridx = 1;
 	    c.gridy = 0;
-		pane.add(tkategorie,c);
-		
-		c.gridx = 2;
-	    c.gridy = 0;
-		pane.add(lid,c);
-		
-		c.gridx = 3;
-	    c.gridy = 0;
-		pane.add(tid,c);
-		
-		c.gridx = 4;
-	    c.gridy = 0;
-		pane.add(lprodukt,c);
-		
-		c.gridx = 5;
-	    c.gridy = 0;
-		pane.add(tprodukt,c);
+		pane.add(tKategorie,c);
 		
 		c.gridx = 0;
 	    c.gridy = 1;
-		pane.add(lanzahl,c);
+		pane.add(lUid,c);
 		
 		c.gridx = 1;
 	    c.gridy = 1;
-		pane.add(tanzahl,c);
+		pane.add(tUid,c);
 		
-		c.gridx = 2;
-	    c.gridy = 1;
-		pane.add(lgewicht,c);
+		c.gridx = 0;
+	    c.gridy = 2;
+		pane.add(lName,c);
 		
-		c.gridx = 3;
-	    c.gridy = 1;
-		pane.add(tgewicht,c);
+		c.gridx = 1;
+	    c.gridy = 2;
+		pane.add(tName,c);
 		
-		c.gridx = 4;
-	    c.gridy = 1;
-		pane.add(lpreis,c);
+		c.gridx = 0;
+	    c.gridy = 3;
+		pane.add(lAnzahl,c);
 		
-		c.gridx = 5;
-	    c.gridy = 1;
-		pane.add(tpreis,c);
+		c.gridx = 1;
+	    c.gridy = 3;
+		pane.add(tAnzahl,c);
+		
+		c.gridx = 0;
+	    c.gridy = 4;
+		pane.add(lGewicht,c);
+		
+		c.gridx = 1;
+	    c.gridy = 4;
+		pane.add(tGewicht,c);
+		
+		c.gridx = 0;
+	    c.gridy = 5;
+		pane.add(lPreis,c);
+		
+		c.gridx = 1;
+	    c.gridy = 5;
+		pane.add(tPreis,c);
 		
 		c.ipadx=40;
+		c.ipady=5;
 		c.gridwidth = 2;
-		c.gridx = 2;
-	    c.gridy = 2;
-		pane.add(button,c);
-	
+		c.gridx = 1;
+	    c.gridy = 6;
+		pane.add(bAdd,c);
+		
+		pack();
 	}
 
 	public void setInventoryView(InventoryView inventoryView) {

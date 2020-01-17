@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import controller.VirtualStorage;
 
@@ -30,31 +31,25 @@ public class NewCategoryView extends JFrame {
 	private VirtualStorage vs;
 	public NewCategoryView() {
 		//GUI
-		setTitle("New Category");
+		setTitle("Neue Kategorie erstellen");
 		setSize(400,150);
 		setLocationRelativeTo(null);
 				
 				
 				
 		//Label
-		JLabel lid = new JLabel("ID");
-		JLabel lname = new JLabel("Categoryname");
-		JLabel ldesc = new JLabel("Description");
+		JLabel lname = new JLabel("Kategoriename");
 			
 		//Textarea
-		JTextArea taid = new JTextArea(1,5);
-		JTextArea taname = new JTextArea(1,5);
-		JTextArea tadesc = new JTextArea(1,5);
+		JTextField taname = new JTextField(15);
 				
 		//Button
 		JButton button = new JButton ("Save");
 		button.addActionListener(new ActionListener() { 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String id = taid.getText();
 				String name = taname.getText();
-				String desc = tadesc.getText();
-		        System.out.println("contents = " + id + name + desc);
+		        System.out.println("contents = "+ name);
 			}
 		});
 		
@@ -62,12 +57,8 @@ public class NewCategoryView extends JFrame {
 				
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
-		pane.add(lid);
-		pane.add(taid);
 		pane.add(lname);
 		pane.add(taname);
-		pane.add(ldesc);
-		pane.add(tadesc);
 		pane.add(button);
 	
 	}
