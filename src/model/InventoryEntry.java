@@ -38,6 +38,9 @@ public class InventoryEntry{
 	public String getStringifiedUID() {
 		String area = Integer.toString(this.getShelfSection());
 		String place = Integer.toString(this.getShelfPlace());
+		if(shelfSection<0&&shelfPlace<0) {
+			return "-1";
+		}
 		while (area.length()<3) {
 			area="0"+area;
 		}
@@ -111,6 +114,20 @@ public class InventoryEntry{
 		}
 		return suid;
 	}
+	
+	/**Der einzige Konstruktor von Inventareintrag, damit immer Regalnummer, Regalplatznummer und ein Produkt zugewiesen sein muss.
+	 * 
+	 * @param shelfSection Regalnummer
+	 * @param shelfPlace Regalplatznummer
+	 * @param product Produkt, welches an dieser Stelle gelagert wird.
+	 */
+	public InventoryEntry(int UID, Product product) {
+		int [] sectionPlace=InventoryEntry.uidToSectionPlace(UID);
+		this.shelfSection=sectionPlace[0];
+		this.shelfPlace=sectionPlace[1];
+		this.product=product;
+	}
+	
 	
 	/**Der einzige Konstruktor von Inventareintrag, damit immer Regalnummer, Regalplatznummer und ein Produkt zugewiesen sein muss.
 	 * 
@@ -267,6 +284,7 @@ public class InventoryEntry{
 				this.product.getCount(),
 				this.product.getWeight(),
 				this.product.getPrize(),
+				//this.product.category.getUID(),
 				this.product.category.getName()
 				};
 		return returnArray;

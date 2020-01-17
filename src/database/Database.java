@@ -321,64 +321,35 @@ public class Database{
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE){
 		
-		/*
-		if(DB_VALIDATE){,
-			if(!newIE.validate()) {
-				throw new Exception("newInventoryEntry failed validation.");
-			}
-			if(!Database.uidExists(UID)) {
-				throw new Exception("@editInventoryEntry UID doesn't exisit.");
-			}
-			if (newIE.getUID()!=UID) {
-				if(Database.uidExists(newIE.getUID())) {
-					if(force==true) {
-						throw new Exception("@editInventoryEntry newUID is taken.");
-					}
-					else {
-						System.out.println("@editInventoryEntry forced overwrite of "+newIE.getUID());
-					}
-				}
-			}
-			if (Database.nameExists(newIE.product.getName())!=UID && Database.nameExists(newIE.product.getName())!=-1) {
-				throw new Exception("@editInventoryEntry newName is taken.");
-			}
-		}
-		*/
+		Element node;
+		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
+        int section=sectionPlace[0];
+        int place=sectionPlace[1];
+		try {
 
-			Document doc = Database.IE_DOC;
-	
-			Node entries = doc.getFirstChild();
-			NodeList entryList = entries.getChildNodes();
+			node = (Element) Database.xpathNode(Database.IE_DOC,"/entries/entry[@area="+section+" and @place="+place+"]");
+			node.setAttribute("area", Integer.toString(newIE.getShelfSection()));
+			node.setAttribute("place", Integer.toString(newIE.getShelfPlace()));
 			
-	
-			for (int i = 0; i < entryList.getLength(); i++) {
-				
-	           Node node = entryList.item(i);
-	           //Element elNode = (Element) node;
-	           NamedNodeMap attr = node.getAttributes();
-	           
-			   if ("entry".equals(node.getNodeName())) {
-				   int entryUID=Integer.parseInt(attr.getNamedItem("place").getTextContent()+attr.getNamedItem("area").getTextContent());
-				   
-				   if (entryUID == UID) {
-					   NodeList nodeChilds = node.getChildNodes();
-					   for (int n = 0; n < nodeChilds.getLength(); n++) {
-						   Node subNode = nodeChilds.item(n);
-						   if ("name".equals(subNode.getNodeName())) {
-							   subNode.setTextContent(newIE.product.getName());
-							   break;
-						   }
-					   }					   
+			NodeList nodeChilds = node.getChildNodes();
+			
+				for (int i = 0; i < nodeChilds.getLength(); i++) {
+				   Node subNode = nodeChilds.item(i);
+				   if (subNode.getNodeName()=="name") {
+					   
+					   subNode.setTextContent(newIE.product.getName());
 				   }
 			   }
-			}
-	
-			// write the content into xml file			
-			Database.transformInventoryEntries();	
-		   
-		System.out.println("InventoryEntry ("+UID+"): replaced with\n"+newIE);
-	
-		return newIE;
+			
+			
+			Database.transformInventoryEntries();
+			System.out.println("SetAttribute ("+UID+"):"+newIE);
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
+		return newIE; 
 		
 	}
 
@@ -430,11 +401,8 @@ public class Database{
         int section=sectionPlace[0];
         int place=sectionPlace[1];
 		try {
-			Date start = new Date();
-			System.out.println("Start xpath:");
+
 			node = (Element) Database.xpathNode(Database.IE_DOC,"/entries/entry[@area="+section+" and @place="+place+"]");
-			Date end = new Date();
-			System.out.println(end.getTime()-start.getTime());
 			NodeList nodeChilds = node.getChildNodes();
 			if(inElements) {
 				for (int i = 0; i < nodeChilds.getLength(); i++) {
@@ -719,11 +687,7 @@ public class Database{
 	 * @throws IOException
 	 */
 	private static Document buildDocument(String file) throws SAXException, IOException {
-		Date start;
-		Date end;
-		
-		System.out.println("Build Document:");
-			start = new Date();
+
 		File inventoryEntriesFile = new File(DBPATH+file);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
@@ -735,8 +699,6 @@ public class Database{
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
-		end = new Date();
-		System.out.println(end.getTime()-start.getTime());
 		return doc;
 	}
 	

@@ -11,6 +11,7 @@ import model.Product;
 public class VirtualStorage {
 	List<InventoryEntry> invEntry;
 	List<Category> cathEntry;
+	public boolean loaded;
 	
 	public VirtualStorage() {
 		loadVirtualStorage();
@@ -93,6 +94,7 @@ public class VirtualStorage {
 	}
 	public void loadVirtualStorage() {
 		invEntry = Database.retrieveInventoryEntriesWithCategory(Database.retrieveCategories());
+		loaded=true;
 	}
 	public void loadCathegoryStorage() {
 		cathEntry = Database.retrieveCategories();
@@ -163,8 +165,9 @@ public class VirtualStorage {
 
 	public List<InventoryEntry> getAllEntries() { return invEntry; }
 
+	public List<Category> getAllCategories(){return cathEntry;}
     
-    public Object[][] getObjectArray() {
+    public Object[][] getInventoryEntryObjectArray() {
         List <InventoryEntry> ie = getAllEntries();
         
         List<Object[]> arrayList = new ArrayList<Object[]>();
@@ -178,4 +181,22 @@ public class VirtualStorage {
         }
         return objectArray;
     }
+    public Object[][] getCategoryObjectArray() {
+        List <Category> categories = cathEntry;
+        System.out.println(categories.get(0));
+        List<Object[]> arrayList = new ArrayList<Object[]>();
+        for(int i=0;categories.size()>i;i++) {
+            arrayList.add(categories.get(i).toObjectArray());
+        }
+        
+        Object[][] objectArray = new Object[categories.size()+10][10];
+        for (int i=0;arrayList.size()>i;i++) {
+            objectArray[i]=arrayList.get(i);
+        }
+        return objectArray;
+    }
+	public void replaceInventoryEntry(int uid, InventoryEntry editedIE) throws Exception{
+		
+		Database.replaceInventoryEntry(uid, editedIE);
+	}
 }
