@@ -282,8 +282,8 @@ public class InventoryEntry{
 				this.getStringifiedUID(),
 				this.product.getName(),
 				this.product.getCount(),
-				this.product.getWeight(),
-				this.product.getPrize(),
+				this.product.getStringifiedWeight(),
+				this.product.getStringifiedPrize(),
 				//this.product.category.getUID(),
 				this.product.category.getName()
 				};

@@ -174,8 +174,7 @@ public class VirtualStorage {
         for(int i=0;ie.size()>i;i++) {
             arrayList.add(ie.get(i).toObjectArray());
         }
-        arrayList.get(0);
-        Object[][] objectArray = new Object[ie.size()+10][10];
+        Object[][] objectArray = new Object[ie.size()][10];
         for (int i=0;arrayList.size()>i;i++) {
             objectArray[i]=arrayList.get(i);
         }
@@ -189,7 +188,7 @@ public class VirtualStorage {
             arrayList.add(categories.get(i).toObjectArray());
         }
         
-        Object[][] objectArray = new Object[categories.size()+10][10];
+        Object[][] objectArray = new Object[categories.size()][10];
         for (int i=0;arrayList.size()>i;i++) {
             objectArray[i]=arrayList.get(i);
         }

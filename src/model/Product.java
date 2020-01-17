@@ -47,6 +47,17 @@ public class Product {
 		return weight;
 	}
 	
+	public String getStringifiedWeight() {
+		if(weight<1000) {
+			float fWeight = (float)this.weight/10.0f;
+
+			return String.valueOf(fWeight)+"g";
+		}
+		
+		float fWeight = (float) this.weight/10000.0f;
+		return String.valueOf(fWeight)+"kg";
+	}
+	
 	/**
 	 * 
 	 * @param weight
@@ -69,6 +80,14 @@ public class Product {
 	 */
 	public void setPrize(int prize) {
 		this.prize = prize;
+	}
+	
+	public String getStringifiedPrize() {
+		if(this.prize<100) {
+			return String.valueOf(prize)+"c";
+		}
+		float fPrize = (float) this.prize/100;
+		return String.valueOf(fPrize)+"€";
 	}
 	
 	/**

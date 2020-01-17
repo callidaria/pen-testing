@@ -3,6 +3,7 @@ package database;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -81,8 +83,13 @@ public class Database{
 	       tmp = Database.buildDocument(DBPATH_IE);
 	       tmp2 = Database.buildDocument(DBPATH_CAT);
 	       System.out.println(tmp);
-	     } catch (Exception uhe) {
+	     } 
+	     catch (IOException e) {
+	    	 System.err.println("Fatal error. Trouble parsing the file:"+DBPATH_IE+"\n We will rebuild the file if it doesn' exist. Please restart.");
+	    	 Database.recreate(0);
+	     } catch (SAXException uhe) {
 	    	 System.err.println("Fatal error. Trouble finding the file:"+DBPATH_IE+"\n We will rebuild the file if it doesn' exist. Please restart.");
+	    	 Database.recover(0);
 	     }
 	     IE_DOC = tmp;
 	     CAT_DOC=tmp2;
@@ -94,6 +101,8 @@ public class Database{
 
 	private static DOMSource CAT_DOM_SOURCE= new DOMSource(Database.CAT_DOC);
 	private static DOMSource IE_DOM_SOURCE= new DOMSource(Database.IE_DOC);
+
+	private static final boolean DEBUG=true;
 	
 	
 	/**Abfragen aller Inventareinträge aus der XML Datei unter DBPATH_IE
@@ -321,6 +330,54 @@ public class Database{
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE){
 		
+		Database.addInventoryEntry(newIE);
+		try {
+			Database.deleteInventoryEntry(UID);
+		} catch (Exception e) {
+			try {
+				Database.deleteInventoryEntry(newIE.getUID());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		/*
+		Document doc = Database.IE_DOC;
+		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
+        int section=sectionPlace[0];
+        int place=sectionPlace[1];
+		Node entries = doc.getFirstChild();
+		NodeList entryList = entries.getChildNodes();
+		
+
+		for (int i = 0; i < entryList.getLength(); i++) {
+			
+           Node node = entryList.item(i);
+           //Element elNode = (Element) node;
+           NamedNodeMap attr = node.getAttributes();
+           
+		   if ("entry".equals(node.getNodeName())) {
+			   int entrySection=Integer.parseInt(attr.getNamedItem("area").getTextContent());
+			   int entryPlace=Integer.parseInt(attr.getNamedItem("place").getTextContent());
+			   if (entrySection == section && entryPlace==place) {
+				   NodeList nodeChilds = node.getChildNodes();
+				   for (int n = 0; n < nodeChilds.getLength(); n++) {
+					   Node subNode = nodeChilds.item(n);
+					   if ("name".equals(subNode.getNodeName())) {
+						   subNode.setTextContent(newIE.product.getName());
+						   break;
+					   }
+				   }					   
+			   }
+		   }
+		}
+
+		// write the content into xml file			
+		Database.transformInventoryEntries();	
+	   
+	System.out.println("InventoryEntry ("+UID+"): replaced with\n"+newIE);
+
 		Element node;
 		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
         int section=sectionPlace[0];
@@ -348,7 +405,7 @@ public class Database{
 			e.printStackTrace();
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-		}
+		}*/
 		return newIE; 
 		
 	}
@@ -753,8 +810,11 @@ public class Database{
 			transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
-			transformer.setOutputProperty(OutputKeys.INDENT, "no");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			if(DEBUG==true) {
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			}
+			
 			transformer.transform(Database.IE_DOM_SOURCE, new StreamResult(new File(DBPATH+DBPATH_IE)));
 			
 		} catch (TransformerConfigurationException e) {
@@ -870,6 +930,68 @@ public class Database{
 	 */
 	private static int getAttributes(Element element, String string) {
 		return Integer.parseInt(element.getAttributes().getNamedItem(string).getTextContent());
+	}
+
+	/**Erstellt die XML Header für die Datenbank neu, wenn das buildDocument fehlschlägt.
+	 * 
+	 * @param mode, 0:Inventareinträge 1: Kategorien
+	 */
+	private static void recover(int mode) {
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder;
+		if(mode==0) {
+			try {
+				Database.buildDocument(DBPATH_IE);
+			} catch (SAXException e) {
+				try {
+				docBuilder=docFactory.newDocumentBuilder();
+				Document newDoc = docBuilder.newDocument();
+				Element mainRootElement = newDoc.createElement("entries");
+				mainRootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+				mainRootElement.setAttribute("xsi:noNamespaceSchemaLocation", "inventoryEntries.xsd");
+				newDoc.appendChild(mainRootElement);
+				Transformer transform = TransformerFactory.newInstance().newTransformer();
+				transform.transform(new DOMSource(newDoc), new StreamResult(new File(DBPATH+DBPATH_IE)));
+				} catch (TransformerException | ParserConfigurationException | TransformerFactoryConfigurationError e1) {
+					System.out.println("Fatal error. Recover failed. The Database is now bricked. Contact the developer.");
+					e1.printStackTrace();
+				}
+				
+			} catch (IOException e) {
+				Database.recreate(mode);
+			}
+		}
+		
+	}
+
+	/**Erstellt die Datenbankdatei neu, wenn sie nicht existiert.
+	 * 
+	 * @param mode, 0:Inventareinträge 1: Kategorien
+	 */
+	private static void recreate(int mode) {
+		String filePath = DBPATH_IE;
+		if(mode==0) {
+			filePath=DBPATH_IE;
+		}
+		else if(mode==1) {
+			filePath=DBPATH_CAT;
+		}
+		else {
+			return;
+		}
+		File file = new File(DBPATH+filePath);
+		if(file.exists()==false) {
+			try {
+				file.createNewFile();
+				@SuppressWarnings("unused")
+				FileOutputStream outFile = new FileOutputStream(file, false); 
+				Database.recover(mode);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
 	}
 	
 	
