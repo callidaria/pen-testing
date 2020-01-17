@@ -8,11 +8,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import controller.VirtualStorage;
+import model.Category;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -35,43 +37,64 @@ public class CategoryView extends JFrame {
 		setTitle("Kategorie Ansicht");
 		setSize(400,150);
 		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		
 		
+		
+		
+	}
+	public void showCategoryView(int UID){
+		setContentPane(new JPanel());
 		//Label
-		JLabel lid = new JLabel("ID");
-		JLabel lname = new JLabel("Categoryname");
-		JLabel ldesc = new JLabel("Description");
+		Category thisCategory = new Category(1,"Keine Kategorie");
+		JLabel lid = new JLabel("Akuteller Kategoriename:");
+		JLabel loldname = new JLabel(thisCategory.getName());
+		JLabel lnewname = new JLabel("Neuer Kategoriename:");
 		
 		//Textarea
-		JTextArea taid = new JTextArea(1,5);
-		JTextArea taname = new JTextArea(1,5);
-		JTextArea tadesc = new JTextArea(1,5);
+
+		JTextArea taname = new JTextArea(1,10);
+		taname.setText(thisCategory.getName());
 		
 		//Button
 		JButton button = new JButton ("Save");
 		button.addActionListener(new ActionListener() { 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String id = taid.getText();
 				String name = taname.getText();
-				String desc = tadesc.getText();
-		        System.out.println("contents = " + id + name + desc);
+		        System.out.println("contents = " + name);
 			}
 		});
 		
 		//Layout
 		
 		Container pane = getContentPane();
-		pane.setLayout(new FlowLayout());
-		pane.add(lid);
-		pane.add(taid);
-		pane.add(lname);
-		pane.add(taname);
-		pane.add(ldesc);
-		pane.add(tadesc);
-		pane.add(button);
+		pane.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        if (true) {
+            //natural height, maximum width
+            c.fill = GridBagConstraints.HORIZONTAL;
+        }
+        c.gridx = 0;
+        c.gridy = 1;
+		pane.add(lid,c);
 		
+		c.gridx = 1;
+        c.gridy = 1;
+		pane.add(loldname,c);
+		
+		c.gridx = 0;
+        c.gridy = 2;
+		pane.add(lnewname,c);
+		
+		c.gridx = 1;
+        c.gridy = 2;
+		pane.add(taname,c);
+		
+		c.gridx = 1;
+        c.gridy = 4;
+		pane.add(button,c);
 	}
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;

@@ -198,5 +198,6 @@ public class VirtualStorage {
 	public void replaceInventoryEntry(int uid, InventoryEntry editedIE) throws Exception{
 		
 		Database.replaceInventoryEntry(uid, editedIE);
+		loadVirtualStorage();
 	}
 }

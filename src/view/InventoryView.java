@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -14,12 +15,14 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 
 import org.xml.sax.SAXException;
 
 import controller.*;
 import database.Database;
 import model.InventoryEntry;
+import model.Product;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -40,6 +43,18 @@ public class InventoryView extends JFrame {
 	private Object[][] data;
 	VirtualStorage vs = new VirtualStorage();
 	private ArticleView articleView;
+	JTable table;
+	DefaultTableModel tableModel;
+	String[] columnNames = {"ID",
+			"Produktname",
+            "Anzahl",
+            "Gewicht",
+            "Preis",
+            //"Kategorie ID",
+            "Kategories"};
+	private CategoriesView categoriesView;
+	
+	private int selectedSearch=0;
 
 	public InventoryView()
 	{
@@ -64,36 +79,29 @@ public class InventoryView extends JFrame {
 		});
 		
 		JButton such = new JButton ("Los!");
-		
+		JButton refresh = new JButton ("Aktualisieren");
 		//Label
 		JLabel suchen = new JLabel("Suchen:");
 		
 		//Textarea
 		JTextArea ta = new JTextArea(1,40);
+	
 		
-		//Table
-		String[] columnNames = {"ID",
-				"Produktname",
-                "Anzahl",
-                "Gewicht",
-                "Preis",
-                "Kategorie"};
-		
-		
-        
-        data = vs.getObjectArray();
-        
-		JTable table = new JTable(data, columnNames) {
-			/** Verhindert das Zellen bearbeitbar sind.
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
 
-			public boolean isCellEditable(int row, int column) {                
-	            return false;               
-			};
-		};
 		
+		
+        
+        data = vs.getInventoryEntryObjectArray();
+        
+       tableModel = new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;
+            }
+        };
+		table = new JTable(tableModel);
+		//table.removeColumn(table.getColumnModel().getColumn(5));
 		JScrollPane scrollPane = new JScrollPane(table);
 		//scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		table.setFillsViewportHeight(true);
@@ -133,10 +141,18 @@ public class InventoryView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CategoriesView cat = new CategoriesView();
-				cat.setVisible(true);
+				categoriesView.setVisible(true);
 			}
 			
+		});
+		String searchSelectables[] = {"Alles","ID","Name","Anzahl","Gewicht","Preis","Kategorie"};
+		JComboBox<String> searchSelector = new JComboBox<String>(searchSelectables);
+		searchSelector.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				selectedSearch=searchSelector.getSelectedIndex();
+			}
 		});
 		
 		menuValidate.addActionListener(new ActionListener() { 
@@ -155,6 +171,13 @@ public class InventoryView extends JFrame {
 			
 		});
 		
+		refresh.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				refresh();
+			}
+		});
 		
 		//submenu.add(zwei);
 		menu.add(menuCategory);
@@ -172,6 +195,7 @@ public class InventoryView extends JFrame {
 		
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new FlowLayout());
+		topPanel.add(searchSelector);
 		topPanel.add(button);
 		topPanel.add(suchen);
 		topPanel.add(ta);
@@ -179,9 +203,11 @@ public class InventoryView extends JFrame {
 		
 		JPanel rightPanel = new JPanel();
 		rightPanel.setPreferredSize(new Dimension(100, 100));
+		rightPanel.add(refresh);
 		
 		JPanel leftPanel = new JPanel();
 		leftPanel.setPreferredSize(new Dimension(100, 100));
+		
 		
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new FlowLayout());
@@ -195,14 +221,13 @@ public class InventoryView extends JFrame {
 	}
 	
 	public void refresh() {
-		vs.loadVirtualStorage();
-		System.out.println("Heureka, jetzt wird die Tabelle refreshed oder auch nicht D:");
+	 	tableModel.setDataVector(vs.getInventoryEntryObjectArray(),columnNames);
+		tableModel.fireTableDataChanged();
 		return;
 	}
 	
 	public void setNewArticleView(NewArticleView articleView) {
 		newArticleView = articleView;
-		System.out.println("Connected Frames");
 	}
 	
 	public void setVirtualStorage(VirtualStorage vs) {
@@ -211,6 +236,10 @@ public class InventoryView extends JFrame {
 
 	public void setArticleView(ArticleView articleView) {
 		this.articleView = articleView;
+	}
+
+	public void setCategoriesView(CategoriesView categoriesView) {
+		this.categoriesView = categoriesView;
 	}
 	
 	

@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
 
 import controller.VirtualStorage;
 
@@ -31,11 +32,17 @@ import java.awt.event.MouseEvent;
 
 public class CategoriesView extends JFrame {
 	private VirtualStorage vs;
+	private CategoryView categoryView;
+	private DefaultTableModel tableModel;
 	public CategoriesView() {
-		//GUI
 		setTitle("Kategorie");
 		setSize(500,600);
 		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	}
+	public void showCategoriesView(){
+		//GUI
+		
 		
 		//Menubar
 		JMenuBar menu = new JMenuBar();
@@ -66,23 +73,27 @@ public class CategoriesView extends JFrame {
 		JButton bsuch = new JButton ("Los!");
 		
 		//Textarea
-		JTextArea tasuchen = new JTextArea(1,5);
+		JTextArea tasuchen = new JTextArea(1,15);
 		
 		//Label
 		JLabel lsuchen = new JLabel("Suchen:");
 		
 		//Table
 		String[] columnNames = {"ID",
-                "Category Name",
-                "Description"};
+                "Kategorie"};
 			
-		Object[][] data = {
-			    {new Integer(1), "Pens", "Regular Pens"},
-			    {new Integer(2), "Colored Pens", "Red, Blue, but not Black"},
-			    {new Integer(3), "Big Pens", "All big pens"}
-		};	
-			
-		JTable table = new JTable(data, columnNames);
+		Object[][] data = vs.getCategoryObjectArray();	
+		tableModel = new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;
+            }
+        };
+		JTable table = new JTable(tableModel);
+
+		table.removeColumn(table.getColumnModel().getColumn(0));
+		table.getColumnModel().getColumn(0).setPreferredWidth(0);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);	
@@ -93,8 +104,11 @@ public class CategoriesView extends JFrame {
 			        Point point = mouseEvent.getPoint();
 			        int row = table.rowAtPoint(point);
 			        if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-			        	CategoryView category = new CategoryView();
-						category.setVisible(true);
+			        	int column = 0;
+			        	Integer UID = (Integer) table.getModel().getValueAt(row, column);
+			        	System.out.println(UID);
+			        	categoryView.showCategoryView(0);
+						categoryView.setVisible(true);
 			        }
 			    }	
 		});
@@ -138,6 +152,11 @@ public class CategoriesView extends JFrame {
 	}
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
+		showCategoriesView();
+	}
+	
+	public void setCategoryView(CategoryView categoryView) {
+		this.categoryView=categoryView;
 	}
 	
 }

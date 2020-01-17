@@ -8,9 +8,12 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,7 +21,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import controller.VirtualStorage;
+import model.Category;
 import model.InventoryEntry;
+import model.Product;
+import view.components.SelectionItem;
 
 public class ArticleView extends JFrame {
 	
@@ -26,22 +32,23 @@ public class ArticleView extends JFrame {
 	final static boolean shouldWeightX = true;
 	final static boolean RIGHT_TO_LEFT = false;
 	private VirtualStorage vs;
+	private InventoryView inventoryView;
 	
 	public ArticleView() {
 		
-		
+		setSize(480,360);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setTitle("Artikeldetailansicht");
 	}
 	
 	public void ShowArticleView(int UID) {
 		setContentPane(new JPanel());
 		InventoryEntry thisArticle = vs.getEntryByUID(UID);
 		
-		
-		
 		//GUI
 		setTitle(thisArticle.product.getName());
-		setSize(480,360);
-		setLocationRelativeTo(null);
+		
 		
 		
 		
@@ -49,7 +56,18 @@ public class ArticleView extends JFrame {
 		JTextArea taplatz = new JTextArea(thisArticle.getStringifiedUID(),1,20);
 		JTextArea taanzahl = new JTextArea(Integer.toString(thisArticle.product.getCount()),1,5);
 		JTextArea taadd = new JTextArea("0",1,5);
-		JTextArea takategorie = new JTextArea(Integer.toString(thisArticle.product.getCategoryID()),1,5);
+		
+		SelectionItem[] searchSelectables = categoriesToItem();
+
+		JComboBox<SelectionItem> takategorie = new JComboBox<SelectionItem>(searchSelectables);
+		takategorie.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SelectionItem item = (SelectionItem) takategorie.getSelectedItem();
+				System.out.println(item.getId()+":"+item.getName());
+			}
+		});
 		JTextArea tapreis = new JTextArea(Integer.toString(thisArticle.product.getPrize()),1,5);
 		JTextArea tagewicht = new JTextArea(Integer.toString(thisArticle.product.getWeight()),1,5);
 		JTextArea taproduct = new JTextArea(thisArticle.product.getName(),1,5);
@@ -75,15 +93,21 @@ public class ArticleView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					vs.deleteProduct(UID);
-					
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				int confirme = JOptionPane.showConfirmDialog(getContentPane(), "Bestätigen","Artikel löschen",JOptionPane.YES_NO_OPTION);
+				if (confirme==0) {
+					try {
+						vs.deleteProduct(UID);
+						JOptionPane.showMessageDialog(getContentPane(),"Artikel erfolgreich gelöscht","Artikel gelöscht", JOptionPane.INFORMATION_MESSAGE);
+						setVisible(false);
+						inventoryView.refresh();
+						dispose();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(getContentPane(),"Hier könnte ihre Nachricht stehen:"+e1.getMessage(),"Artikel gelöscht", JOptionPane.INFORMATION_MESSAGE);
+					}
 				}
-				JOptionPane.showMessageDialog(getContentPane(),"Hier könnte ihre Nachricht stehen","Artikel gelöscht", JOptionPane.INFORMATION_MESSAGE);
-				setVisible(false);
+				
+				
 			}
 			
 			
@@ -115,7 +139,7 @@ public class ArticleView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Date start = new Date();
+				
 				String eins = taadd.getText();
 				String zwei = taanzahl.getText();
 				int add = Integer.parseInt(eins);
@@ -125,18 +149,12 @@ public class ArticleView extends JFrame {
 				taadd.setText("0");
 				taanzahl.setText(Integer.toString(sum));
 				try {
-					
-
 					vs.changeAmountBy(UID, -add);
-					
 					
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				Date end = new Date();
-				System.out.println("Time:");
-				System.out.println(end.getTime()-start.getTime());
 			}
 			
 		});
@@ -145,50 +163,51 @@ public class ArticleView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				String suid = taplatz.getText();
+				int uid = Integer.parseInt(suid);
 				
 				String splatz = taplatz.getText();
 				int platz = Integer.parseInt(splatz);
 				
 				String sanzahl = taanzahl.getText();
 				int anzahl = Integer.parseInt(sanzahl);
-				try {
-					vs.setAmount(UID, anzahl);
-					if (anzahl<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Anzahl eingeben","", JOptionPane.INFORMATION_MESSAGE);
-				} 
-				catch (Exception e2) 
-				{
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
 				
-				String kategorie = takategorie.getText();
+				SelectionItem skategorie = (SelectionItem) takategorie.getSelectedItem();
+				int kategorie_id = skategorie.getId();
 				
 				String spreis = tapreis.getText();
 				int preis = Integer.parseInt(spreis);
-				try {
-					vs.setPrize(UID, preis);
-					if (preis<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Preis eingeben","", JOptionPane.INFORMATION_MESSAGE);
-				} 
-				catch (Exception e2) {
-			
-					e2.printStackTrace();
-				}
-				
 				String sgewicht = tagewicht.getText();
 				int gewicht = Integer.parseInt(sgewicht);
+				String name =taproduct.getText();
+				
+				InventoryEntry editedIE = new InventoryEntry(uid, new Product(name, anzahl, gewicht, preis, kategorie_id));
+				
+				if (anzahl<=0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Anzahl eingeben","", JOptionPane.INFORMATION_MESSAGE);
+			
+			
+			
+			
+			
+				if (preis<=0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Preis eingeben","", JOptionPane.INFORMATION_MESSAGE);
+			
+			
+			
+			
+				if (gewicht <= 0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Gewicht eingeben","", JOptionPane.INFORMATION_MESSAGE); 
 				try {
-					vs.setWeight(UID, gewicht);
-					if (gewicht < 0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Gewicht eingeben","", JOptionPane.INFORMATION_MESSAGE); 
-				} 
-				catch (Exception e2) {
-					JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben","", JOptionPane.INFORMATION_MESSAGE);
-					e2.printStackTrace();
+					vs.replaceInventoryEntry(thisArticle.getUID(),editedIE);
+					int close = JOptionPane.showConfirmDialog(getContentPane(), "Änderung gespeichert.\n Schließen?","Änderung gespeichert",JOptionPane.YES_NO_OPTION);
+					if (close==0) {
+						inventoryView.refresh();
+						setVisible(false);
+						dispose();
+					}
+				}catch (Exception e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(getContentPane(),"Fehler: "+e1.getMessage(),"Fehler", JOptionPane.INFORMATION_MESSAGE);
 				}
 				
-				String name =taproduct.getText();
-				try {vs.setName(UID, name);} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();}
 				
 			}
 			
@@ -313,8 +332,22 @@ public class ArticleView extends JFrame {
         pane.add(bsave, c);
         setContentPane(pane);
 	}
+
+	private SelectionItem[] categoriesToItem() {
+		List<Category> categories = vs.getAllCategories();
+		List<SelectionItem> categoryNames = new ArrayList<SelectionItem>();
+		for (int i=0; i<categories.size();i++) {
+			categoryNames.add(
+					new SelectionItem(categories.get(i).getUID(), categories.get(i).getName())
+					);
+		}
+		SelectionItem[] searchSelectables = categoryNames.toArray(new SelectionItem[categories.size()]);
+		return searchSelectables;
+	}
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
-		
+	}
+	public void setInventoryView(InventoryView inventoryView) {
+		this.inventoryView = inventoryView;
 	}
 }
