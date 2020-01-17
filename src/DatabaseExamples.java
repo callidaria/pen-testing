@@ -3,7 +3,6 @@ import java.util.Date;
 
 import database.Database;
 import model.Category;
-import model.CodedException;
 import model.InventoryEntry;
 import model.Product;
 
@@ -16,7 +15,7 @@ public class DatabaseExamples{
 		
 		start = new Date();
 		try {
-			Database.addTestInventoryEntries(100, 999, false);
+			Database.addTestInventoryEntries(100, 999);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

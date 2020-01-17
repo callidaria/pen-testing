@@ -3,10 +3,14 @@ package controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.xml.sax.SAXException;
+
 import database.Database;
-import model.Category;
 import model.InventoryEntry;
 import model.Product;
+import model.Category;
+
+
 
 public class VirtualStorage {
 	List<InventoryEntry> invEntry;
@@ -203,5 +207,9 @@ public class VirtualStorage {
 	public void manualSave() {
 		Database.transformCategories();
 		Database.transformInventoryEntries();
+	}
+	
+	public boolean validateDatabase() throws SAXException {
+		return Database.validate();
 	}
 }

@@ -23,7 +23,6 @@ import javax.swing.table.DefaultTableModel;
 import org.xml.sax.SAXException;
 
 import controller.*;
-import database.Database;
 import model.InventoryEntry;
 import model.Product;
 
@@ -203,7 +202,7 @@ public class InventoryView extends JFrame {
 				JOptionPane.showMessageDialog(getContentPane(),"Das Validieren ist für den Administrator gemacht. Achtung! Das Validieren der Datenbank kann bei einem großen Datensatz sehr lange dauern. Wir reden von ca einer Stunde bei einer vollen Datenbank!","Datenbankvalidierung gestartet", JOptionPane.INFORMATION_MESSAGE);
 				boolean valide=false;
 				try {
-					valide = Database.validate();
+					valide = vs.validateDatabase();
 				} catch (SAXException e1) {
 					JOptionPane.showMessageDialog(getContentPane(),"Datenbank nicht valide und eventuell korrumpiert. Bitte wenden Sie sich an einen Admin. Fehlermeldung:\n"+e1.getMessage(),"DB Validierungsstatus", JOptionPane.INFORMATION_MESSAGE);
 				}

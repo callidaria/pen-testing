@@ -33,7 +33,7 @@ public class Product {
 	
 	/**Getter/Setter-Methode
 	 * 
-	 * @param name
+	 * @param name Produktname
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -64,7 +64,7 @@ public class Product {
 	
 	/**Getter/Setter-Methode
 	 * 
-	 * @param weight
+	 * @param weight Gewicht in dezigramm
 	 */
 	public void setWeight(int weight) {
 		this.weight = weight;
@@ -80,7 +80,7 @@ public class Product {
 	
 	/**Getter/Setter-Methode
 	 * 
-	 * @param Preis in Cent
+	 * @param prize Preis in Cent
 	 */
 	public void setPrize(int prize) {
 		this.prize = prize;
@@ -106,9 +106,9 @@ public class Product {
 		return count;
 	}
 	
-	/**
+	/**Getter/Setter-Methode
 	 * 
-	 * @param count
+	 * @param count Menge
 	 */
 	public void setCount(int count) {
 		this.count = count;
@@ -166,7 +166,7 @@ public class Product {
 	 * @param weight Gewicht in dezigramm
 	 * @param prize Preis in Cent
 	 * @param categoryID KategorieID
-	 * @category category Verweis auf Kategorie
+	 * @param category Verweis auf Kategorie
 	 */
 	public Product(String name, int count, int weight, int prize, int categoryID, Category category){
 		this.name=name;

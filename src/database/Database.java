@@ -14,8 +14,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -32,16 +30,13 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import model.Category;
-import model.CodedException;
 import model.InventoryEntry;
 import model.Product;
 
@@ -112,11 +107,13 @@ public class Database{
 	static TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
 	/**CAT_DOC als DOMSource
-	 * ermöglicht das Document als DOM Tree zu parsen.
+	 * Ermöglicht das Document als DOM Tree zu parsen.
+	 * Und bei allen Methoden wird der DOM bearbeitet und nicht die Datei.
 	 */
 	private static DOMSource CAT_DOM_SOURCE= new DOMSource(Database.CAT_DOC);
 	/**IE_DOC als DOMSource
-	 * ermöglicht das Document als DOM Tree zu parsen.
+	 * Ermöglicht das Document als DOM Tree zu parsen.
+	 * Und bei allen Methoden wird der DOM bearbeitet und nicht die Datei.
 	 */
 	private static DOMSource IE_DOM_SOURCE= new DOMSource(Database.IE_DOC);
 
@@ -250,10 +247,12 @@ public class Database{
 			
 		   
 	}
-	
-	public static void addTestInventoryEntries(int maxAreas, int maxPlaces,Boolean validate){
-		String errorPreamble="Fehler beim Hinzufügen eines Inventareintrages.\n";
-		
+	/**Eine Methode mit der man die Datenbank zum Testen befüllen kann. Achtung: Dabei werden keine Konstrainst geprüft.
+	 * 
+	 * @param maxAreas bis zu welchem Regal gefüllt werden soll.
+	 * @param maxPlaces bis zu welchem Fach pro Regal gefüllt werden soll.
+	 */
+	public static void addTestInventoryEntries(int maxAreas, int maxPlaces){
 		Document doc = Database.IE_DOC;
 
 		// Get the root element
@@ -346,7 +345,6 @@ public class Database{
 	 * 
 	 * Der Eintrag an UID ist ersetzt durch newIE.
 	 * 
-	 * @throws Exception unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
 	 * @return Gibt den newIE zurück. (warum?)
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE){
@@ -448,13 +446,8 @@ public class Database{
 		boolean inElements = Arrays.stream(DatabaseSchema.elements).anyMatch(attribute::equals);
 		boolean inAttributes = Arrays.stream(DatabaseSchema.attributes).anyMatch(attribute::equals);
 		if(!inElements&&!inAttributes) {
-			throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist."+DatabaseErrors.internalWarning);
+			throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist. Internal Error.");
 		}
-		boolean verifiedAttribute = DatabaseSchema.verifyAttribute(attribute, newValue);
-		if(!verifiedAttribute){
-			throw new Exception("Attribute ("+attribute+") darf den Wert ("+newValue+") nicht haben.");
-		}
-		
 		/*
 		if(DB_VALIDATE) {
 			if(attribute=="UID") {
@@ -590,7 +583,7 @@ public class Database{
 		String errorPreamble="Fehler beim Hinzufügen eines Inventareintrages.\n";
 		int freeUID=-1;
 		if(!category.validate()) {
-			throw new Exception(errorPreamble+DatabaseErrors.inventoryEntryFailedValidation);
+			throw new Exception(errorPreamble+"New Category failed validation.");
 		}
 		
 		
@@ -624,7 +617,7 @@ public class Database{
 	 * 
 	 * @return nächste freie UID
 	 */
-	private static int freeCategoryUID() {
+	public static int freeCategoryUID() {
 		// TODO Auto-generated method stub
 		Category lastCategory=Database.retrieveCategories().get(Database.retrieveCategories().size() -1);
 		return lastCategory.getUID()+1;
@@ -710,7 +703,7 @@ public class Database{
 	
 	/** Prüft die Datenbank auf das Einhalten der Datenbankrestriktionen mit hilfe einer XSD.
 	 * @return wahr, wenn die Inventareintragsdatei gegen die XSD validiert.
-	 * @throws SAXException 
+	 * @throws SAXException wenn nicht valide, wirft die Fehlermeldung beim Abgleichen aus.
 	 */
 	public static boolean validate() throws SAXException {
 		return Database.validateAgainstXSD(DBPATH_IE,DBPATH_IE_XSD);
@@ -771,10 +764,80 @@ public class Database{
 		return unescapedString;
 	}
 	
+	/**Hilfsmethode. Speichert (transformiert) das veränderte Inventareinträge-Doc.
+	 * 
+	 * @return true, wenn das Transformieren erfolgreich war.
+	 */
+	public static boolean transformInventoryEntries() {
+		
+		
+		Date start;
+		Date end;
+		
+		
+			
+		TransformerFactory transformerFactory = Database.transformerFactory;
+		Transformer transformer;
+		
+		try {
+			transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
+			if(DEBUG==true) {
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			}
+			//Transformiert die verändert IE_DOM_SOURCE und schreibt sie nach InventoryEntries.xml
+			transformer.transform(Database.IE_DOM_SOURCE, new StreamResult(new File(DBPATH+DBPATH_IE)));
+			
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+		
+	}
+
+	/**Hilfsmethode. Speichert (transformiert) das veränderte Kategorie-Doc.
+	 * 
+	 * @return wahr, wenn die Transformation erfolgreich war, ansonsten falsch.
+	 */
+	public static boolean transformCategories() {	
+		TransformerFactory transformerFactory = Database.transformerFactory;
+		Transformer transformer;
+		
+		try {
+			transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
+			if(DEBUG==true){
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			}
+			transformer.transform(Database.CAT_DOM_SOURCE, new StreamResult(new File(DBPATH+DBPATH_CAT)));
+			
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+		
+	}
+
 	/** Hilfsmethode. Gibt das fertige Document zurück.
 	 * 
 	 * @param file Pfad zur Datei
-	 * @return Document
+	 * @return Document der File als Document Object
 	 * @throws SAXException wenn das Dokument nicht richtig formatiert ist.
 	 * @throws IOException wenn die Datei nicht existiert.
 	 */
@@ -828,88 +891,12 @@ public class Database{
 		
 	}
 	
-	/**Hilfsmethode. Speichert (transformiert) das veränderte Inventareinträge-Doc.
-	 * 
-	 * @return true, wenn das Transformieren erfolgreich war.
-	 */
-	public static boolean transformInventoryEntries() {
-		
-		
-		Date start;
-		Date end;
-		
-		
-			
-		TransformerFactory transformerFactory = Database.transformerFactory;
-		Transformer transformer;
-		
-		try {
-			transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
-			if(DEBUG==true) {
-				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	
-				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			}
-			
-			transformer.transform(Database.IE_DOM_SOURCE, new StreamResult(new File(DBPATH+DBPATH_IE)));
-			
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-		
-	}
-	/**Hilfsmethode. Speichert (transformiert) das veränderte Kategorie-Doc.
-	 * 
-	 * 
-	 * @param doc erwartet ein Dokument, welche sinnvollerweiße verändert wurde
-	 * @param targetPath der Speicherort
-	 */
-	public static boolean transformCategories() {
-		
-		
-		Date start;
-		Date end;
-		
-		
-			
-		TransformerFactory transformerFactory = Database.transformerFactory;
-		Transformer transformer;
-		
-		try {
-			transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
-			transformer.setOutputProperty(OutputKeys.INDENT, "no");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			transformer.transform(Database.CAT_DOM_SOURCE, new StreamResult(new File(DBPATH+DBPATH_CAT)));
-			
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-		
-	}
-	
 	/** Vergleich eine XML Datei mit einer XSD (XML Schema Definition) Datei. Lange Laufzeit bei großer Datenbank, daher in der Anwendung nur als manuelle Methode.
 	 * 
 	 * @param xmlPath Pfad der XML Datei.
 	 * @param xsdPath Pfad der XSD Datei.
 	 * @return wahr, wenn die XML mit der XSD validiert. Ansonsten false.
-	 * @throws SAXException 
+	 * @throws SAXException wenn nicht valide, wirft die Fehlermeldung beim Abgleichen aus.
 	 */
 	private static boolean validateAgainstXSD(String xmlPath, String xsdPath) throws SAXException
 	{
@@ -1020,7 +1007,7 @@ public class Database{
 		if(file.exists()==false) {
 			try {
 				file.createNewFile();
-				@SuppressWarnings("unused")
+				@SuppressWarnings({ "resource", "unused" })
 				FileOutputStream outFile = new FileOutputStream(file, false); 
 				Database.recover(mode);
 			} catch (IOException e) {

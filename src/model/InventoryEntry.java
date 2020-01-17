@@ -14,7 +14,7 @@ public class InventoryEntry{
 	private Integer shelfSection;
 	
 	/**
-	 * Die Regalplatznummer. Die letzten 3 Zahlen der Platznummer.
+	 * Die Fachnummer. Die letzten 3 Zahlen der Platznummer.
 	 */
 	private Integer shelfPlace;
 	
@@ -61,7 +61,7 @@ public class InventoryEntry{
 	/**Getter/Setter-Methode
 	 * Weist shelfSection neu zu.
 	 * 
-	 * @param shelfSection
+	 * @param shelfSection Regalnummer
 	 */
 	public void setShelfSection(int shelfSection) {
 		this.shelfSection = shelfSection;
@@ -69,7 +69,7 @@ public class InventoryEntry{
 	
 	/**
 	 * 
-	 * @return die letzten 3 Zahlen der gesamten Platznummer aka Regalplatznummer.
+	 * @return die letzten 3 Zahlen der gesamten Platznummer aka Fachnummer.
 	 */
 	public int getShelfPlace() {
 		return shelfPlace;
@@ -77,7 +77,7 @@ public class InventoryEntry{
 	
 	/**Weist shelfPlace neu zu.
 	 * 
-	 * @param shelfPlace
+	 * @param shelfPlace Fachnummer
 	 */
 	public void setShelfPlace(int shelfPlace) {
 		this.shelfPlace = shelfPlace;
@@ -115,10 +115,9 @@ public class InventoryEntry{
 		return suid;
 	}
 	
-	/**Der einzige Konstruktor von Inventareintrag, damit immer Regalnummer, Regalplatznummer und ein Produkt zugewiesen sein muss.
+	/**Der einzige Konstruktor von Inventareintrag, damit immer Regalnummer, Fachnummer und ein Produkt zugewiesen sein muss.
 	 * 
-	 * @param shelfSection Regalnummer
-	 * @param shelfPlace Regalplatznummer
+	 * @param UID gesamte Platznummer
 	 * @param product Produkt, welches an dieser Stelle gelagert wird.
 	 */
 	public InventoryEntry(int UID, Product product) {
@@ -129,10 +128,10 @@ public class InventoryEntry{
 	}
 	
 	
-	/**Der einzige Konstruktor von Inventareintrag, damit immer Regalnummer, Regalplatznummer und ein Produkt zugewiesen sein muss.
+	/**Der einzige Konstruktor von Inventareintrag, damit immer Regalnummer, Fachnummer und ein Produkt zugewiesen sein muss.
 	 * 
 	 * @param shelfSection Regalnummer
-	 * @param shelfPlace Regalplatznummer
+	 * @param shelfPlace Fachnummer
 	 * @param product Produkt, welches an dieser Stelle gelagert wird.
 	 */
 	public InventoryEntry(int shelfSection, int shelfPlace, Product product) {
@@ -154,10 +153,10 @@ public class InventoryEntry{
 	
 	
 
-	/**Eine statische Methode um eine UID in Regalnummer und Regalplatznummer umzuwandeln.
+	/**Eine statische Methode um eine UID in Regalnummer und Fachnummer umzuwandeln.
 	 * 
-	 * @param UID
-	 * @return int[2]: [0] Regalnummer, [1] Regalplatznummer.
+	 * @param UID gesamte Platznummer
+	 * @return int[2]: [0] Regalnummer, [1] Fachnummer.
 	 */
 	static public int[] uidToSectionPlace(int UID){
 		// Idee ist als Eingabe UID zubekommen und dann Section und Place auszugeben.
@@ -179,7 +178,7 @@ public class InventoryEntry{
 			section = "000";
 			place = stringUID;
 		}
-		//Ansonsten sind die letzten 3 Zeichen, die Regalplatznummer und alles davor die Regalnummer
+		//Ansonsten sind die letzten 3 Zeichen, die Fachnummer und alles davor die Regalnummer
 		else {
 			//Alle Zeichen vor den letzten 3.
 			section=stringUID.substring(0, stringLength - 3);
@@ -190,21 +189,21 @@ public class InventoryEntry{
 		//System.out.println("uidToSectionPlace("+UID+"): "+section+"|"+place);
 		//Regalnummer
 		sectionPlace[0]=Integer.parseInt(section);
-		//Regalplatznummer
+		//Fachnummer
 		sectionPlace[1]=Integer.parseInt(place);
 		
 		return sectionPlace;
 	}
 	
-	/**Wandelt Regalnummer und Regalplatznummer zu einer UID.
+	/**Wandelt Regalnummer und Fachnummer zu einer UID.
 	 * 
 	 * @param section, Regalnummer
-	 * @param place, Regalplatznummer
+	 * @param place, Fachnummer
 	 * @return UID Wenn Section oder Place so nicht erlaubt sind, wird -1 zurück gegeben. Ansonsten die UID.
 	 */
 	static public int sectionPlaceToUID(int section, int place) {
 		String strPlace = Integer.toString(place);
-		//Regalnummer und Regalplatznummer müssen positiv und kleiner als 1000 sein.
+		//Regalnummer und Fachnummer müssen positiv und kleiner als 1000 sein.
 		if(section<0||place<0||section>999||place>999) {
 			return -1;
 		}

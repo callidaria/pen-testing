@@ -5,11 +5,11 @@ import javax.swing.JPanel;
 
 import controller.VirtualStorage;
 
-public class SplashFrame extends JFrame{
+public class SplashView extends JFrame{
 	private VirtualStorage vs;
 	private InventoryView inventoryView;
 
-	public SplashFrame() {
+	public SplashView() {
 		setContentPane(new JPanel());
 		setTitle("Loading");
 		setSize(480,360);
