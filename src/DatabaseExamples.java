@@ -9,22 +9,22 @@ import model.Product;
 
 public class DatabaseExamples{
 	public DatabaseExamples() {		
-		/*
+		
 		Date start;
 		Date end;
 		
 		
 		start = new Date();
 		try {
-			Database.addTestInventoryEntries(10, 999, false);
+			Database.addTestInventoryEntries(100, 999, false);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		end = new Date();
 		System.out.println(end.getTime()-start.getTime());
-		*/
-
+		
+		if(true)return;
 		
 		ArrayList<Category> categories = Database.retrieveCategories();
 

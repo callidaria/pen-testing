@@ -76,13 +76,14 @@ public class Database{
 	static final Document IE_DOC;
 	static final Document CAT_DOC;
 
+	/** Setzt Document IE_DOC & CAT_DOC;
+	 * 	Dadurch wird wird die Datenbank einmal als Document in den Arbeitsspeicher geladen, so geht das öffnen schneller.
+	 */
 	static {
 	     Document tmp = null;
 	     Document tmp2 = null;
 	     try {
 	       tmp = Database.buildDocument(DBPATH_IE);
-	       tmp2 = Database.buildDocument(DBPATH_CAT);
-	       System.out.println(tmp);
 	     } 
 	     catch (IOException e) {
 	    	 System.err.println("Fatal error. Trouble parsing the file:"+DBPATH_IE+"\n We will rebuild the file if it doesn' exist. Please restart.");
@@ -91,19 +92,42 @@ public class Database{
 	    	 System.err.println("Fatal error. Trouble finding the file:"+DBPATH_IE+"\n We will rebuild the file if it doesn' exist. Please restart.");
 	    	 Database.recover(0);
 	     }
+	     try {
+			tmp2 = Database.buildDocument(DBPATH_CAT);
+		} catch (SAXException e) {
+			System.err.println("Fatal error. Trouble parsing the file:"+DBPATH_CAT+"\n We will rebuild the file if it doesn' exist. Please restart.");
+	    	Database.recreate(1);
+		} catch (IOException e) {
+			System.err.println("Fatal error. Trouble finding the file:"+DBPATH_CAT+"\n We will rebuild the file if it doesn' exist. Please restart.");
+	    	Database.recover(1);
+		}
 	     IE_DOC = tmp;
 	     CAT_DOC=tmp2;
 	}
 	
 	
-	//Testing with only one tranformerFactory instance
+	/**Damit gibt es eine statische TransformerFactory um eventuell schneller zu die Datenbank zu transformieren.
+	 * (nicht bestätigt) 
+	 */
 	static TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
+	/**CAT_DOC als DOMSource
+	 * ermöglicht das Document als DOM Tree zu parsen.
+	 */
 	private static DOMSource CAT_DOM_SOURCE= new DOMSource(Database.CAT_DOC);
+	/**IE_DOC als DOMSource
+	 * ermöglicht das Document als DOM Tree zu parsen.
+	 */
 	private static DOMSource IE_DOM_SOURCE= new DOMSource(Database.IE_DOC);
 
-	private static final boolean DEBUG=true;
+	/**Wenn wird XML Datein mit Umbrüchen und Tabs ausgegeben.  
+	 */
+	private static final boolean DEBUG=false;
 	
+	/**Aktiviert/deaktiviert das Transformieren bei jeder Interaktion mit der Datenbank.
+	 * Wenn die Datenbank voll ist können durch das Deaktivieren des Autosaves, bis zu 5 Sekunden pro Interaktion gespart werden. 
+	 */
+	private static final boolean AUTOSAVE=false;
 	
 	/**Abfragen aller Inventareinträge aus der XML Datei unter DBPATH_IE
 	 *  
@@ -166,8 +190,6 @@ public class Database{
 	
 	/** 
 	 * @param newIE erwartet einen Inventareintrag, der validiert sein sollte, sonst wird eine Exception geworfen.
-	 * @throws Exception errors
-	 * @throws CodedException errors
 	 */
 	public static void addInventoryEntry(InventoryEntry newIE){
 		
@@ -224,7 +246,7 @@ public class Database{
 			entries.appendChild(newEntry);
 
 			// write the content into xml file
-			Database.transformInventoryEntries();
+			if(AUTOSAVE) Database.transformInventoryEntries();
 			
 		   
 	}
@@ -304,7 +326,7 @@ public class Database{
 				}
 			}
 			// write the content into xml file
-			Database.transformInventoryEntries();
+			if(AUTOSAVE) if(AUTOSAVE) Database.transformInventoryEntries();
 	}
 	
 	
@@ -315,7 +337,6 @@ public class Database{
 	 * 
 	 * @param UID Bestimmt den Inventareintrag, der ersetzt werden soll.
 	 * @param newIE der Inventareintrag der an der ausgewählten Stelle eingefügt wird.
-	 * @param force bestimmt ob, wenn ein anderer Eintrag an UID vorhanden ist, überschrieben werden soll.
 	 * 
 	 * Pre:
 	 * newIE muss validieren.
@@ -374,7 +395,7 @@ public class Database{
 		}
 
 		// write the content into xml file			
-		Database.transformInventoryEntries();	
+		if(AUTOSAVE) Database.transformInventoryEntries();	
 	   
 	System.out.println("InventoryEntry ("+UID+"): replaced with\n"+newIE);
 
@@ -399,7 +420,7 @@ public class Database{
 			   }
 			
 			
-			Database.transformInventoryEntries();
+			if(AUTOSAVE) Database.transformInventoryEntries();
 			System.out.println("SetAttribute ("+UID+"):"+newIE);
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
@@ -495,25 +516,39 @@ public class Database{
 	 * @throws Exception unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
 	 */
 	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
-		Document doc = Database.IE_DOC;
-		Element node;
+		Element node = null;
 		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
 	    int section=sectionPlace[0];
 	    int place=sectionPlace[1];
+	    NodeList nodeList = IE_DOC.getElementsByTagName("entry");
+	    System.out.println("To find"+section+"|"+place);
+	    Element tmpNode = null;
+	    for (int i=0; i<nodeList.getLength();i++) {
+	    	tmpNode = (Element) nodeList.item(i);
+	    	//System.out.println("Found"+node2.getAttribute("area")+"|"+node2.getAttribute("place"));
+	    	
+	    	if(Integer.parseInt(tmpNode.getAttribute("area"))==section&&Integer.parseInt(tmpNode.getAttribute("place"))==place) {
+	    		node = tmpNode;
+	    		break;
+	    	}
+	    }
 		try {
-			node = (Element) Database.xpathNode(doc,"/entries/entry[@area="+section+" and @place="+place+"]");
+			
 			if(node==null) {
 				return;
 			}
 			NodeList nodeChilds = node.getChildNodes();
-			for (int i = 0; i < nodeChilds.getLength(); i++) {
+			if(force==false) {
+				for (int i = 0; i < nodeChilds.getLength(); i++) {
 				   Node subNode = nodeChilds.item(i);
-				   if (subNode.getNodeName()=="count" && Integer.parseInt(subNode.getTextContent())!=0 && force==false) {
+				   if (subNode.getNodeName()=="count" && Integer.parseInt(subNode.getTextContent())!=0) {
 					   throw new Exception("Löschen von Inventareintrag("+UID+") fehlgeschlagen. Die Quantität ("+subNode.getTextContent()+") sollte 0 sein ist, ansonsten benutzten Sie 'force delete'.");
 				   }
 			   }
+			}
+			
 		node.getParentNode().removeChild(node);
-		Database.transformInventoryEntries();
+		if(AUTOSAVE) Database.transformInventoryEntries();
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -628,7 +663,7 @@ public class Database{
 				return;
 			}
 			node.getParentNode().removeChild(node);
-			Database.transformInventoryEntries();
+			if(AUTOSAVE) Database.transformInventoryEntries();
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -740,8 +775,8 @@ public class Database{
 	 * 
 	 * @param file Pfad zur Datei
 	 * @return Document
-	 * @throws SAXException
-	 * @throws IOException
+	 * @throws SAXException wenn das Dokument nicht richtig formatiert ist.
+	 * @throws IOException wenn die Datei nicht existiert.
 	 */
 	private static Document buildDocument(String file) throws SAXException, IOException {
 
@@ -793,7 +828,9 @@ public class Database{
 		
 	}
 	
-	/**Hilfsmethode. Speichert (transformiert) das veränderte doc an der Stelle targetPath.
+	/**Hilfsmethode. Speichert (transformiert) das veränderte Inventareinträge-Doc.
+	 * 
+	 * @return true, wenn das Transformieren erfolgreich war.
 	 */
 	public static boolean transformInventoryEntries() {
 		
@@ -829,7 +866,7 @@ public class Database{
 		return true;
 		
 	}
-	/**Hilfsmethode. Speichert (transformiert) das veränderte doc an der Stelle targetPath.
+	/**Hilfsmethode. Speichert (transformiert) das veränderte Kategorie-Doc.
 	 * 
 	 * 
 	 * @param doc erwartet ein Dokument, welche sinnvollerweiße verändert wurde
@@ -867,7 +904,7 @@ public class Database{
 		
 	}
 	
-	/** Vergleich eine XML Datei mit einer XSD (XML Schema Definition) Datei.
+	/** Vergleich eine XML Datei mit einer XSD (XML Schema Definition) Datei. Lange Laufzeit bei großer Datenbank, daher in der Anwendung nur als manuelle Methode.
 	 * 
 	 * @param xmlPath Pfad der XML Datei.
 	 * @param xsdPath Pfad der XSD Datei.

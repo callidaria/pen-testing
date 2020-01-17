@@ -46,7 +46,11 @@ public class Product {
 	public int getWeight() {
 		return weight;
 	}
-	
+	/**Gewicht so wie sie in der Anwendung dargestellt werden soll.
+	 * Einheit ist Gramm, wenn weniger als 1 Kilo, ansonsten Kilogramm.
+	 * 
+	 * @return Gewicht mit Einheit als String
+	 */
 	public String getStringifiedWeight() {
 		if(weight<1000) {
 			float fWeight = (float)this.weight/10.0f;
@@ -58,7 +62,7 @@ public class Product {
 		return String.valueOf(fWeight)+"kg";
 	}
 	
-	/**
+	/**Getter/Setter-Methode
 	 * 
 	 * @param weight
 	 */
@@ -66,22 +70,26 @@ public class Product {
 		this.weight = weight;
 	}
 	
-	/**
+	/**Getter/Setter-Methode
 	 * 
-	 * @return
+	 * @return Preis in Cent
 	 */
 	public int getPrize() {
 		return prize;
 	}
 	
-	/**
+	/**Getter/Setter-Methode
 	 * 
-	 * @param prize
+	 * @param Preis in Cent
 	 */
 	public void setPrize(int prize) {
 		this.prize = prize;
 	}
-	
+	/**Preis so wie sie in der Anwendung dargestellt werden soll.
+	 * Einheit ist Cent, wenn weniger als 1 Euro, sonst Euro.
+	 * 
+	 * @return Preis mit Einheit als String
+	 */
 	public String getStringifiedPrize() {
 		if(this.prize<100) {
 			return String.valueOf(prize)+"c";
@@ -90,9 +98,9 @@ public class Product {
 		return String.valueOf(fPrize)+"€";
 	}
 	
-	/**
+	/**Getter/Setter-Methode
 	 * 
-	 * @return
+	 * @return Menge in Stück
 	 */
 	public int getCount() {
 		return count;
@@ -114,22 +122,35 @@ public class Product {
 		return categoryID;
 	}
 	
-	/**
-	 * Getter/Setter-Methode
-	 * @param categoryID
+	/**Getter/Setter-Methode
+	 * Beim Neustart wird dann auch der Name der Kategorie angezeigt.
+	 * 
+	 * @param categoryID der gewünschten Kategorie.
 	 */
 	public void setCategoryID(int categoryID) {
 		this.categoryID = categoryID;
 		this.setCategory(new Category(categoryID,"Kategorie nicht geladen"));
 	}
 	
+	/**Getter/Setter-Methode
+	 * Weißt Kategorie neu zu.
+	 * 
+	 * @param category, die gewünschte Kategorie als Category Object.
+	 */
 	public void setCategory(Category category) {
 		this.categoryID=category.getUID();
 		this.category=category;
 	}
 	
 	
-	
+	/** Konstruktor ohne den Namen der Kategorie
+	 * 
+	 * @param name Name
+	 * @param count Anzahl in Stück
+	 * @param weight Gewicht in dezigramm
+	 * @param prize Preis in Cent
+	 * @param categoryID KategorieID
+	 */
 	public Product(String name, int count, int weight, int prize, int categoryID){
 		this.name=name;
 		this.count=count;
@@ -138,7 +159,15 @@ public class Product {
 		this.categoryID=categoryID;
 		this.setCategory(new Category(categoryID,"Kategorie nicht geladen"));
 	}
-	
+	/** Konstruktor mit Verweis auf Kategorie
+	 * 
+	 * @param name Name
+	 * @param count Anzahl in Stück
+	 * @param weight Gewicht in dezigramm
+	 * @param prize Preis in Cent
+	 * @param categoryID KategorieID
+	 * @category category Verweis auf Kategorie
+	 */
 	public Product(String name, int count, int weight, int prize, int categoryID, Category category){
 		this.name=name;
 		this.count=count;
@@ -148,16 +177,16 @@ public class Product {
 		this.category=category;
 	}
 	
-	
+	/**Ein schneller Check, ob irgendein Attribut null ist und ob die Kategore validiert.
+	 * Kein ausführlicher Constraintcheck.
+	 * 
+	 * @return true, wenn kein Wert null
+	 */
 	public boolean validate() {
 		if (this.name==null || this.count==null || this.weight==null || this.prize==null || this.categoryID==null || this.category.validate() == false) {
 			return false;
 		}
 		return true;
-	}
-	public void repair() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public String toString() {

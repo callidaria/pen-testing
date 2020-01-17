@@ -152,28 +152,6 @@ public class InventoryEntry{
 		return true;
 	}
 	
-	/**Experimentell, wird aktuell nicht in der Anwendung genutzt.
-	 * 
-	 * @return wahr, wenn der Eintrag repariert werden konnte.
-	 */
-	public boolean repair() {
-		if(!this.validate()) {
-			if (this.shelfSection==null) {
-				this.setShelfSection(-1);
-			}
-			if (this.shelfPlace==null) {
-				this.setShelfPlace(-1);
-			}
-			if(!this.product.validate()) {
-				this.product.repair();
-			}
-		}
-		else {
-			return false;
-		}
-		
-		return true;
-	}
 	
 
 	/**Eine statische Methode um eine UID in Regalnummer und Regalplatznummer umzuwandeln.
@@ -222,7 +200,7 @@ public class InventoryEntry{
 	 * 
 	 * @param section, Regalnummer
 	 * @param place, Regalplatznummer
-	 * @return UID
+	 * @return UID Wenn Section oder Place so nicht erlaubt sind, wird -1 zurück gegeben. Ansonsten die UID.
 	 */
 	static public int sectionPlaceToUID(int section, int place) {
 		String strPlace = Integer.toString(place);

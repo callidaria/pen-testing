@@ -199,4 +199,9 @@ public class VirtualStorage {
 		Database.replaceInventoryEntry(uid, editedIE);
 		loadVirtualStorage();
 	}
+	
+	public void manualSave() {
+		Database.transformCategories();
+		Database.transformInventoryEntries();
+	}
 }

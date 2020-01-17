@@ -137,6 +137,7 @@ public class InventoryView extends JFrame {
 		//scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		table.setFillsViewportHeight(true);
 		table.setRowHeight(26);
+		table.getRowSorter().toggleSortOrder(0);
 		
 		table.addMouseListener(new MouseAdapter(){
 			 public void mousePressed(MouseEvent mouseEvent) {
@@ -168,6 +169,7 @@ public class InventoryView extends JFrame {
 		JMenu menu = new JMenu("Menü");
 		//JMenu submenu = new JMenu("Submenü");
 		JMenuItem menuCategory = new JMenuItem("Kategorien");
+		JMenuItem menuSave = new JMenuItem("Speichern");
 		JMenuItem menuValidate = new JMenuItem("DB Validieren");
 		menuCategory.addActionListener(new ActionListener() { 
 			
@@ -176,6 +178,13 @@ public class InventoryView extends JFrame {
 				categoriesView.setVisible(true);
 			}
 			
+		});
+		menuSave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				vs.manualSave();
+			}
 		});
 		String searchSelectables[] = {"Alles","ID","Name","Anzahl","Gewicht","Preis","Kategorie"};
 		JComboBox<String> searchSelector = new JComboBox<String>(searchSelectables);
@@ -214,7 +223,10 @@ public class InventoryView extends JFrame {
 		//submenu.add(zwei);
 		menu.add(menuCategory);
 		menu.addSeparator();
+		menu.add(menuSave);
+		menu.addSeparator();
 		menu.add(menuValidate);
+		
 		menuBar.add(menu);
 		setJMenuBar (menuBar);
 		
@@ -257,6 +269,7 @@ public class InventoryView extends JFrame {
 		//vs.loadVirtualStorage();
 	 	tableModel.setDataVector(vs.getInventoryEntryObjectArray(),columnNames);
 		tableModel.fireTableDataChanged();
+		table.getRowSorter().toggleSortOrder(0);
 		return;
 	}
 	
