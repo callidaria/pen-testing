@@ -27,6 +27,11 @@ import model.InventoryEntry;
 import model.Product;
 import view.components.SelectionItem;
 
+/**
+ * In der Klasse ArticleView wird ein ausgewählter Artikel genauer betrachtet.
+ * Alles über diesen Artikel kann hier verändert werden
+ * und er kann gelöscht werden
+ */
 public class ArticleView extends JFrame {
 	
 	final static boolean shouldFill = true;
@@ -35,6 +40,10 @@ public class ArticleView extends JFrame {
 	private VirtualStorage vs;
 	private InventoryView inventoryView;
 	
+	
+	/**
+	 * Konstruktor der ArticleView
+	 */
 	public ArticleView() {
 		
 		setSize(480,360);
@@ -43,6 +52,9 @@ public class ArticleView extends JFrame {
 		setTitle("Artikeldetailansicht");
 	}
 	
+	/**
+	 * Wird aufgerufen beim Doppelklick auf Artikel in der Tabelle, mit UID als parameter
+	 */
 	public void ShowArticleView(int UID) {
 		setContentPane(new JPanel());
 		InventoryEntry thisArticle = vs.getEntryByUID(UID);
@@ -50,9 +62,7 @@ public class ArticleView extends JFrame {
 		//GUI
 		setTitle(thisArticle.product.getName());
 		
-		
-		
-		
+				
 		//TextArea
 		JTextField taplatz = new JTextField(thisArticle.getStringifiedUID(),20);
 		JTextField taanzahl = new JTextField(Integer.toString(thisArticle.product.getCount()),5);
@@ -75,7 +85,7 @@ public class ArticleView extends JFrame {
 		
 		
 		
-		//Label
+		//Labels
 		JLabel lgewicht = new JLabel("Gewicht in 1/10 gramm:");
 		JLabel lpreis = new JLabel("Preis:");
 		JLabel lkategorie = new JLabel("Kategorie:");
@@ -84,7 +94,7 @@ public class ArticleView extends JFrame {
 		JLabel ladd = new JLabel("+/˗:");
 		JLabel product = new JLabel("Name:");
 		
-		//button
+		//buttons zum löschen des Artikels und Speichern der Änderungen, und addieren/subtrahieren der Anzahl
 		JButton badd = new JButton ("＋");
 		JButton bsubtract = new JButton ("˗");
 		JButton bdelete = new JButton ("Artikel Löschen");
@@ -216,9 +226,7 @@ public class ArticleView extends JFrame {
 			
 		});
 		
-		//Layout
-		//Container pane = getContentPane();
-		//pane.setLayout(new GridLayout(2,4));
+		//Layout wird hier festgelegt. Reihenfolge alle Elemente
 		
 		Container pane = getContentPane();
 		
@@ -334,6 +342,9 @@ public class ArticleView extends JFrame {
         setContentPane(pane);
 	}
 
+	/**
+	 * 
+	 */
 	private SelectionItem[] categoriesToItem() {
 		List<Category> categories = vs.getAllCategories();
 		List<SelectionItem> categoryNames = new ArrayList<SelectionItem>();
@@ -345,9 +356,17 @@ public class ArticleView extends JFrame {
 		SelectionItem[] searchSelectables = categoryNames.toArray(new SelectionItem[categories.size()]);
 		return searchSelectables;
 	}
+	
+	/**
+	 * setter für VirtualStorage
+	 */
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
 	}
+	
+	/**
+	 * setter für InventoryView
+	 */
 	public void setInventoryView(InventoryView inventoryView) {
 		this.inventoryView = inventoryView;
 	}

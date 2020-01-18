@@ -29,6 +29,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Wird angezeigt beim Doppelklick auf die Kategorientabellen
+ * hier werden änderungen an einzelnen Kategorien vorgenommen 
+ */
+
 public class CategoryView extends JFrame {
 	
 	private VirtualStorage vs;
@@ -44,6 +49,9 @@ public class CategoryView extends JFrame {
 		
 		
 	}
+	/**
+	 * wird aufgerufen, wenn auf die Tabelle der Kategorien gedoppelklickt wird
+	 */
 	public void showCategoryView(int UID){
 		setContentPane(new JPanel());
 		//Label
@@ -102,6 +110,10 @@ public class CategoryView extends JFrame {
         c.gridy = 4;
 		pane.add(bSave,c);
 	}
+	
+	/**
+	 * setter für Virtualstorage
+	 */
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
 	}

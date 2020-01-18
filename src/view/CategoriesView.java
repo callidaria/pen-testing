@@ -30,20 +30,31 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Hier wird die Tabelle der Kategorien angezeigt, von hier aus werden die Änderungen verschiedenster Kategorien aufgerufen
+ */
+
 public class CategoriesView extends JFrame {
 	private VirtualStorage vs;
 	private CategoryView categoryView;
 	private DefaultTableModel tableModel;
+	
+	/**
+	 * Konstruktor der CategoriesView
+	 */
 	public CategoriesView() {
 		setTitle("Kategorie");
 		setSize(500,600);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
+	
+	/**
+	 * wird über das Menü aufgerufen
+	 * Zeigt alles an
+	 */
 	public void showCategoriesView(){
-		//GUI
-		
-		
+				
 		//Menubar
 		JMenuBar menu = new JMenuBar();
 		JMenu datei = new JMenu("Menü");
@@ -113,7 +124,7 @@ public class CategoriesView extends JFrame {
 			    }	
 		});
 			
-		//Layout
+		//Layout wird hier festgelegt, Reihenfolge wie die Elemente angezeigt werden
 		Container container = getContentPane();
 		
 		container.setLayout(new BorderLayout());
@@ -150,11 +161,18 @@ public class CategoriesView extends JFrame {
 		
 		
 	}
+	
+	/**
+	 * setter Virtualstorage
+	 */
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
 		showCategoriesView();
 	}
 	
+	/**
+	 * setter für categoryview
+	 */
 	public void setCategoryView(CategoryView categoryView) {
 		this.categoryView=categoryView;
 	}

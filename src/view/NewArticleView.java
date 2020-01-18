@@ -28,13 +28,19 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 
-
+/**
+ * wird aufgerufen, wenn in der InventoryView auf den Button neuen Eintrag erstellen geklickt wird, hiermit wird ein neuer Eintrag erstellt
+ * und zur Datenbank hinzugefügt
+ */
 
 public class NewArticleView extends JFrame {
 	
 	private InventoryView inventoryView;
 	private VirtualStorage vs;
 
+	/**
+	 *Konstruktor der newArticleView, wird über den button aufgerufen 
+	 */
 	public NewArticleView() {
 		
 		//GUI
@@ -59,7 +65,7 @@ public class NewArticleView extends JFrame {
 		JLabel lPreis = new JLabel("Preis:");
 		JLabel lUid = new JLabel("ID:");
 		
-		//Button
+		//Button hier wird der neue Eintrag erstellt und die Daten an die Datenbank weitergeleitet
 		JButton bAdd = new JButton ("Hinzufügen");
 		bAdd.addActionListener(new ActionListener() { 
 			@Override
@@ -95,6 +101,7 @@ public class NewArticleView extends JFrame {
 		});
 		
 
+		//Layout
 		
 		Container pane = getContentPane();
 		
@@ -161,13 +168,23 @@ public class NewArticleView extends JFrame {
 		pack();
 	}
 
+	/**
+	 * setter für inventoryView
+	 */
 	public void setInventoryView(InventoryView inventoryView) {
 		this.inventoryView = inventoryView;
 	}
 
+	/**
+	 * setzt die sichtbarkeit des frames
+	 */
 	public void setFrameVisible(boolean b) {
 		setVisible(b);
 	}
+	
+	/**
+	 * setter für Virtualstorage
+	 */
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
 	}

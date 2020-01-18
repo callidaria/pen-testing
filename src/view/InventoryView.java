@@ -38,9 +38,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+/**
+ * Die Hauptansicht der Datenbank.
+ * Hier werden alle Inhalte des Bestandes angezeigt
+ * Von hier aus kommt man zu den Klassen, die die Daten manipulieren können
+ */
+
 
 public class InventoryView extends JFrame {
 
+	
+	
 	private NewArticleView newArticleView;
 	private Object[][] data;
 	VirtualStorage vs = new VirtualStorage();
@@ -58,18 +66,21 @@ public class InventoryView extends JFrame {
 	
 	private int selectedSearch=0;
 
+	/**
+	 * Konstruktor der InventoryView
+	 * Hier wird das gesamte Layout festgelegt und die Funktionen aller features.
+	 */
 	public InventoryView()
 	{
 		
-		
+		//GUI Aufruf des sichtbaren Fensters
 		setContentPane(new JPanel());
 		setTitle("Bestandsübersicht");
 		setSize(1280,720);
 		setLocationRelativeTo(null);
-		//setDefaultCloseOperation(EXIT_ON_CLOSE);
+
 		
-		
-		//Button
+		//Buttons alle Buttons werden hier deklariert
 		JButton bNewIE = new JButton ("Neuen Inventareintrag erstellen");
 		bNewIE.addActionListener(new ActionListener() { 
 		
@@ -82,10 +93,12 @@ public class InventoryView extends JFrame {
 		
 		JButton bSearch = new JButton ("Los!");
 		JButton bRefresh = new JButton ("Aktualisieren");
-		//Label
+		
+		
+		//Label Alle Labels werden hier deklariert
 		JLabel lSearch = new JLabel("Suchen:");
 		
-		//Textarea
+		//Textarea alle Textareas werden hier deklariert
 		JTextField taSearch = new JTextField(40);
 		taSearch.setPreferredSize(new Dimension(40,30));
 	
@@ -104,10 +117,10 @@ public class InventoryView extends JFrame {
 		bSearch.addActionListener(startSearch);
 		
 		
-        
+        //Table hier wird die Tabelle deklariert und mit den Einträgen der Datenbank gefüllt und die Funktionen festgelegt
         data = vs.getInventoryEntryObjectArray();
         
-       tableModel = new DefaultTableModel(data, columnNames) {
+        tableModel = new DefaultTableModel(data, columnNames) {
 		private static final long serialVersionUID = 1L;
 			@Override
             public boolean isCellEditable(int row, int column)
@@ -163,10 +176,9 @@ public class InventoryView extends JFrame {
 		
 		
 		
-		//Menubar
+		//Menubar hier wird das Menu mit allen funktionen festgelegt
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menu = new JMenu("Menü");
-		//JMenu submenu = new JMenu("Submenü");
 		JMenuItem menuCategory = new JMenuItem("Kategorien");
 		JMenuItem menuSave = new JMenuItem("Speichern");
 		JMenuItem menuValidate = new JMenuItem("DB Validieren");
@@ -219,7 +231,7 @@ public class InventoryView extends JFrame {
 			}
 		});
 		
-		//submenu.add(zwei);
+		
 		menu.add(menuCategory);
 		menu.addSeparator();
 		menu.add(menuSave);
@@ -230,7 +242,7 @@ public class InventoryView extends JFrame {
 		setJMenuBar (menuBar);
 		
 		
-		//Layout
+		//Layout Hier werden alle Elemente auf das sichtbare Fenster hinzugefügt
 		Container container = getContentPane();
 		
 		container.setLayout(new BorderLayout());
@@ -264,6 +276,11 @@ public class InventoryView extends JFrame {
 		container.add(bottomPanel,BorderLayout.PAGE_END);	
 	}
 	
+	/**
+	 * Der refresh Button wird hier aufgerufen, sodass die Tabelle mit allen Einträgen aktualisiert werden kann
+	 * ohne das programm neu aufzurufen
+	 */
+	
 	public void refresh() {
 		//vs.loadVirtualStorage();
 	 	tableModel.setDataVector(vs.getInventoryEntryObjectArray(),columnNames);
@@ -272,18 +289,31 @@ public class InventoryView extends JFrame {
 		return;
 	}
 	
+	/**
+	 * setter für newarticleview
+	 */
 	public void setNewArticleView(NewArticleView articleView) {
 		newArticleView = articleView;
 	}
 	
+	/**
+	 * setter für den virtualstorage
+	 */
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
 	}
-
+	
+	/**
+	 * setter für articleview
+	 */
 	public void setArticleView(ArticleView articleView) {
 		this.articleView = articleView;
 	}
-
+	
+	
+	/**
+	 * setter für categoriesview
+	 */
 	public void setCategoriesView(CategoriesView categoriesView) {
 		this.categoriesView = categoriesView;
 	}

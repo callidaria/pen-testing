@@ -27,8 +27,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Erstellt eine neue kategorie und fügt sie der Datenbank hinzu
+ * wird über den Button neue Kategorie erstellen aufgerufen
+ */
+
 public class NewCategoryView extends JFrame {
 	private VirtualStorage vs;
+	
+	/**
+	 * Konstruktor der NewCategoryView, wird über den Button aufgerufen
+	 */
 	public NewCategoryView() {
 		//GUI
 		setTitle("Neue Kategorie erstellen");
@@ -42,8 +51,9 @@ public class NewCategoryView extends JFrame {
 			
 		//Textarea
 		JTextField taname = new JTextField(15);
-				
-		//Button
+		
+		
+		//Button wird hier erstellt und an die Datenbank weitergeleitet
 		JButton button = new JButton ("Save");
 		button.addActionListener(new ActionListener() { 
 			@Override
@@ -62,6 +72,10 @@ public class NewCategoryView extends JFrame {
 		pane.add(button);
 	
 	}
+	
+	/**
+	 * setter für VirtualStorage
+	 */
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
 	}
