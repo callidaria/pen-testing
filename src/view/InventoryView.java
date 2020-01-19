@@ -70,7 +70,7 @@ public class InventoryView extends JFrame {
 	 * Konstruktor der InventoryView
 	 * Hier wird das gesamte Layout festgelegt und die Funktionen aller features.
 	 */
-	public InventoryView(VirtualStorage vs)
+	public InventoryView(VirtualStorage vs) {
 		this.vs=vs;
 		//GUI Aufruf des sichtbaren Fensters
 		setContentPane(new JPanel());
