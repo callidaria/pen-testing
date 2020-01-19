@@ -135,13 +135,21 @@ public class ArticleView extends JFrame {
 			// Nach klicken des Buttons wird die Zahl die eingegeben wurde drauf addiert auf die Anzahl.	
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Textfield to String
 				String eins = tfAddRemove.getText();
 				String zwei = tfCount.getText();
+				
+				//String to Integer
 				int add = Integer.parseInt(eins);
 				int anzahl = Integer.parseInt(zwei);
+				
+				//Berechnung des Ergebnisses für das Textfield
 				int sum = add+anzahl;
 				
+				//tfAddRemove wieder auf 0, sodass weitere adds ausgeführt werden können
 				tfAddRemove.setText("0");
+				
+				//tfCount auf aktuellen lagerbestand
 				tfCount.setText(Integer.toString(sum));
 				//Aufruf der Changeamout methode aus dem VirtualStorage
 				try {
@@ -156,9 +164,11 @@ public class ArticleView extends JFrame {
 			// Nach Buttonklick wird die zahl weg subtrahiert von der Anzahl
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				//Textfield to String
 				String eins = tfAddRemove.getText();
 				String zwei = tfCount.getText();
+				
+				//String to Integer
 				int add = Integer.parseInt(eins);
 				int anzahl = Integer.parseInt(zwei);
 				
@@ -197,9 +207,12 @@ public class ArticleView extends JFrame {
 				
 				String spreis = tfPrize.getText();
 				int preis = Integer.parseInt(spreis);
+				
 				String sgewicht = tfWeight.getText();
 				int gewicht = Integer.parseInt(sgewicht);
+				
 				String name =tfName.getText();
+							
 				
 				InventoryEntry editedIE = new InventoryEntry(uid, new Product(name, anzahl, gewicht, preis, kategorie_id));
 				//Methode zum ändern des Artikels wird aufgerufen

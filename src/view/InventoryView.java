@@ -162,11 +162,13 @@ public class InventoryView extends JFrame {
 		
 		//Aufruf der ArtikelView, also der einzelansicht nach doppelklick auf einen Artikel der Tabelle
 		table.addMouseListener(new MouseAdapter(){
+			//feuert, wenn mit der Maus auf die tabelle geklickt wurde
 			public void mousePressed(MouseEvent mouseEvent) {
 			        JTable table =(JTable) mouseEvent.getSource();
 			        Point point = mouseEvent.getPoint();
 			        int row = table.rowAtPoint(point);
 			        int column = 0;
+			        //Stellt fest, ob es ein doppelklick war und in die zu sehende Tabelle geklickt wurde
 			        if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1 && table.getValueAt(row, column)!=null) {
 			        	SwingUtilities.invokeLater(new Runnable() {
 			                @Override
@@ -193,6 +195,7 @@ public class InventoryView extends JFrame {
 		JMenuItem menuRefresh = new JMenuItem("Aktualisieren");
 		JMenuItem menuSave = new JMenuItem("Manuel Speichern");
 		JMenuItem menuValidate = new JMenuItem("DB Validieren");
+		
 		menuCategory.addActionListener(new ActionListener() { 
 			//Hiermit gelangt man zur Kategorie
 			@Override
@@ -202,18 +205,21 @@ public class InventoryView extends JFrame {
 		});
 
 		menuRefresh.addActionListener(new ActionListener() {
-
+			//nach klicken wird die Tabelle aktualisiert
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				refresh();
 			}
 		});
+		
 		menuSave.addActionListener(new ActionListener() {
+			//nach Buttonklick werden alle änderungen gesichert
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				vs.manualSave();
 			}
 		});
+		
 		menuValidate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -230,6 +236,7 @@ public class InventoryView extends JFrame {
 			}
 		});
 
+		//Legt die Reihenfolge der Item in der Menubar fest
 		menu.add(menuCategory);
 		menu.addSeparator();
 		menu.add(menuRefresh);

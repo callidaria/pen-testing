@@ -35,6 +35,10 @@ public class CategoryView extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 	}
+	
+	/**
+	 * Nimmt die UID der angeklickten Kategorie als Parameter an, um genau diese nach aufruf dieser Methode anzuzeigen
+	 */
 	public void showCategoryView(int UID) {
 		setContentPane(new JPanel());
 		Category thisCategory = vs.getCategoryByUID(UID);
@@ -45,6 +49,7 @@ public class CategoryView extends JFrame {
 
 		JTextField tfName = new JTextField(10);
 		tfName.setText(thisCategory.getName());
+		
 		//Button
 		JButton bSave = new JButton ("Speichern");
 		bSave.addActionListener(new ActionListener() { 
@@ -71,6 +76,7 @@ public class CategoryView extends JFrame {
 		});
 		JButton bDelete = new JButton ("Löschen");
 		bDelete.addActionListener(new ActionListener() {
+			//Nach klicken wird die ausgewählte Kategorie gelöscht
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (JOptionPane.showConfirmDialog(getContentPane(), "Kategorie Löschen?","Bestätigen",JOptionPane.YES_NO_OPTION)==0) {

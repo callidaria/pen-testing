@@ -20,6 +20,10 @@ public class NewCategoryView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private VirtualStorage vs;
 	private CategoriesView categoriesView;
+	
+	/**
+	 * Nimmt als Parameter einen neuen VirtualStorage Eintrag an, sodass dieser nach Beendigung der Datenbank hinzugefügt werden kann
+	 */
 	public NewCategoryView(VirtualStorage vs) {
 		this.vs=vs;
 		//GUI
@@ -37,9 +41,13 @@ public class NewCategoryView extends JFrame {
 		//Button wird hier erstellt und an die Datenbank weitergeleitet
 		JButton bSave = new JButton ("Save");
 		bSave.addActionListener(new ActionListener() {
+			//nach dem Buttonklick wird alles gespeichert
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Textfield wird ausgelesen
 				String name = tfName.getText();
+				
+				//loadCategory Methode aus dem Virtual Storage wird ausgeführt
 				vs.loadCategoryStorage();
 				int err_code = vs.addCategory(name); //breakable
 				if (err_code==0) {
@@ -53,7 +61,7 @@ public class NewCategoryView extends JFrame {
 			}
 		});
 		
-		//Layout
+		//Layout Hier wird die Reihenfolge aller Elemente festgelegt
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
 		pane.add(lName);

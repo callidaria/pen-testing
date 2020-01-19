@@ -43,6 +43,9 @@ public class NewArticleView extends JFrame {
 	private InventoryView inventoryView;
 	private VirtualStorage vs;
 
+	/**
+	 * Konstruktor der NewArticleView, nimmt einen neuen VirtualStorage eintrag als Parameter um diesen nach Beendigung hinzuzufügen
+	 */
 	public NewArticleView(VirtualStorage vs) {
 		this.vs=vs;
 		
@@ -53,7 +56,7 @@ public class NewArticleView extends JFrame {
 		setLocationRelativeTo(null);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		//Textarea
+		//Textfields - Hier werden alle Parameter des zu erstellenden Artikels eingetragen
 		//JTextField tKategorie = new JTextField(20);
 		JTextField tName = new JTextField(20);
 		JTextField tAnzahl = new JTextField(20);
@@ -61,7 +64,7 @@ public class NewArticleView extends JFrame {
 		JTextField tPreis = new JTextField(20);
 		JTextField tUid = new JTextField(20);
 		
-		//Label
+		//Label beschriftung für die Textfields
 		JLabel lKategorie = new JLabel("KategorieID:");
 		JLabel lName = new JLabel("Produktname:");
 		JLabel lAnzahl = new JLabel("Anzahl:");
@@ -94,7 +97,9 @@ public class NewArticleView extends JFrame {
 				int gewicht = Integer.parseInt(sgewicht);
 				int preis = Integer.parseInt(spreis);
 				int id = Integer.parseInt(sid);
-                try {
+                
+				//Ausführen der hinzufügen Methode aus dem VirtualStorage
+				try {
 					int adding=vs.addProduct(id, produkt, anzahl, gewicht, preis, ((SelectionItem)takategorie.getSelectedItem()).getId());
 					if (adding==0) {
 						JOptionPane.showMessageDialog(getContentPane(),"Eintrag wurde hinzugefügt","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
@@ -120,6 +125,9 @@ public class NewArticleView extends JFrame {
 		pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(10,5,0,5);
+        
+        //gridx für horizontale koordinate
+        //gridy für vertikale koordinate
         c.gridx = 0;
         c.gridy = 0;
 		pane.add(lKategorie,c);

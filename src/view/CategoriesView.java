@@ -47,12 +47,15 @@ public class CategoriesView extends JFrame {
 		setResizable(false);
 		showCategoriesView();
 	}
+	/**
+	 * Die Methode zum anzeigen der CategoryView, wird aufgerufen durch die Menubar in der Bestandsübersicht
+	 */
 	public void showCategoriesView() {
 		//Button
 		JButton bAddCategory = new JButton ("Neue Kategorie erstellen");
-		//CategoriesView tp = this;
-		bAddCategory.addActionListener(new ActionListener() { 
 		
+		bAddCategory.addActionListener(new ActionListener() { 
+			//Ruft ein neues Fenster auf, in welchem man eine neue Kategorie erstellen kann
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				vs.loadCategoryStorage();
@@ -152,6 +155,8 @@ public class CategoriesView extends JFrame {
 		container.add(rightPanel,BorderLayout.LINE_END);
 		container.add(bottomPanel,BorderLayout.PAGE_END);
 	}
+	
+
 	public void setCategoryView(CategoryView categoryView) {
 		this.categoryView=categoryView;
 	}
