@@ -9,21 +9,41 @@ import basic.InventoryEntry;
 import basic.Product;
 import database.Database;
 
+/**
+ * VirtualStorage ist die Klasse die es für das Frontend möglich macht einfach mit den Einträgen der Datenbank umzugehen.
+ * Sie beinhaltet die Funktionen die maßgeschneidert auf die angestrebten Funktionen im Frontend sind und verhindert,
+ * dass alle Einträge immer aus der Datenbank gelesen werden müssen.
+ * 
+ * @author Lovis Trüstedt
+ * 
+ */
 public class VirtualStorage {
 	List<InventoryEntry> inventoryEntry;
 	List<Category> categoryEntry;
 	public boolean loaded;
 	
+	/**
+	 * Der Konstruktor lädt ersteinmal die Datenbank und alle Kategorien
+	 */
 	public VirtualStorage() {
 		loadVirtualStorage();
 		loadCategoryStorage();
 	}
+	/**
+	 * Sucht den Eintrag mit der eingegebenen ID und gibt das zugehörige Objekt dazu aus
+	 * @param id, spezifiziert die ID des gesuchten Eintrags
+	 * @return das gesuchte Objekt des Datenbankeintrages
+	 */
 	public InventoryEntry getEntryByUID(int id) {
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getUID()==id)
 				return inventoryEntry.get(i);
 		} return null;
 	}
+	/**
+	 * Sucht jedes Attribut jedes Eintrags nach Äquivalenzen mit dem eingegebenen Suchwort ab
+	 * @param search, das Suchwort
+	 */
 	public void searchEntries(String search) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -37,6 +57,10 @@ public class VirtualStorage {
 				nie.add(proc);
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Sucht die ID jedes Eintrags nach Äquivalenzen mit dem eingegebenen Suchwort ab
+	 * @param search, das Suchwort
+	 */
 	public void searchEntriesByID(String search) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -44,6 +68,10 @@ public class VirtualStorage {
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Sucht den Namen jedes Eintrags nach Äquivalenzen mit dem eingegebenen Suchwort ab
+	 * @param search, das Suchwort
+	 */
 	public void searchEntriesByName(String search) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -51,6 +79,10 @@ public class VirtualStorage {
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Sucht die Menge jedes Eintrags nach Äquivalenzen mit dem eingegebenen Suchwort ab
+	 * @param search, das Suchwort
+	 */
 	public void searchEntriesByAmount(String search) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -58,6 +90,10 @@ public class VirtualStorage {
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Sucht das Gewicht jedes Eintrags nach Äquivalenzen mit dem eingegebenen Suchwort ab
+	 * @param search, das Suchwort
+	 */
 	public void searchEntriesByWeight(String search) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -65,6 +101,10 @@ public class VirtualStorage {
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Sucht den Preis jedes Eintrags nach Äquivalenzen mit dem einegegebenen Suchwort ab
+	 * @param search, das Suchwort
+	 */
 	public void searchEntriesByPrize(String search) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -72,6 +112,10 @@ public class VirtualStorage {
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Sucht den String-Wert der Kategorie jedes Eintrags nach Äquivalenzen mit dem eingegebenen Suchwort ab
+	 * @param search, das Suchwort
+	 */
 	public void searchEntriesByCategory(String search) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -79,12 +123,21 @@ public class VirtualStorage {
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Hilfsmethode die anhand einer eingegebenen Kategorie-ID den zugehörigen Namen als String ausgibt
+	 * @param ID, Kategorie-ID
+	 * @return der String-Wert des gesuchten Kategorienamens
+	 */
 	private String getCategoryNameByID(int ID) {
 		for (int i=0;i<categoryEntry.size();i++) {
 			if (categoryEntry.get(i).getUID()==ID) return categoryEntry.get(i).getName();
 		}
 		return null;
 	}
+	/**
+	 * Sucht den Namen jeder Kategorie nach Äquivalenzen mit dem eingegebenen Suchwort ab
+	 * @param search, das Suchwort
+	 */
 	public void searchCategoriesByName(String search) {
 		loadCategoryStorage();
 		List<Category> nce = new ArrayList<Category>();
@@ -93,6 +146,10 @@ public class VirtualStorage {
 				nce.add(categoryEntry.get(i));
 		} categoryEntry = nce;
 	}
+	/**
+	 * Verbesserung der Anzeigereihenfolge von kurzen Listen anhand eines Suchwortes mithilfe der Levenshtein Abweichung
+	 * @param search, das Suchwort
+	 */
 	public void searchEntriesByLevenshtein(String search) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		List<Integer> weights = new ArrayList<Integer>();
@@ -114,6 +171,12 @@ public class VirtualStorage {
 		}
 		inventoryEntry = nie;
 	}
+	/**
+	 * Rekursive Hilfsmethode zur Berechnung der Levenshtein Abweichung zweier Strings
+	 * @param i, erster String
+	 * @param j, zweiter String
+	 * @return Resultat der Levenshtein Abweichung
+	 */
 	private int levenshtein(String i, String j) {
 		int is = i.length(); int js = j.length();
 		if (Math.min(is,js)==0) return Math.max(is,js);
@@ -121,24 +184,44 @@ public class VirtualStorage {
 				levenshtein(i,j.substring(0,js-1))+1),
 				levenshtein(i.substring(0,is-1),j.substring(0,js-1))+((i.substring(is-1).compareTo(j.substring(js-1))!=0)?1:0));
 	}
+	/**
+	 * Filter einer bestimmten Wertespanne, entschieden nach Wert der ID
+	 * @param from, erster angezeigter Wert
+	 * @param to, letzter angezeigter Wert
+	 */
 	public void filterByID(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getUID()>=from&&inventoryEntry.get(i).getUID()<=to) nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Filter einer bestimmten Wertespanne, entschieden nach der Regalnummer
+	 * @param from, erster angezeigter Wert
+	 * @param to, letzter angezeigter Wert
+	 */
 	public void filterBySection(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getShelfSection()>=from&&inventoryEntry.get(i).getShelfSection()<=to) nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Filter einer bestimmten Wertespanne, entschieden nach der Platznummer
+	 * @param from, erster angezeigter Wert
+	 * @param to, letzter angezeigter Wert
+	 */
 	public void filterByPlace(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getShelfPlace()>=from&&inventoryEntry.get(i).getShelfPlace()<=to) nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Filter einer bestimmten Wertespanne, entschieden nach Anzahl der Lagernden Objekte
+	 * @param from, erster angezeigter Wert
+	 * @param to, letzter angezeigter Wert
+	 */
 	public void filterByCount(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -146,6 +229,11 @@ public class VirtualStorage {
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Filter einer bestimmten Wertespanne, entschieden nach Artikelgewicht
+	 * @param from, erster angezeigter Wert
+	 * @param to, letzter angezeigter Wert
+	 */
 	public void filterByWeight(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -153,6 +241,11 @@ public class VirtualStorage {
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Filter einer bestimmten Wertespanne, entschieden nach Artikelpreis
+	 * @param from, erster angezeigter Wert
+	 * @param to, letzter angezeigter Wert
+	 */
 	public void filterByPrize(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -160,23 +253,52 @@ public class VirtualStorage {
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Filter einer bestimmten Wertespanne, entschieden nach Wert der Kategorie-ID
+	 * @param from, erster angezeigter Wert
+	 * @param to, letzter angezeigter Wert
+	 */
 	public void filterByCathegory(Category cath) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getProduct().getCategoryID()==cath.getUID()) nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
+	/**
+	 * Änderung des Lagerungswertes
+	 * @param id, betroffener Eintrag
+	 * @param val, Werteveränderung
+	 * @return errorcodes
+	 * @throws Exception
+	 */
 	public int changeAmountBy(int id,int val) throws Exception {
 		int nVal = getEntryByUID(id).getProduct().getCount()+val;
 		return setAmount(id,nVal);
 	}
+	/**
+	 * Lädt die Einträge aus der Datenbank in die Liste
+	 */
 	public void loadVirtualStorage() {
 		inventoryEntry = Database.retrieveInventoryEntriesWithCategory(Database.retrieveCategories());
 		loaded=true;
 	}
+	/**
+	 * Lädt die Kategorien aus der Datenbank in die Liste
+	 */
 	public void loadCategoryStorage() {
 		categoryEntry = Database.retrieveCategories();
 	}
+	/**
+	 * Fügt ein Artikel hinzu
+	 * @param UID, neue ID
+	 * @param name, Artikelname
+	 * @param count, Artikelanzahl
+	 * @param weight, Artikelgewicht
+	 * @param prize, Artikelpreis
+	 * @param categoryID, Kategorie
+	 * @return errorcode
+	 * @throws Exception
+	 */
     public int addProduct(int UID, String name, int count, int weight, int prize, int categoryID) throws Exception {
         int section = InventoryEntry.uidToSectionPlace(UID)[0];
         int place = InventoryEntry.uidToSectionPlace(UID)[1];
@@ -192,10 +314,20 @@ public class VirtualStorage {
 		loadVirtualStorage();
 		return 0;
 	}
+    /**
+     * Löscht ein Artikel
+     * @param id, Zugehörige ID
+     * @throws Exception
+     */
 	public void deleteProduct(int id) throws Exception {
 		Database.deleteInventoryEntry(id, true);
 		loadVirtualStorage();
 	}
+	/**
+	 * Fügt neue Kategorie hinzu
+	 * @param name, Name der Kategorie
+	 * @return errorcode
+	 */
 	public int addCategory(String name) {
 		if (name.length()>255) return -1;
 		for (int i=0;i<categoryEntry.size();i++) {
@@ -209,6 +341,12 @@ public class VirtualStorage {
 			return -2;
 		}
 	}
+	/**
+	 * Benennt Kategorie um
+	 * @param id, ID der Katogorie
+	 * @param newName, Neuer Name
+	 * @return errorcode
+	 */
 	public int renameCategory(int id, String newName) {
 		for (int i=0;i<categoryEntry.size();i++) {
 			if (categoryEntry.get(i).getName().compareTo(newName)==0) return -1;
@@ -216,6 +354,11 @@ public class VirtualStorage {
 		loadCategoryStorage();
 		return 0;
 	}
+	/**
+	 * Löscht Kategorie
+	 * @param id, ID der Katogorie
+	 * @return errorcode
+	 */
 	public int removeCategory(int id) {
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getProduct().getCategoryID()==id) return -1;
@@ -226,6 +369,12 @@ public class VirtualStorage {
 		} loadCategoryStorage();
 		return 0;
 	}
+	/**
+	 * Eine Artikelmenge setzen
+	 * @param id, Betroffene ArtikelID
+	 * @param amount, Menge
+	 * @return errorcode
+	 */
 	public int setAmount(int id,int amount) {
 		if (amount<0) return -1;
 		try {
