@@ -55,7 +55,6 @@ public class InventoryView extends JFrame {
             "Kategories"};
 	private CategoriesView categoriesView;
 	
-	private int selectedSearch=0;
 
 	public InventoryView(VirtualStorage vs)
 	{
@@ -85,7 +84,12 @@ public class InventoryView extends JFrame {
 		tfSearch.setPreferredSize(new Dimension(40,30));
 		Action startSearch = new AbstractAction()
 		{
-		    @Override
+		    /**
+			 * 
+			 */
+			private static final long serialVersionUID = 2869195429379554645L;
+
+			@Override
 		    public void actionPerformed(ActionEvent e)
 		    {
 		    	if (tfSearch.getText()!="") vs.searchEntriesByName(tfSearch.getText());
@@ -152,7 +156,7 @@ public class InventoryView extends JFrame {
 		//JMenu submenu = new JMenu("Submenü");
 		JMenuItem menuCategory = new JMenuItem("Kategorien");
 		JMenuItem menuRefresh = new JMenuItem("Aktualisieren");
-		JMenuItem menuSave = new JMenuItem("Speichern");
+		JMenuItem menuSave = new JMenuItem("Manuel Speichern");
 		JMenuItem menuValidate = new JMenuItem("DB Validieren");
 		menuCategory.addActionListener(new ActionListener() { 
 			
@@ -177,13 +181,7 @@ public class InventoryView extends JFrame {
 		});
 		String searchSelectables[] = {"Alles","ID","Name","Anzahl","Gewicht","Preis","Kategorie"};
 		JComboBox<String> searchSelector = new JComboBox<String>(searchSelectables);
-		searchSelector.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				selectedSearch=searchSelector.getSelectedIndex();
-			}
-		});
+		
 		
 		menuValidate.addActionListener(new ActionListener() { 
 			

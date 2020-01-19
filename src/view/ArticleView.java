@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -20,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.ListDataListener;
 
 import basic.Category;
 import basic.InventoryEntry;
@@ -34,7 +37,7 @@ public class ArticleView extends JFrame {
 	final static boolean RIGHT_TO_LEFT = false;
 	private VirtualStorage vs;
 	private InventoryView inventoryView;
-	
+	public JComboBox<SelectionItem> selectorCategory;
 	public ArticleView(VirtualStorage vs) {
 		this.vs=vs;
 		setSize(480,360);
@@ -57,8 +60,10 @@ public class ArticleView extends JFrame {
 		JTextField tfAddRemove = new JTextField("0",5);
 		
 		SelectionItem[] searchSelectables = categoriesToItem();
-
-		JComboBox<SelectionItem> selectorCategory = new JComboBox<SelectionItem>(searchSelectables);
+		
+		DefaultComboBoxModel<SelectionItem> selectionModel = new DefaultComboBoxModel<SelectionItem>(searchSelectables);
+		selectorCategory = new JComboBox<SelectionItem>(selectionModel);
+		
 		selectorCategory.addActionListener(new ActionListener() {
 			
 			@Override
@@ -290,6 +295,7 @@ public class ArticleView extends JFrame {
         c.gridx = 0;
         c.gridy = 8;
         pane.add(bSave, c);
+		selectorCategory.repaint();
         setContentPane(pane);
 	}
 

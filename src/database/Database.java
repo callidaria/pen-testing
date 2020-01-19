@@ -1,9 +1,11 @@
 package database;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +54,7 @@ import basic.Product;
 public class Database{
 	
 	//**Der relative Pfad von root zu den Datenbankdateien
-	static final String DBPATH="data/xml/";
+	static final String DBPATH="data/";
 	
 	//Dateiname von Inventareinträgen	
 	static final String DBPATH_IE="inventoryEntries.xml";
@@ -157,8 +159,7 @@ public class Database{
 				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,product);
 				inventoryEntries.add(position);
 			}
-		
-		System.out.println("Retrieved Inventory Entries");
+	
 		return inventoryEntries;
 	}
 	
@@ -543,7 +544,6 @@ public class Database{
 			Category category = new Category(uid,name);
 			categories.add(category);
 		}
-		System.out.println("Retrieved Categories");
 		return categories;
 	}
 	
@@ -585,7 +585,13 @@ public class Database{
 	 */
 	public static int freeCategoryUID() {
 		// TODO Auto-generated method stub
-		Category lastCategory=Database.retrieveCategories().get(Database.retrieveCategories().size() -1);
+		Category lastCategory = null;
+		if(Database.retrieveCategories().size()>0) {
+			lastCategory=Database.retrieveCategories().get(Database.retrieveCategories().size() -1);	
+		}
+		else {
+			return 0;
+		}
 		return lastCategory.getUID()+1;
 	}
 
@@ -890,6 +896,7 @@ public class Database{
 	    }
 	    catch (IOException e) {
 			e.printStackTrace();
+			recreate(-1);
 	    	return false;
 		}
 	}
@@ -978,7 +985,7 @@ public class Database{
 		
 	}
 
-	/**Erstellt die Datenbankdatei neu, wenn sie nicht existiert.
+	/**Erstellt die Datenbankdatei neu, wenn sie nicht existiert. Und erstellt die XSD Datein neu, wenn sie nicht existieren.
 	 * 
 	 * @param mode, 0:Inventareinträge 1: Kategorien
 	 */
@@ -1000,17 +1007,46 @@ public class Database{
 		else {
 			return;
 		}
-		File file = new File(DBPATH+filePath);
-		if(file.exists()==false) {
+		File databaseFile = new File(DBPATH+filePath);
+		if(databaseFile.exists()==false) {
 			try {
-				file.createNewFile();
+				databaseFile.createNewFile();
 				@SuppressWarnings({ "resource", "unused" })
-				FileOutputStream outFile = new FileOutputStream(file, false); 
+				FileOutputStream outFile = new FileOutputStream(databaseFile, false); 
 				Database.recover(mode);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		
+		File categoriesXSD = new File(DBPATH+DBPATH_CAT_XSD);
+		
+		if(categoriesXSD.exists()==false) {
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter(categoriesXSD));
+				writer.write(DatabaseSchema.inventoryEntriesXSD);
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		File inventoryEntriesXSD = new File(DBPATH+DBPATH_IE_XSD);
+		
+		if(inventoryEntriesXSD.exists()==false) {
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter(inventoryEntriesXSD));
+				writer.write(DatabaseSchema.inventoryEntriesXSD);
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
 		
 		
 	}
