@@ -126,7 +126,6 @@ public class InventoryView extends JFrame {
 		    		else if (searchSelector.getSelectedIndex()==5) vs.searchEntriesByPrize(tfSearch.getText());
 		    		else vs.searchEntriesByCategory(tfSearch.getText());
 		    	}
-		    	vs.loadVirtualStorage();
 		        refresh();
 		        
 		    }
@@ -291,8 +290,6 @@ public class InventoryView extends JFrame {
 	 */
 	
 	public void refresh() {
-		vs.loadCategoryStorage();
-		vs.loadVirtualStorage();
 	 	tableModel.setDataVector(vs.getInventoryEntryObjectArray(),columnNames);
 		tableModel.fireTableDataChanged();
 		table.getRowSorter().toggleSortOrder(0);
