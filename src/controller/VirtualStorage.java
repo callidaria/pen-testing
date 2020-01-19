@@ -125,7 +125,6 @@ public class VirtualStorage {
 		} inventoryEntry = nie;
 		Database.deleteCategory(id);
 	}
-
 	public int setAmount(int id,int amount) {
 		if (amount<0) return -1;
 		try {

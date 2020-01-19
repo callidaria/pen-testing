@@ -179,11 +179,6 @@ public class ArticleView extends JFrame {
 				}
 			}
 		});
-
-		//Layout
-		//Container pane = getContentPane();
-		//pane.setLayout(new GridLayout(2,4));
-		
 		Container pane = getContentPane();
 		
 		if (RIGHT_TO_LEFT) {
@@ -196,9 +191,6 @@ public class ArticleView extends JFrame {
             //natural height, maximum width
             c.fill = GridBagConstraints.HORIZONTAL;
         }
-        
-        
- 
         if (shouldWeightX) {
             c.weightx = 0.5;
         }
@@ -211,7 +203,6 @@ public class ArticleView extends JFrame {
         c.gridy = 2;
         pane.add(taproduct, c);
               
-   
         c.gridx = 1;
         c.gridy = 1;
         pane.add(lplatz, c);
@@ -220,8 +211,6 @@ public class ArticleView extends JFrame {
         c.gridy = 2;
         pane.add(taplatz, c);
         
-        
-       
         c.gridx = 0;
         c.gridy = 3;
         pane.add(lanzahl, c);
@@ -237,7 +226,6 @@ public class ArticleView extends JFrame {
         c.gridx = 1;
         c.gridy = 3;
         pane.add(ladd, c);        
-        
         
         c.gridheight = 2;
         c.gridx = 1;
@@ -255,7 +243,6 @@ public class ArticleView extends JFrame {
         c.gridy = 5;
         pane.add(bsubtract, c);
         
-     
         c.gridx = 0;
         c.gridy = 6;
         pane.add(lkategorie, c);
@@ -280,9 +267,6 @@ public class ArticleView extends JFrame {
         c.gridy = 7;
         pane.add(tagewicht, c);
         
-       
-        
-      
         c.ipady = 0;       //reset to default
         c.weighty = 1.0;   //request any extra vertical space
         c.anchor = GridBagConstraints.PAGE_END; //bottom of space
@@ -302,9 +286,7 @@ public class ArticleView extends JFrame {
 		List<Category> categories = vs.getAllCategories();
 		List<SelectionItem> categoryNames = new ArrayList<SelectionItem>();
 		for (int i=0; i<categories.size();i++) {
-			categoryNames.add(
-					new SelectionItem(categories.get(i).getUID(), categories.get(i).getName())
-					);
+			categoryNames.add(new SelectionItem(categories.get(i).getUID(), categories.get(i).getName()));
 		}
 		SelectionItem[] searchSelectables = categoryNames.toArray(new SelectionItem[categories.size()]);
 		return searchSelectables;

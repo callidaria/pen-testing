@@ -14,10 +14,11 @@ import controller.VirtualStorage;
 public class Main {
 
 	public Main() {
+		VirtualStorage MainVirtualStorage=new VirtualStorage();
 		SplashView loadingView =new SplashView();
 		InventoryView inventoryView = new InventoryView();
 			inventoryView.setMinimumSize(new Dimension(600, 200));
-		NewArticleView newArticleView = new NewArticleView();
+		NewArticleView newArticleView = new NewArticleView(MainVirtualStorage);
 		ArticleView articleView = new ArticleView();
 		CategoriesView categoriesView = new CategoriesView();
 		CategoryView categoryView = new CategoryView();
@@ -25,13 +26,10 @@ public class Main {
 		
 		loadingView.setVisible(true);
 		
-		VirtualStorage MainVirtualStorage=new VirtualStorage();
-		
 		loadingView.setVirtualStorage(MainVirtualStorage);
 		inventoryView.setVirtualStorage(MainVirtualStorage);
 		articleView.setVirtualStorage(MainVirtualStorage);
 		categoriesView.setVirtualStorage(MainVirtualStorage);
-		newArticleView.setVirtualStorage(MainVirtualStorage);
 		newCategoryView.setVirtualStorage(MainVirtualStorage);
 		
 		loadingView.setInventoryView(inventoryView);

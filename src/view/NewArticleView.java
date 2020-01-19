@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -13,6 +14,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import controller.VirtualStorage;
+import model.Category;
+import view.components.SelectionItem;
 
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
@@ -25,6 +28,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -35,7 +40,8 @@ public class NewArticleView extends JFrame {
 	private InventoryView inventoryView;
 	private VirtualStorage vs;
 
-	public NewArticleView() {
+	public NewArticleView(VirtualStorage vs) {
+		this.vs=vs;
 		
 		//GUI
 		setTitle("Neuer Artikel");
@@ -45,7 +51,7 @@ public class NewArticleView extends JFrame {
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		//Textarea
-		JTextField tKategorie = new JTextField(20);
+		//JTextField tKategorie = new JTextField(20);
 		JTextField tName = new JTextField(20);
 		JTextField tAnzahl = new JTextField(20);
 		JTextField tGewicht = new JTextField(20);
@@ -60,12 +66,21 @@ public class NewArticleView extends JFrame {
 		JLabel lPreis = new JLabel("Preis:");
 		JLabel lUid = new JLabel("ID:");
 		
+		JComboBox<SelectionItem> takategorie = new JComboBox<SelectionItem>(categoriesToItem());
+		takategorie.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SelectionItem item = (SelectionItem) takategorie.getSelectedItem();
+				System.out.println("sync");
+			}
+		});
+		
 		//Button
 		JButton bAdd = new JButton ("Hinzufügen");
 		bAdd.addActionListener(new ActionListener() { 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String skategorie = tKategorie.getText();
+				//String skategorie = tKategorie.getText();
 				String produkt = tName.getText();
 				String sanzahl = tAnzahl.getText();
 				String sgewicht = tGewicht.getText();
@@ -76,9 +91,11 @@ public class NewArticleView extends JFrame {
 				int gewicht = Integer.parseInt(sgewicht);
 				int preis = Integer.parseInt(spreis);
 				int id = Integer.parseInt(sid);
-				int kategorie = Integer.parseInt(skategorie);
+				//int kategorie = Integer.parseInt(skategorie);
+				//SelectionItem skategorie = (SelectionItem) takategorie.getSelectedItem();
+				//int kategorie = (Integer)skategorie.getId();
                 try {
-					int adding=vs.addProduct(id, produkt, anzahl, gewicht, preis, kategorie);
+					int adding=vs.addProduct(id, produkt, anzahl, gewicht, preis, ((SelectionItem)takategorie.getSelectedItem()).getId());
 					if (adding==0) {
 						JOptionPane.showMessageDialog(getContentPane(),"Eintrag wurde hinzugefügt","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 						inventoryView.refresh();
@@ -106,7 +123,7 @@ public class NewArticleView extends JFrame {
 		
 		c.gridx = 1;
 	    c.gridy = 0;
-		pane.add(tKategorie,c);
+		pane.add(takategorie,c);
 		
 		c.gridx = 0;
 	    c.gridy = 1;
@@ -161,12 +178,16 @@ public class NewArticleView extends JFrame {
 	public void setInventoryView(InventoryView inventoryView) {
 		this.inventoryView = inventoryView;
 	}
-
 	public void setFrameVisible(boolean b) {
 		setVisible(b);
 	}
-	public void setVirtualStorage(VirtualStorage vs) {
-		this.vs = vs;
+	private SelectionItem[] categoriesToItem() {
+		List<Category> categories = vs.getAllCategories();
+		List<SelectionItem> categoryNames = new ArrayList<SelectionItem>();
+		for (int i=0; i<categories.size();i++) {
+			categoryNames.add(new SelectionItem(categories.get(i).getUID(), categories.get(i).getName()));
+		}
+		SelectionItem[] searchSelectables = categoryNames.toArray(new SelectionItem[categories.size()]);
+		return searchSelectables;
 	}
-	
 }

@@ -1,33 +1,17 @@
 package view;
-import javax.swing.GroupLayout;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
 import controller.VirtualStorage;
-
-import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class NewCategoryView extends JFrame {
+	private static final long serialVersionUID = 1L;
 	private VirtualStorage vs;
 	public NewCategoryView() {
 		//GUI
@@ -36,17 +20,15 @@ public class NewCategoryView extends JFrame {
 		setLocationRelativeTo(null);
 		setResizable(false);
 				
-				
-				
 		//Label
 		JLabel lname = new JLabel("Kategoriename");
 			
-		//Textarea
+		//Text area
 		JTextField taname = new JTextField(15);
 				
 		//Button
 		JButton button = new JButton ("Save");
-		button.addActionListener(new ActionListener() { 
+		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = taname.getText();
@@ -55,7 +37,6 @@ public class NewCategoryView extends JFrame {
 		});
 		
 		//Layout
-				
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
 		pane.add(lname);
