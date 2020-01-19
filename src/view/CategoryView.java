@@ -45,7 +45,8 @@ public class CategoryView extends JFrame {
 		bSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				vs.loadCategoryStorage();
+				vs.loadVirtualStorage();
 				String newName = tfName.getText();
 				int success=vs.renameCategory(UID, newName);
 				if(success==0) {

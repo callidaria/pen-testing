@@ -58,15 +58,26 @@ public class ArticleView extends JFrame {
 		
 		SelectionItem[] searchSelectables = categoriesToItem();
 
-		JComboBox<SelectionItem> takategorie = new JComboBox<SelectionItem>(searchSelectables);
-		takategorie.addActionListener(new ActionListener() {
+		JComboBox<SelectionItem> selectorCategory = new JComboBox<SelectionItem>(searchSelectables);
+		selectorCategory.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SelectionItem item = (SelectionItem) takategorie.getSelectedItem();
+				SelectionItem item = (SelectionItem) selectorCategory.getSelectedItem();
 				System.out.println(item.getId()+":"+item.getName());
 			}
 		});
+		int selectedIndex=0;
+		
+		for(int n=0;searchSelectables.length>n;n++) {
+			if(thisArticle.product.category.getName()==searchSelectables[n].getName()) {
+				System.out.println(thisArticle.product.category.getName()+"|"+searchSelectables[n].getName());
+				break;
+			}
+			selectedIndex++;
+		}
+		System.out.println(selectedIndex);
+		selectorCategory.setSelectedIndex(selectedIndex);
 		JTextField tfPrize = new JTextField(Integer.toString(thisArticle.product.getPrize()),5);
 		JTextField tfWeight = new JTextField(Integer.toString(thisArticle.product.getWeight()),5);
 		JTextField tfName = new JTextField(thisArticle.product.getName(),5);
@@ -156,7 +167,7 @@ public class ArticleView extends JFrame {
 				String sanzahl = tfCount.getText();
 				int anzahl = Integer.parseInt(sanzahl);
 				
-				SelectionItem skategorie = (SelectionItem) takategorie.getSelectedItem();
+				SelectionItem skategorie = (SelectionItem) selectorCategory.getSelectedItem();
 				int kategorie_id = skategorie.getId();
 				
 				String spreis = tfPrize.getText();
@@ -257,7 +268,7 @@ public class ArticleView extends JFrame {
         
         c.gridx = 0;
         c.gridy = 7;
-        pane.add(takategorie, c);
+        pane.add(selectorCategory, c);
         
         c.gridx = 1;
         c.gridy = 7;

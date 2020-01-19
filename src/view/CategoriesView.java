@@ -72,7 +72,7 @@ public class CategoriesView extends JFrame {
 		    public void actionPerformed(ActionEvent e)
 		    {
 		    	if (tfSearch.getText()!="") {
-		    		System.out.println("Search Category:"+tfSearch.getText());
+		    		 vs.searchCategoriesByName(tfSearch.getText());
 		    	}
 		    	else vs.loadVirtualStorage();
 		        refresh();
