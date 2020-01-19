@@ -35,6 +35,7 @@ public class NewCategoryView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = tfName.getText();
+				vs.loadCategoryStorage();
 				int err_code = vs.addCategory(name); //breakable
 				if (err_code==0) {
 					JOptionPane.showMessageDialog(getContentPane(),"Kategorie wurde hinzugefügt","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);

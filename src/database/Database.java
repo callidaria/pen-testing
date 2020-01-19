@@ -170,15 +170,20 @@ public class Database{
 	 */
 	public static ArrayList<InventoryEntry> retrieveInventoryEntriesWithCategory(ArrayList<Category> categories){
 		ArrayList<InventoryEntry> inventoryEntries = Database.retrieveInventoryEntries();
-		Category defaultCategory = new Category(0, "Keine Kategorie");
+		Category defaultCategory = new Category(-1, "Kategorie existiert nicht");
 		for(int i=0;i < inventoryEntries.size();i++) {
+			boolean found=false;
 			int categoryID = inventoryEntries.get(i).product.getCategoryID();
-			inventoryEntries.get(i).product.setCategory(defaultCategory);
+			
 			for(int n =0;n < categories.size();n++) {
 				if(categoryID==categories.get(n).getUID()) {
 					inventoryEntries.get(i).product.setCategory(categories.get(n));
+					found=true;
 					break;
 				}
+			}
+			if(!found) {
+				inventoryEntries.get(i).product.setCategory(defaultCategory);
 			}
 			
 		}	

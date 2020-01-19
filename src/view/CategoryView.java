@@ -48,13 +48,16 @@ public class CategoryView extends JFrame {
 				
 				String newName = tfName.getText();
 				int success=vs.renameCategory(UID, newName);
-				if(success>=0) {
+				if(success==0) {
 					JOptionPane.showMessageDialog(getContentPane(),"Kategorie umbennant","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 					setVisible(false);
 					dispose();
 					categoriesView.refresh();
-				}else {
-					JOptionPane.showMessageDialog(getContentPane(),"Fehler","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				}else if(success==-1){
+					JOptionPane.showMessageDialog(getContentPane(),"Dieser Name existiert bereits.","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				}
+				else {
+					JOptionPane.showMessageDialog(getContentPane(),"Unbekannter Fehler","Fehler", JOptionPane.INFORMATION_MESSAGE);
 				}
 				
 			}
