@@ -1,4 +1,4 @@
-package model;
+package basic;
 
 /** Die Inventareintrags-Klasse ist eine Basisklasse.
  *  Inventareinträge stellen Inventareinträge in unserer Datenbank dar.

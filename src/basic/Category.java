@@ -1,4 +1,4 @@
-package model;
+package basic;
 
 public class Category {
 	private Integer uid;

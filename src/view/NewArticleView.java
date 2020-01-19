@@ -13,8 +13,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import basic.Category;
 import controller.VirtualStorage;
-import model.Category;
 import view.components.SelectionItem;
 
 import java.awt.BorderLayout;

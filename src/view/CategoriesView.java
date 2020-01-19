@@ -35,7 +35,7 @@ public class CategoriesView extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 	}
-	public void showCategoriesView(){
+	public void showCategoriesView() {
 		//Button
 		JButton button = new JButton ("Neue Kategorie erstellen");
 		CategoriesView tp = this;
@@ -43,6 +43,7 @@ public class CategoriesView extends JFrame {
 		
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				vs.loadCategoryStorage();
 				NewCategoryView neu = new NewCategoryView(vs,tp);
 				neu.setVisible(true);
 			}
@@ -82,14 +83,14 @@ public class CategoriesView extends JFrame {
 			        int row = table.rowAtPoint(point);
 			        if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
 			        	int column = 0;
+			        	vs.loadCategoryStorage();
 			        	Integer UID = (Integer) table.getModel().getValueAt(row, column);
 			        	System.out.println(UID);
 			        	categoryView.showCategoryView(UID);
 						categoryView.setVisible(true);
 			        }
-			 }	
+			 }
 		});
-			
 		//Layout
 		Container container = getContentPane();
 		

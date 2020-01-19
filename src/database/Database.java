@@ -37,9 +37,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import model.Category;
-import model.InventoryEntry;
-import model.Product;
+import basic.Category;
+import basic.InventoryEntry;
+import basic.Product;
 
 /**
  * Hauptklasse im database Packet. Beinhaltet Methoden um von einer XML Datei zulesen und zuschreiben.

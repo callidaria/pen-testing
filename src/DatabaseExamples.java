@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 import java.util.Date;
 
+import basic.Category;
+import basic.InventoryEntry;
+import basic.Product;
 import database.Database;
-import model.Category;
-import model.InventoryEntry;
-import model.Product;
 
 public class DatabaseExamples{
 	public DatabaseExamples() {		

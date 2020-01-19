@@ -2,15 +2,12 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.xml.sax.SAXException;
 
+import basic.Category;
+import basic.InventoryEntry;
+import basic.Product;
 import database.Database;
-import model.InventoryEntry;
-import model.Product;
-import model.Category;
-
-
 
 public class VirtualStorage {
 	List<InventoryEntry> inventoryEntry;
@@ -19,18 +16,75 @@ public class VirtualStorage {
 	
 	public VirtualStorage() {
 		loadVirtualStorage();
-		loadCathegoryStorage();
+		loadCategoryStorage();
 	}
-	//TODO ALL: delete from list ??optimize
-	//TODO : javadoc
 	public InventoryEntry getEntryByUID(int id) {
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getUID()==id)
 				return inventoryEntry.get(i);
 		} return null;
 	}
-	public void getEntriesByLevinson(String search) {
-		//TODO
+	public void searchEntries(String search) {
+		
+	}
+	public void searchEntriesByID(String search) {
+		
+	}
+	public void searchEntriesByName(String search) {
+		loadVirtualStorage();
+		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getProduct().getName().contains(search))
+				nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
+	}
+	public void searchEntriesByAmount(String search) {
+		
+	}
+	public void searchEntriesByWeight(String search) {
+		
+	}
+	public void searchEntriesByPrize(String search) {
+		
+	}
+	public void searchEntriesByCategory(String search) {
+		
+	}
+	public void searchCategoriesByName(String search) {
+		loadCategoryStorage();
+		List<Category> nce = new ArrayList<Category>();
+		for (int i=0;i<categoryEntry.size();i++) {
+			if (categoryEntry.get(i).getName().contains(search))
+				nce.add(categoryEntry.get(i));
+		} categoryEntry = nce;
+	}
+	public void searchEntriesByLevenshtein(String search) {
+		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+		List<Integer> weights = new ArrayList<Integer>();
+		for (int i=0;i<inventoryEntry.size();i++) {
+			System.out.println(i);
+			int res = levenshtein(inventoryEntry.get(i).getProduct().getName(),search);
+			if (nie.size()==0) {
+				nie.add(inventoryEntry.get(i));
+				weights.add(res);
+			} else {
+				for (int j=0;j<nie.size();j++) {
+					if (weights.get(j)<=res) {
+						nie.add(j,inventoryEntry.get(i));
+						weights.add(j,res);
+						break;
+					}
+				}
+			}
+		}
+		inventoryEntry = nie;
+	}
+	private int levenshtein(String i, String j) {
+		int is = i.length(); int js = j.length();
+		if (Math.min(is,js)==0) return Math.max(is,js);
+		return Math.min(Math.min(levenshtein(i.substring(0,is-1),j)+1,
+				levenshtein(i,j.substring(0,js-1))+1),
+				levenshtein(i.substring(0,is-1),j.substring(0,js-1))+((i.substring(is-1).compareTo(j.substring(js-1))!=0)?1:0));
 	}
 	public void filterByID(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
@@ -85,7 +139,7 @@ public class VirtualStorage {
 		inventoryEntry = Database.retrieveInventoryEntriesWithCategory(Database.retrieveCategories());
 		loaded=true;
 	}
-	public void loadCathegoryStorage() {
+	public void loadCategoryStorage() {
 		categoryEntry = Database.retrieveCategories();
 	}
     public int addProduct(int UID, String name, int count, int weight, int prize, int categoryID) throws Exception {
@@ -109,7 +163,7 @@ public class VirtualStorage {
 			if (categoryEntry.get(i).getName().compareTo(name)==0) return -1;
 		} try {
 			Database.addCategory(new Category(0,name));
-			loadCathegoryStorage();
+			loadCategoryStorage();
 			return 0;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -120,7 +174,7 @@ public class VirtualStorage {
 		for (int i=0;i<categoryEntry.size();i++) {
 			if (categoryEntry.get(i).getName()==newName) return -1;
 		} Database.renameCategory(id, newName);
-		loadCathegoryStorage();
+		loadCategoryStorage();
 		return 0;
 	}
 	public void removeCategory(int id) {
@@ -138,7 +192,7 @@ public class VirtualStorage {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		loadCathegoryStorage();
+		loadCategoryStorage();
 	}
 	public int setAmount(int id,int amount) {
 		if (amount<0) return -1;

@@ -2,4 +2,4 @@
  * Diese Basisklassen sind die Repressentation von den in unser Datenbank gehaltenen Einträge.
  * 
  */
-package model;
+package basic;

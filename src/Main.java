@@ -7,5 +7,7 @@ public class Main {
 		//Database.addTestInventoryEntries(999, 999);
 		new view.Main();
 		//Database.addTestInventoryEntries(999, 999);
+		//VirtualStorage vs = new VirtualStorage();
+		//System.out.println(vs.levenshtein("hello","hallo"));
 	}
 }

@@ -22,9 +22,9 @@ import javax.swing.table.DefaultTableModel;
 
 import org.xml.sax.SAXException;
 
+import basic.InventoryEntry;
+import basic.Product;
 import controller.*;
-import model.InventoryEntry;
-import model.Product;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 
 public class InventoryView extends JFrame {
-
+	private static final long serialVersionUID = 1L;
 	private NewArticleView newArticleView;
 	private Object[][] data;
 	VirtualStorage vs = new VirtualStorage();
@@ -52,7 +52,6 @@ public class InventoryView extends JFrame {
             "Anzahl",
             "Gewicht",
             "Preis",
-            //"Kategorie ID",
             "Kategories"};
 	private CategoriesView categoriesView;
 	
@@ -66,14 +65,13 @@ public class InventoryView extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		
 		//Button
 		JButton bNewIE = new JButton ("Neuen Inventareintrag erstellen");
-		bNewIE.addActionListener(new ActionListener() { 
-		
+		bNewIE.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				refresh();
+				vs.loadVirtualStorage();
+				vs.loadCategoryStorage();
 				newArticleView.setFrameVisible(true);
 			}
 		});
@@ -81,7 +79,6 @@ public class InventoryView extends JFrame {
 		JButton bSearch = new JButton ("Los!");
 		//Label
 		JLabel lSearch = new JLabel("Suchen:");
-		
 		//Textarea
 		JTextField taSearch = new JTextField(40);
 		taSearch.setPreferredSize(new Dimension(40,30));
@@ -90,7 +87,8 @@ public class InventoryView extends JFrame {
 		    @Override
 		    public void actionPerformed(ActionEvent e)
 		    {
-		        System.out.println("Search ("+selectedSearch+"):"+taSearch.getText());
+		    	if (taSearch.getText()!="") vs.searchEntriesByName(taSearch.getText());
+		    	else vs.loadVirtualStorage();
 		        refresh();
 		    }
 		};
@@ -101,12 +99,9 @@ public class InventoryView extends JFrame {
         tableModel = new DefaultTableModel(data, columnNames) {
 		private static final long serialVersionUID = 1L;
 			@Override
-            public boolean isCellEditable(int row, int column)
-            {
-                return false;
-            }
+            public boolean isCellEditable(int row, int column) { return false; }
             public Class<?> getColumnClass( int column ) {
-                switch( column ){
+                switch( column ) {
                     case 0: return String.class;
                     case 1: return String.class;
                     case 2: return Integer.class;
@@ -116,7 +111,6 @@ public class InventoryView extends JFrame {
                     default: return Object.class;
                 }
             }
-            
         };
 		table = new JTable(tableModel);
 		table.setAutoCreateRowSorter(true);
@@ -130,7 +124,7 @@ public class InventoryView extends JFrame {
 		table.getRowSorter().toggleSortOrder(0);
 		
 		table.addMouseListener(new MouseAdapter(){
-			 public void mousePressed(MouseEvent mouseEvent) {
+			public void mousePressed(MouseEvent mouseEvent) {
 			        JTable table =(JTable) mouseEvent.getSource();
 			        Point point = mouseEvent.getPoint();
 			        int row = table.rowAtPoint(point);
@@ -139,20 +133,17 @@ public class InventoryView extends JFrame {
 			        	SwingUtilities.invokeLater(new Runnable() {
 			                @Override
 			                public void run() {
-			                	
+			                	vs.loadVirtualStorage();
+			                	vs.loadCategoryStorage();
 					        	int UID = Integer.parseInt((String) table.getValueAt(row, column));
 					        	System.out.println("Select UID:"+UID);
 					        	articleView.setVisible(true);
 								articleView.ShowArticleView(UID);
 			                }
 			            });
-			        	
 			        }
-			    }	
+			 }
 		});
-		
-		
-		
 		
 		//Menubar
 		JMenuBar menuBar = new JMenuBar();
@@ -210,8 +201,6 @@ public class InventoryView extends JFrame {
 			}
 			
 		});
-		
-		//submenu.add(zwei);
 		menu.add(menuCategory);
 		menu.addSeparator();
 		menu.add(menuRefresh);

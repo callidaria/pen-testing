@@ -21,10 +21,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import basic.Category;
+import basic.InventoryEntry;
+import basic.Product;
 import controller.VirtualStorage;
-import model.Category;
-import model.InventoryEntry;
-import model.Product;
 import view.components.SelectionItem;
 
 public class ArticleView extends JFrame {

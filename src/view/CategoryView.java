@@ -7,8 +7,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import basic.Category;
 import controller.VirtualStorage;
-import model.Category;
 
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -46,7 +46,6 @@ public class CategoryView extends JFrame {
 				String name = taname.getText();
 			}
 		});
-		System.out.println(UID);
 		JButton bDelete = new JButton ("Löschen");
 		bDelete.addActionListener(new ActionListener() {
 			@Override
