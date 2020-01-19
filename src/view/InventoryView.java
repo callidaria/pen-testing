@@ -288,6 +288,8 @@ public class InventoryView extends JFrame {
 	 */
 	
 	public void refresh() {
+		vs.loadCategoryStorage();
+		vs.loadVirtualStorage();
 	 	tableModel.setDataVector(vs.getInventoryEntryObjectArray(),columnNames);
 		tableModel.fireTableDataChanged();
 		table.getRowSorter().toggleSortOrder(0);

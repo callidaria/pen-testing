@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="inventoryEntries.xsd"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="inventoryEntries.xsd"><entry area="0" place="1"><name>Blauer Stift</name><count>100</count><weight>1000</weight><prize>100</prize><category_id>0</category_id></entry></entries>

@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Random;
 
 import javax.xml.XMLConstants;
@@ -53,25 +52,44 @@ import basic.Product;
  */
 public class Database{
 	
-	//**Der relative Pfad von root zu den Datenbankdateien
+	/**
+	 * Der relative Pfad von root zu den Datenbankdateien
+	 */
 	static final String DBPATH="data/";
 	
-	//Dateiname von Inventareinträgen	
+	/**
+	 * Dateiname von Inventareinträgen	
+	 */
 	static final String DBPATH_IE="inventoryEntries.xml";
 	
-	//Dateiname der Definitionsdatei von Inventareinträgen
+	/**
+	 * Dateiname der Definitionsdatei von Inventareinträgen
+	 */
 	static final String DBPATH_IE_XSD="inventoryEntries.xsd";
 	
-	//Dateiname von Kategorien	
+	/**
+	 * Dateiname von Kategorien	
+	 */
 	static final String DBPATH_CAT="categories.xml";
 		
-	//Dateiname der Definitionsdatei von Kategorien
+	/**
+	 * Dateiname der Definitionsdatei von Kategorien
+	 */
 	static final String DBPATH_CAT_XSD="categories.xsd";
 	
-	//Legt fest ob Eingaben validiert werden sollen.
+	/**
+	 * Legt fest ob Eingaben validiert werden sollen.
+	 */
 	static final Boolean DB_VALIDATE=false;
 	
+	/**
+	 * Inventareintrag Datenbank als Document Object. Wird bei Programmstart eingelesen.
+	 */
 	static final Document IE_DOC;
+	
+	/**
+	 * Kategorien Datenbank als Document Object. Wird bei Programmstart eingelesen.
+	 */
 	static final Document CAT_DOC;
 
 	/** Setzt Document IE_DOC & CAT_DOC;
@@ -120,12 +138,13 @@ public class Database{
 	 */
 	private static DOMSource IE_DOM_SOURCE= new DOMSource(Database.IE_DOC);
 
-	/**Wenn wird XML Datein mit Umbrüchen und Tabs ausgegeben.  
+	/**Wenn wahr, wird XML Datein mit Umbrüchen und Tabs ausgegeben.  
 	 */
 	private static final boolean DEBUG=false;
 	
-	/**Aktiviert/deaktiviert das Transformieren bei jeder Interaktion mit der Datenbank.
-	 * Wenn die Datenbank voll ist können durch das Deaktivieren des Autosaves, bis zu 5 Sekunden pro Interaktion gespart werden. 
+	/**Aktiviert/deaktiviert das Transformieren (Speichern) bei jeder Interaktion mit der Datenbank.
+	 * Wenn die Datenbank voll ist können durch das Deaktivieren des Autosaves, bis zu 5 Sekunden pro Interaktion gespart werden.
+	 * Wir haben es leider nicht geschaft einen Autosave-Toggel zu implementieren.
 	 */
 	private static final boolean AUTOSAVE=true;
 	
@@ -595,7 +614,11 @@ public class Database{
 		return lastCategory.getUID()+1;
 	}
 
-
+	/**Umbenennen einer Kategorie.
+	 * 
+	 * @param UID, identifiziert die Kategorie, die geändert werden soll.
+	 * @param newName, der neue Name der Kategorie
+	 */
 	public static void renameCategory(int UID, String newName) {
 		Element node;
 		try {
@@ -620,7 +643,11 @@ public class Database{
 		return;
 	}
 	
-	public static void deleteCategory(int UID) throws Exception {
+	/** Löscht eine Kategorie
+	 * 
+	 * @param UID, identifiziert die Kategorie, die gelöscht werden soll.
+	 */
+	public static void deleteCategory(int UID) {
 
 		Document doc = CAT_DOC;
 		Element node;
@@ -633,48 +660,13 @@ public class Database{
 			if(AUTOSAVE) Database.transformInventoryEntries();
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
-			throw new Exception("Internal Error.");
+			return;
 		}
 		System.out.println("Category ("+UID+"): deleted");
 		transformCategories();
 		return;
 	}
 
-	/* Diese Methode ermittelt den freien Platz in einem "Bereich".
-	 * Es dauert aber bei einer vollen Datenbank bis zu einer Minute. Daher wird eine in-ram Lösung entwickelt.
-	 * 
-	 * @param shelf Nummer des Regals
-	 * 
-	 * @return die Menge ein freiem Platz in dem Regal mit der Nummer shelf.
-	 * @deprecated bitte benutze eine Methode aus dem Controller / VirtualStorage.
-	 * */
-	@Deprecated
-	public static int freeSpace(int shelf) {
-		System.out.println("WARNING work in progress @freeSpace!");
-		
-		int shelfCapicity=100*1000;
-		int usedSpace = 0;
-		try {
-			Document doc = Database.IE_DOC;
-			NodeList nodes;
-			nodes = Database.xpathNodes(doc,"/entries/entry[@area="+shelf+"]");
-			System.out.println("Nodes in Shelf: "+nodes.getLength());
-			   for (int i = 0; i < nodes.getLength(); i++) {
-				   Element node = (Element) nodes.item(i);
-					int count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
-					int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
-					
-					usedSpace = usedSpace + (count*weight);
-			   }
-		}catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("Exception in freeSpace ("+e.getMessage()+")");
-			return -1;
-		}
-		return shelfCapicity-usedSpace;
-	}
-	
 	/** Prüft die Datenbank auf das Einhalten der Datenbankrestriktionen mit hilfe einer XSD.
 	 * @return wahr, wenn die Inventareintragsdatei gegen die XSD validiert.
 	 * @throws SAXException wenn nicht valide, wirft die Fehlermeldung beim Abgleichen aus.
@@ -683,73 +675,22 @@ public class Database{
 		return Database.validateAgainstXSD(DBPATH_IE,DBPATH_IE_XSD);
 	}
 	
-
-	/** Prüft ob ein Name in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
-	 * @param name, der zu prüfende Name.
+	
+	/**Hilfsmethode. Diese Methode ist nicht fertig geworden. Es wird davon ausgegangen das vom Controller bereits ausreichend escaped wird.
 	 * 
-	 * @return -1, wenn nicht exisitert, ansonsten UID wo der Name existiert.
-	 * @deprecated bitte benutze eine Methode aus dem Controller / VirtualStorage.
-	 * */
-	@Deprecated
-	public static int nameExists(String name) {
-		try {
-	        Document doc = Database.buildDocument("inventoryEntries.xml");
-	        Element node;
-			node = (Element) Database.xpathNode(doc,"/entries/entry[name/text()='"+name+"']");
-			if (node!=null) {
-				int shelfSection = Integer.parseInt(node.getAttributes().getNamedItem("area").getTextContent());
-				int shelfPlace = Integer.parseInt(node.getAttributes().getNamedItem("place").getTextContent());
-				return InventoryEntry.sectionPlaceToUID(shelfSection, shelfPlace);
-			};
-		}  catch (SAXException|IOException|XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return -1;
-	}
-	
-	
-	/** Prüft ob eine UID in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
-	 * @param uid, die zu prüfende UID.
-	 * 
-	 * @return true, wenn exisitert, ansonsten false.
-	 * @deprecated bitte benutze eine Methode aus dem Controller / VirtualStorage.
-	 * */
-	@Deprecated
-	public static boolean uidExists(int uid) {
-		try {
-	        Document xmlDocument = Database.buildDocument("inventoryEntries.xml");
-	        Element subNode;
-	        int[] sectionPlace = InventoryEntry.uidToSectionPlace(uid);
-	        int section=sectionPlace[0];
-	        int place=sectionPlace[1];
-			subNode = (Element) Database.xpathNode(xmlDocument, "/entries/entry[@area="+section+" and @place="+place+"]");
-			if (subNode!=null) {
-				return true;
-			};
-		} catch (XPathExpressionException|SAXException|IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
+	 * @param unescapedString, der String mit allen Zeichen.
+	 * @return der selbe String
+	 */
 	public static String escapeString(String unescapedString) {
 		return unescapedString;
 	}
 	
-	/**Hilfsmethode. Speichert (transformiert) das veränderte Inventareinträge-Doc.
+	/**Wichtige Hilfsmethode. Speichert (transformiert) das veränderte Inventareinträge-Doc. Der IE_DOM_SOURCE wird auf InventoryEntries.xml geschrieben.
 	 * 
 	 * @return true, wenn das Transformieren erfolgreich war.
 	 */
+	@SuppressWarnings("unused")
 	public static boolean transformInventoryEntries() {
-		
-		
-		Date start;
-		Date end;
-		
-		
-			
 		TransformerFactory transformerFactory = Database.transformerFactory;
 		Transformer transformer;
 		
@@ -757,6 +698,7 @@ public class Database{
 			transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
+			
 			if(DEBUG==true) {
 				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	
 				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
@@ -777,10 +719,11 @@ public class Database{
 		
 	}
 
-	/**Hilfsmethode. Speichert (transformiert) das veränderte Kategorie-Doc.
+	/**Wichtige Hilfsmethode. Speichert (transformiert) das veränderte Kategorie-Doc. Der CAT_DOM_SOURCE wird auf Categories.xml geschrieben.
 	 * 
 	 * @return wahr, wenn die Transformation erfolgreich war, ansonsten falsch.
 	 */
+	@SuppressWarnings("unused")
 	public static boolean transformCategories() {	
 		TransformerFactory transformerFactory = Database.transformerFactory;
 		Transformer transformer;
@@ -789,6 +732,7 @@ public class Database{
 			transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
+			
 			if(DEBUG==true){
 				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	
 				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
@@ -808,13 +752,14 @@ public class Database{
 		
 	}
 
-	/** Hilfsmethode. Gibt das fertige Document zurück.
+	/** Gibt das fertige Document Object zurück.
 	 * 
 	 * @param file Pfad zur Datei
 	 * @return Document der File als Document Object
 	 * @throws SAXException wenn das Dokument nicht richtig formatiert ist.
 	 * @throws IOException wenn die Datei nicht existiert.
 	 */
+	
 	private static Document buildDocument(String file) throws SAXException, IOException {
 
 		File inventoryEntriesFile = new File(DBPATH+file);
@@ -911,7 +856,7 @@ public class Database{
 		return element.getElementsByTagName(string).item(0).getTextContent();
 	}
 
-	/**Hilfmethode.
+	/**Hilfmethode. Damit ich nicht jedesmal parseInt machen muss.
 	 * 
 	 * @param element, ein Element
 	 * @param string, das Tag welches wir erhalten wollen.
@@ -921,7 +866,7 @@ public class Database{
 		return Integer.parseInt(element.getElementsByTagName(string).item(0).getTextContent());
 	}
 
-	/**Hilfmethode.
+	/**Hilfmethode. Damit ich nicht jedesmal parseInt machen muss.
 	 * 
 	 * @param element, ein Element
 	 * @param string, das Attribut welches wir erhalten wollen.
@@ -1049,6 +994,90 @@ public class Database{
 		
 		
 		
+	}
+
+	/** Diese Methode ermittelt den freien Platz in einem "Bereich".
+	 * Es dauert aber bei einer vollen Datenbank bis zu einer Minute. Daher wird eine in-ram Lösung entwickelt.
+	 * 
+	 * @param shelf Nummer des Regals
+	 * 
+	 * @return die Menge ein freiem Platz in dem Regal mit der Nummer shelf.
+	 * @deprecated bitte benutze eine Methode aus dem Controller / VirtualStorage.
+	 * */
+	@Deprecated
+	public static int freeSpace(int shelf) {
+		System.out.println("WARNING work in progress @freeSpace!");
+		
+		int shelfCapicity=100*1000;
+		int usedSpace = 0;
+		try {
+			Document doc = Database.IE_DOC;
+			NodeList nodes;
+			nodes = Database.xpathNodes(doc,"/entries/entry[@area="+shelf+"]");
+			System.out.println("Nodes in Shelf: "+nodes.getLength());
+			   for (int i = 0; i < nodes.getLength(); i++) {
+				   Element node = (Element) nodes.item(i);
+					int count = Integer.parseInt(node.getElementsByTagName("count").item(0).getTextContent());
+					int weight = Integer.parseInt(node.getElementsByTagName("weight").item(0).getTextContent());
+					
+					usedSpace = usedSpace + (count*weight);
+			   }
+		}catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Exception in freeSpace ("+e.getMessage()+")");
+			return -1;
+		}
+		return shelfCapicity-usedSpace;
+	}
+
+	/** Prüft ob ein Name in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
+	 * @param name, der zu prüfende Name.
+	 * 
+	 * @return -1, wenn nicht exisitert, ansonsten UID wo der Name existiert.
+	 * @deprecated bitte benutze eine Methode aus dem Controller / VirtualStorage.
+	 * */
+	@Deprecated
+	public static int nameExists(String name) {
+		try {
+	        Document doc = Database.buildDocument("inventoryEntries.xml");
+	        Element node;
+			node = (Element) Database.xpathNode(doc,"/entries/entry[name/text()='"+name+"']");
+			if (node!=null) {
+				int shelfSection = Integer.parseInt(node.getAttributes().getNamedItem("area").getTextContent());
+				int shelfPlace = Integer.parseInt(node.getAttributes().getNamedItem("place").getTextContent());
+				return InventoryEntry.sectionPlaceToUID(shelfSection, shelfPlace);
+			};
+		}  catch (SAXException|IOException|XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	/** Prüft ob eine UID in der Datenbank exisitiert. Wichtig zum Prüfen der Datenbankrestriktionen.
+	 * @param uid, die zu prüfende UID.
+	 * 
+	 * @return true, wenn exisitert, ansonsten false.
+	 * @deprecated bitte benutze eine Methode aus dem Controller / VirtualStorage.
+	 * */
+	@Deprecated
+	public static boolean uidExists(int uid) {
+		try {
+	        Document xmlDocument = Database.buildDocument("inventoryEntries.xml");
+	        Element subNode;
+	        int[] sectionPlace = InventoryEntry.uidToSectionPlace(uid);
+	        int section=sectionPlace[0];
+	        int place=sectionPlace[1];
+			subNode = (Element) Database.xpathNode(xmlDocument, "/entries/entry[@area="+section+" and @place="+place+"]");
+			if (subNode!=null) {
+				return true;
+			};
+		} catch (XPathExpressionException|SAXException|IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	

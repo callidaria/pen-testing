@@ -68,8 +68,8 @@ public class NewArticleView extends JFrame {
 		JLabel lKategorie = new JLabel("KategorieID:");
 		JLabel lName = new JLabel("Produktname:");
 		JLabel lAnzahl = new JLabel("Anzahl:");
-		JLabel lGewicht = new JLabel("Gewicht:");
-		JLabel lPreis = new JLabel("Preis:");
+		JLabel lGewicht = new JLabel("Gewicht (in gramm):");
+		JLabel lPreis = new JLabel("Preis (in cent):");
 		JLabel lUid = new JLabel("ID:");
 		
 		JComboBox<SelectionItem> takategorie = new JComboBox<SelectionItem>(categoriesToItem());
@@ -105,6 +105,7 @@ public class NewArticleView extends JFrame {
 						JOptionPane.showMessageDialog(getContentPane(),"Eintrag wurde hinzugefügt","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 						inventoryView.refresh();
 						setVisible(false);
+						dispose();
 					} else if (adding==-1) {
 						JOptionPane.showMessageDialog(getContentPane(),"Produktname bereits vergeben oder zu lang","Fehler", JOptionPane.INFORMATION_MESSAGE);
 					} else if (adding==-2) {
