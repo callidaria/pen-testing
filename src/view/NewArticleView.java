@@ -71,7 +71,6 @@ public class NewArticleView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SelectionItem item = (SelectionItem) takategorie.getSelectedItem();
-				System.out.println("sync");
 			}
 		});
 		
@@ -97,7 +96,7 @@ public class NewArticleView extends JFrame {
 						inventoryView.refresh();
 						setVisible(false);
 					} else if (adding==-1) {
-						JOptionPane.showMessageDialog(getContentPane(),"Produktname bereits vergeben","Fehler", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(getContentPane(),"Produktname bereits vergeben oder zu lang","Fehler", JOptionPane.INFORMATION_MESSAGE);
 					} else if (adding==-2) {
 						JOptionPane.showMessageDialog(getContentPane(),"ID bereits vergeben oder unzulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
 					} else {

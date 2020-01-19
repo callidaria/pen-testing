@@ -2,7 +2,6 @@ package view;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -14,29 +13,20 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-
 import org.xml.sax.SAXException;
-
-import basic.InventoryEntry;
-import basic.Product;
 import controller.*;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 
 public class InventoryView extends JFrame {
@@ -79,6 +69,16 @@ public class InventoryView extends JFrame {
 		JButton bSearch = new JButton ("Los!");
 		//Label
 		JLabel lSearch = new JLabel("Suchen:");
+		
+		String searchSelectables[] = {"Alles","ID","Name","Anzahl","Gewicht","Preis","Kategorie"};
+		JComboBox<String> searchSelector = new JComboBox<String>(searchSelectables);
+		searchSelector.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				selectedSearch=searchSelector.getSelectedIndex();
+			}
+		});
+		
 		//Textarea
 		JTextField taSearch = new JTextField(40);
 		taSearch.setPreferredSize(new Dimension(40,30));
@@ -87,8 +87,16 @@ public class InventoryView extends JFrame {
 		    @Override
 		    public void actionPerformed(ActionEvent e)
 		    {
-		    	if (taSearch.getText()!="") vs.searchEntriesByName(taSearch.getText());
-		    	else vs.loadVirtualStorage();
+		    	vs.loadVirtualStorage();
+		    	if (taSearch.getText()!="") {
+		    		if (searchSelector.getSelectedIndex()==0) vs.searchEntries(taSearch.getText());
+		    		else if (searchSelector.getSelectedIndex()==1) vs.searchEntriesByID(taSearch.getText());
+		    		else if (searchSelector.getSelectedIndex()==2) vs.searchEntriesByName(taSearch.getText());
+		    		else if (searchSelector.getSelectedIndex()==3) vs.searchEntriesByAmount(taSearch.getText());
+		    		else if (searchSelector.getSelectedIndex()==4) vs.searchEntriesByWeight(taSearch.getText());
+		    		else if (searchSelector.getSelectedIndex()==5) vs.searchEntriesByPrize(taSearch.getText());
+		    		else vs.searchEntriesByCategory(taSearch.getText());
+		    	}
 		        refresh();
 		    }
 		};
@@ -153,13 +161,11 @@ public class InventoryView extends JFrame {
 		JMenuItem menuRefresh = new JMenuItem("Aktualisieren");
 		JMenuItem menuSave = new JMenuItem("Speichern");
 		JMenuItem menuValidate = new JMenuItem("DB Validieren");
-		menuCategory.addActionListener(new ActionListener() { 
-			
+		menuCategory.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				categoriesView.setVisible(true);
 			}
-			
 		});
 		menuRefresh.addActionListener(new ActionListener() {
 			@Override
@@ -168,24 +174,12 @@ public class InventoryView extends JFrame {
 			}
 		});
 		menuSave.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				vs.manualSave();
 			}
 		});
-		String searchSelectables[] = {"Alles","ID","Name","Anzahl","Gewicht","Preis","Kategorie"};
-		JComboBox<String> searchSelector = new JComboBox<String>(searchSelectables);
-		searchSelector.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				selectedSearch=searchSelector.getSelectedIndex();
-			}
-		});
-		
-		menuValidate.addActionListener(new ActionListener() { 
-			
+		menuValidate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int yna = JOptionPane.showConfirmDialog(getContentPane(),"Das Validieren ist für den Administrator gedacht. Achtung! Das Validieren der Datenbank kann bei einem großen Datensatz sehr lange dauern. Wir reden von ca. einer Stunde bei einer vollen Datenbank! Fortfahren?","Achtung!", JOptionPane.YES_NO_OPTION);
@@ -199,7 +193,6 @@ public class InventoryView extends JFrame {
 					JOptionPane.showMessageDialog(getContentPane(),"Datenbank Validierungsstatus: "+valide,"DB Validierungsstatus", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-			
 		});
 		menu.add(menuCategory);
 		menu.addSeparator();

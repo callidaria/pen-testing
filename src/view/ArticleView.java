@@ -170,7 +170,7 @@ public class ArticleView extends JFrame {
 				int err_code=vs.replaceInventoryEntry(thisArticle.getUID(),uid,name,anzahl,gewicht,preis,kategorie_id);
 				if (err_code==-1) JOptionPane.showMessageDialog(getContentPane(),"Keine negativen Zahlen als Anzahl, Gewicht oder Preis zulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
 				else if (err_code==-2) JOptionPane.showMessageDialog(getContentPane(),"ID bereits vergeben oder unzulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
-				else if (err_code==-3) JOptionPane.showMessageDialog(getContentPane(),"Name bereits vergeben","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				else if (err_code==-3) JOptionPane.showMessageDialog(getContentPane(),"Name bereits vergeben oder zu lang","Fehler", JOptionPane.INFORMATION_MESSAGE);
 				else {
 					inventoryView.refresh();
 					JOptionPane.showMessageDialog(getContentPane(),"Eintrag wurde erfolgreich geändert","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
