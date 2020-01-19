@@ -214,18 +214,15 @@ public class VirtualStorage {
 		loadCategoryStorage();
 		return 0;
 	}
-	public void removeCategory(int id) {
-		/*List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+	public int removeCategory(int id) {
 		for (int i=0;i<inventoryEntry.size();i++) {
-			if (inventoryEntry.get(i).getProduct().getCategoryID()!=id) nie.add(inventoryEntry.get(i));
-		} inventoryEntry = nie;*/
-		for (int i=0;i<categoryEntry.size();i++) {
-			if (id==categoryEntry.get(i).getUID()) System.out.println("sync");
+			if (inventoryEntry.get(i).getProduct().getCategoryID()==id) return -1;
 		} try {
 			Database.deleteCategory(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} loadCategoryStorage();
+		return 0;
 	}
 	public int setAmount(int id,int amount) {
 		if (amount<0) return -1;

@@ -207,12 +207,9 @@ public class ArticleView extends JFrame {
 				
 				String spreis = tfPrize.getText();
 				int preis = Integer.parseInt(spreis);
-				
 				String sgewicht = tfWeight.getText();
 				int gewicht = Integer.parseInt(sgewicht);
-				
 				String name =tfName.getText();
-							
 				
 				InventoryEntry editedIE = new InventoryEntry(uid, new Product(name, anzahl, gewicht, preis, kategorie_id));
 				//Methode zum ändern des Artikels wird aufgerufen

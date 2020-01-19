@@ -195,7 +195,6 @@ public class InventoryView extends JFrame {
 		JMenuItem menuRefresh = new JMenuItem("Aktualisieren");
 		JMenuItem menuSave = new JMenuItem("Manuel Speichern");
 		JMenuItem menuValidate = new JMenuItem("DB Validieren");
-		
 		menuCategory.addActionListener(new ActionListener() { 
 			//Hiermit gelangt man zur Kategorie
 			@Override

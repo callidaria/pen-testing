@@ -34,7 +34,6 @@ public class NewCategoryView extends JFrame {
 				
 		//Label
 		JLabel lName = new JLabel("Kategoriename");
-			
 		//Textfeld zum eintragen des namens
 		JTextField tfName = new JTextField(15);
 				

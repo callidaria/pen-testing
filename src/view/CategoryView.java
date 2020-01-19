@@ -80,17 +80,14 @@ public class CategoryView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (JOptionPane.showConfirmDialog(getContentPane(), "Kategorie Löschen?","Bestätigen",JOptionPane.YES_NO_OPTION)==0) {
-					//try {
-						vs.removeCategory(UID);
+					
+					int err_code = vs.removeCategory(UID);
+					if (err_code==0) {
 						JOptionPane.showMessageDialog(getContentPane(),"Kategorie gelöscht","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 						setVisible(false);
 						dispose();
 						categoriesView.refresh();
-					/*} catch (Exception e1) {
-						JOptionPane.showMessageDialog(getContentPane(),"Unbekannter Fehler beim Löschen. Wenden sie sich bitte an den Entwickler!","Fehler", JOptionPane.INFORMATION_MESSAGE);
-						e1.printStackTrace();
-						System.out.println(e1.getMessage());
-					}*/
+					} else JOptionPane.showMessageDialog(getContentPane(),"Kategorie konnte nicht gelöscht werden. Es sind noch Einträge enthalten","Fehler", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
