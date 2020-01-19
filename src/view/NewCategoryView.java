@@ -49,7 +49,7 @@ public class NewCategoryView extends JFrame {
 		//Label
 		JLabel lname = new JLabel("Kategoriename");
 			
-		//Textarea
+		//Textarea zum eintragen des namens
 		JTextField taname = new JTextField(15);
 		
 		
@@ -58,6 +58,7 @@ public class NewCategoryView extends JFrame {
 		button.addActionListener(new ActionListener() { 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Textarea wird ausgelesen
 				String name = taname.getText();
 		        System.out.println("contents = "+ name);
 			}

@@ -41,7 +41,11 @@ import java.util.ArrayList;
 /**
  * Die Hauptansicht der Datenbank.
  * Hier werden alle Inhalte des Bestandes angezeigt
- * Von hier aus kommt man zu den Klassen, die die Daten manipulieren können
+ * Von hier aus kommt man zu den Klassen, die die Daten manipulieren können.
+ * Es gibt eine Tabelle des gesamten Bestandes. Doppelklick auf einen Artikel in der Tabelle öffnet eine einzelansicht des Artikels
+ * Klick auf den Button neuen eintrag erstellen öffnet ein Fenster, in welchem ein neuer Eintrag erstellt werden kann.
+ * Durch die menubar gelangt man zur kategorieansicht
+ * Durch klicken auf aktualisieren wird die Datenbank aktualisiert und änderungen werden angezeigt
  */
 
 
@@ -83,7 +87,7 @@ public class InventoryView extends JFrame {
 		//Buttons alle Buttons werden hier deklariert
 		JButton bNewIE = new JButton ("Neuen Inventareintrag erstellen");
 		bNewIE.addActionListener(new ActionListener() { 
-		
+			//Aufruf des Fensters für einen neuen Artikel durch buttonklick
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				refresh();
@@ -140,17 +144,17 @@ public class InventoryView extends JFrame {
             }
             
         };
+        
+        //Diverse Einstellungen der Tabelle
 		table = new JTable(tableModel);
 		table.setAutoCreateRowSorter(true);
-		
 		table.getTableHeader().setReorderingAllowed(false);
-		//table.removeColumn(table.getColumnModel().getColumn(5));
 		JScrollPane scrollPane = new JScrollPane(table);
-		//scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		table.setFillsViewportHeight(true);
 		table.setRowHeight(26);
 		table.getRowSorter().toggleSortOrder(0);
 		
+		//Aufruf der ArtikelView, also der einzelansicht nach doppelklick auf einen Artikel der Tabelle
 		table.addMouseListener(new MouseAdapter(){
 			 public void mousePressed(MouseEvent mouseEvent) {
 			        JTable table =(JTable) mouseEvent.getSource();
@@ -179,11 +183,12 @@ public class InventoryView extends JFrame {
 		//Menubar hier wird das Menu mit allen funktionen festgelegt
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menu = new JMenu("Menü");
+		
 		JMenuItem menuCategory = new JMenuItem("Kategorien");
 		JMenuItem menuSave = new JMenuItem("Speichern");
 		JMenuItem menuValidate = new JMenuItem("DB Validieren");
 		menuCategory.addActionListener(new ActionListener() { 
-			
+			//Hiermit gelangt man zur Kategorie
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				categoriesView.setVisible(true);
@@ -191,7 +196,7 @@ public class InventoryView extends JFrame {
 			
 		});
 		menuSave.addActionListener(new ActionListener() {
-			
+			//Hiermit werden alle Einträge der Datenbank gespeichert
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				vs.manualSave();
@@ -224,14 +229,14 @@ public class InventoryView extends JFrame {
 		});
 		
 		bRefresh.addActionListener(new ActionListener() {
-			
+			//Hiermit wird die tabellenansicht aktualisiert
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				refresh();
 			}
 		});
 		
-		
+		//Hier wird die Reihenfolge der menuelemente festgelegt
 		menu.add(menuCategory);
 		menu.addSeparator();
 		menu.add(menuSave);

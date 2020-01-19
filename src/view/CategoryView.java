@@ -31,7 +31,7 @@ import java.awt.event.MouseEvent;
 
 /**
  * Wird angezeigt beim Doppelklick auf die Kategorientabellen
- * hier werden änderungen an einzelnen Kategorien vorgenommen 
+ * hier wird der Kategoriename einer bestehenden Kategorie verändert.
  */
 
 public class CategoryView extends JFrame {
@@ -54,6 +54,7 @@ public class CategoryView extends JFrame {
 	 */
 	public void showCategoryView(int UID){
 		setContentPane(new JPanel());
+		
 		//Label
 		Category thisCategory = new Category(1,"Keine Kategorie");
 		JLabel lid = new JLabel("Akuteller Kategoriename:");
@@ -68,6 +69,7 @@ public class CategoryView extends JFrame {
 		//Button
 		JButton bSave = new JButton ("Speichern");
 		bSave.addActionListener(new ActionListener() { 
+			//Nach Buttonklick werden die Änderungen gespeichert.
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = taname.getText();
@@ -77,7 +79,7 @@ public class CategoryView extends JFrame {
 		
 		JButton bDelete = new JButton ("Löschen");
 		
-		//Layout
+		//Layout Hier wird die Reihenfolge der vorher deklarierten Elemente festgelegt, und ob sie überhaupt dargestellt sind.
 		
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());

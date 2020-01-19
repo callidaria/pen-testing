@@ -31,7 +31,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * Hier wird die Tabelle der Kategorien angezeigt, von hier aus werden die Änderungen verschiedenster Kategorien aufgerufen
+ * Hier wird die Tabelle der Kategorien angezeigt, von hier aus werden die Änderungen verschiedenster Kategorien aufgerufen.
+ * Gleiches Prinzip wie beim Inventory View.
+ * Es gibt wieder eine Menubar, über welche der Bestand aufgerufen werden kann.
  */
 
 public class CategoriesView extends JFrame {
@@ -50,8 +52,8 @@ public class CategoriesView extends JFrame {
 	}
 	
 	/**
-	 * wird über das Menü aufgerufen
-	 * Zeigt alles an
+	 * wird über das Menü aus dem Bestand aufgerufen
+	 * Zeigt alles über die Kategorien an
 	 */
 	public void showCategoriesView(){
 				
@@ -73,7 +75,7 @@ public class CategoriesView extends JFrame {
 		//Button
 		JButton button = new JButton ("Neue Kategorie erstellen");
 		button.addActionListener(new ActionListener() { 
-		
+			// Nach buttonklick öffnet sich ein neues Fenster, wo eine neue Kategorie erstellt werden kann
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				NewCategoryView neu = new NewCategoryView();
@@ -89,7 +91,7 @@ public class CategoriesView extends JFrame {
 		//Label
 		JLabel lsuchen = new JLabel("Suchen:");
 		
-		//Table
+		//Table wird hier mit Elementen aus der Datenbank gefüllt
 		String[] columnNames = {"ID",
                 "Kategorie"};
 			
@@ -109,6 +111,7 @@ public class CategoriesView extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);	
 		
+		//Durch doppelklick öffnet sich ein einzelnes Fenster einer Kategorie, in welcher diese verändert werden kann
 		table.addMouseListener(new MouseAdapter(){
 			 public void mousePressed(MouseEvent mouseEvent) {
 			        JTable table =(JTable) mouseEvent.getSource();

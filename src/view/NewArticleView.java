@@ -29,8 +29,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 /**
- * wird aufgerufen, wenn in der InventoryView auf den Button neuen Eintrag erstellen geklickt wird, hiermit wird ein neuer Eintrag erstellt
- * und zur Datenbank hinzugefügt
+ * wird aufgerufen, wenn in der InventoryView auf den Button neuen Eintrag erstellen geklickt wird.
+ * Nachdem alle Felder ausgefüllt sind und auf den speicherbutton geklickt wurde, wird der neue Eintrag der datenbank hinzugefügt
  */
 
 public class NewArticleView extends JFrame {
@@ -39,7 +39,7 @@ public class NewArticleView extends JFrame {
 	private VirtualStorage vs;
 
 	/**
-	 *Konstruktor der newArticleView, wird über den button aufgerufen 
+	 *Konstruktor der newArticleView, wird über den button in der inventoryview aufgerufen.
 	 */
 	public NewArticleView() {
 		
@@ -49,7 +49,7 @@ public class NewArticleView extends JFrame {
 		setLocationRelativeTo(null);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		//Textarea
+		//Textarea zum Eintragen aller Parameter
 		JTextField tKategorie = new JTextField(20);
 		JTextField tName = new JTextField(20);
 		JTextField tAnzahl = new JTextField(20);
@@ -68,8 +68,10 @@ public class NewArticleView extends JFrame {
 		//Button hier wird der neue Eintrag erstellt und die Daten an die Datenbank weitergeleitet
 		JButton bAdd = new JButton ("Hinzufügen");
 		bAdd.addActionListener(new ActionListener() { 
+			//Nach klicken des Buttons wird der erstellte Artikel gespeichert und der Datenbank hinzugefügt
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Auslesen aller Textareas als Strings
 				String skategorie = tKategorie.getText();
 				String produkt = tName.getText();
 				String sanzahl = tAnzahl.getText();
@@ -77,12 +79,15 @@ public class NewArticleView extends JFrame {
 				String spreis = tPreis.getText();
 				String sid = tUid.getText();
 				
+				//Konvertieren in Integer
 				int anzahl = Integer.parseInt(sanzahl);
 				int gewicht = Integer.parseInt(sgewicht);
 				int preis = Integer.parseInt(spreis);
 				int id = Integer.parseInt(sid);
 				int kategorie = Integer.parseInt(skategorie);
-                try {
+                
+				//Die addProduct methode aus dem VirtualStorage wird aufgerufen
+				try {
 					int adding=vs.addProduct(id, produkt, anzahl, gewicht, preis, kategorie);
 					if(adding==0) {
 						JOptionPane.showMessageDialog(getContentPane(),"Erfolgreich","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
@@ -101,7 +106,7 @@ public class NewArticleView extends JFrame {
 		});
 		
 
-		//Layout
+		//Layout Hier wird die Reihenfolge aller Labels, Textareas und Buttons festgelegt
 		
 		Container pane = getContentPane();
 		

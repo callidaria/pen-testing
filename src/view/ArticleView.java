@@ -29,8 +29,9 @@ import view.components.SelectionItem;
 
 /**
  * In der Klasse ArticleView wird ein ausgewählter Artikel genauer betrachtet.
- * Alles über diesen Artikel kann hier verändert werden
- * und er kann gelöscht werden
+ * Alles über diesen Artikel kann hier verändert werden und er kann gelöscht werden. Dies geschieht über Textareas die einfach editiert werden.
+ * Oder durch hinzuaddieren bei der Anzahl.
+ * Am Ende müssen die Änderungen gespeichert werden.
  */
 public class ArticleView extends JFrame {
 	
@@ -53,7 +54,7 @@ public class ArticleView extends JFrame {
 	}
 	
 	/**
-	 * Wird aufgerufen beim Doppelklick auf Artikel in der Tabelle, mit UID als parameter
+	 * Wird aufgerufen beim Doppelklick auf Artikel in der Tabelle, mit UID als parameter. Über diese Methode wird das gesamte Fenster angezeigt.
 	 */
 	public void ShowArticleView(int UID) {
 		setContentPane(new JPanel());
@@ -63,7 +64,7 @@ public class ArticleView extends JFrame {
 		setTitle(thisArticle.product.getName());
 		
 				
-		//TextArea
+		//TextField zum eintragen der Parameter des Artikels, alte Parameter stehen nach aufruf bereits drinnen und können nach wunsch verändert werden.
 		JTextField taplatz = new JTextField(thisArticle.getStringifiedUID(),20);
 		JTextField taanzahl = new JTextField(Integer.toString(thisArticle.product.getCount()),5);
 		JTextField taadd = new JTextField("0",5);
@@ -85,7 +86,7 @@ public class ArticleView extends JFrame {
 		
 		
 		
-		//Labels
+		//Labels zur beschriftung der Textfields
 		JLabel lgewicht = new JLabel("Gewicht in 1/10 gramm:");
 		JLabel lpreis = new JLabel("Preis:");
 		JLabel lkategorie = new JLabel("Kategorie:");
@@ -100,8 +101,9 @@ public class ArticleView extends JFrame {
 		JButton bdelete = new JButton ("Artikel Löschen");
 		JButton bsave = new JButton ("Änderungen Speichern");
 		
+		
 		bdelete.addActionListener(new ActionListener() { 
-			
+		// Button zum Löschen eines Artikels, geschieht nach klicken des Buttons über eine Methode im VirtualStorage
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int confirme = JOptionPane.showConfirmDialog(getContentPane(), "Bestätigen","Artikel löschen",JOptionPane.YES_NO_OPTION);
@@ -125,17 +127,21 @@ public class ArticleView extends JFrame {
 		});
 		
 		badd.addActionListener(new ActionListener() { 
-			
+		// Nach klicken des Buttons wird die Zahl die eingegeben wurde drauf addiert auf die Anzahl.	
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Textfields to strings
 				String eins = taadd.getText();
 				String zwei = taanzahl.getText();
+				
+				//Strings to Integer
 				int add = Integer.parseInt(eins);
 				int anzahl = Integer.parseInt(zwei);
 				int sum = add+anzahl;
 				
 				taadd.setText("0");
 				taanzahl.setText(Integer.toString(sum));
+				//Aufruf der Changeamout methode aus dem VirtualStorage
 				try {
 					vs.changeAmountBy(UID, add);
 				} catch (Exception e1) {
@@ -147,18 +153,23 @@ public class ArticleView extends JFrame {
 		});
 		
 		bsubtract.addActionListener(new ActionListener() { 
-			
+		// Nach Buttonklick wird die zahl weg subtrahiert von der Anzahl	
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				//Textfields zu Strings
 				String eins = taadd.getText();
 				String zwei = taanzahl.getText();
+				//Strings to integer
 				int add = Integer.parseInt(eins);
 				int anzahl = Integer.parseInt(zwei);
+				
+				//Berechnung des Ergebnisses für das Textfield
 				int sum = anzahl-add;
 				
 				taadd.setText("0");
 				taanzahl.setText(Integer.toString(sum));
+				//aufruf der changeamount methode aus dem VirtualStorage
 				try {
 					vs.changeAmountBy(UID, -add);
 					
@@ -171,9 +182,10 @@ public class ArticleView extends JFrame {
 		});
 		
 		bsave.addActionListener(new ActionListener() { 
-			
+			// Durch den Buttonklick werden die Änderungen am artikel gespeichert, dies geschieht über eine Methode des VirtualStorage
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Jedes Textfield wird ausgelesen und wenn nötig in Integer umgewandelt
 				String suid = taplatz.getText();
 				int uid = Integer.parseInt(suid);
 				
@@ -193,19 +205,11 @@ public class ArticleView extends JFrame {
 				String name =taproduct.getText();
 				
 				InventoryEntry editedIE = new InventoryEntry(uid, new Product(name, anzahl, gewicht, preis, kategorie_id));
-				
+				//Fehlerabfragen
 				if (anzahl<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Anzahl eingeben","", JOptionPane.INFORMATION_MESSAGE);
-			
-			
-			
-			
-			
 				if (preis<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Preis eingeben","", JOptionPane.INFORMATION_MESSAGE);
-			
-			
-			
-			
 				if (gewicht < 0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Gewicht eingeben","", JOptionPane.INFORMATION_MESSAGE); 
+				//Methode zum ändern des Artikels wird aufgerufen
 				try {
 					vs.replaceInventoryEntry(thisArticle.getUID(),editedIE);
 					int close = JOptionPane.showConfirmDialog(getContentPane(), "Änderung gespeichert.\n Schließen?","Änderung gespeichert",JOptionPane.YES_NO_OPTION);
