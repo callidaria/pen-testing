@@ -38,6 +38,7 @@ public class CategoryView extends JFrame {
 	
 	/**
 	 * Nimmt die UID der angeklickten Kategorie als Parameter an, um genau diese nach aufruf dieser Methode anzuzeigen
+	 * @param UID, UID der angeklickten Kategorie
 	 */
 	public void showCategoryView(int UID) {
 		setContentPane(new JPanel());

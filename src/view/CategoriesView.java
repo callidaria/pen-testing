@@ -38,6 +38,10 @@ public class CategoriesView extends JFrame {
 	private String[] columnNames;
 	private JTable table;
 	private NewCategoryView newCategoryView;
+	/**Die Methode zum anzeigen der CategoryView, wird aufgerufen durch die Menubar in der Bestandsübersicht.
+	 * 
+	 * @param vs, der MainVirtualStorage
+	 */
 	public CategoriesView(VirtualStorage vs) {
 		this.vs=vs;
 		setTitle("Kategorien");
@@ -45,12 +49,7 @@ public class CategoriesView extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
-		showCategoriesView();
-	}
-	/**
-	 * Die Methode zum anzeigen der CategoryView, wird aufgerufen durch die Menubar in der Bestandsübersicht
-	 */
-	public void showCategoriesView() {
+
 		//Button
 		JButton bAddCategory = new JButton ("Neue Kategorie erstellen");
 		

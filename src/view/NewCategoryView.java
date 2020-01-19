@@ -23,6 +23,7 @@ public class NewCategoryView extends JFrame {
 	
 	/**
 	 * Nimmt als Parameter einen neuen VirtualStorage Eintrag an, sodass dieser nach Beendigung der Datenbank hinzugefügt werden kann
+	 * @param vs, der MainVirtualStorage
 	 */
 	public NewCategoryView(VirtualStorage vs) {
 		this.vs=vs;

@@ -46,6 +46,8 @@ public class ArticleView extends JFrame {
 	public JComboBox<SelectionItem> selectorCategory;
 	/**
 	 * Konstruktor der ArticleView
+	 * 
+	 * @param vs, der MainVirtualStorage
 	 */
 	public ArticleView(VirtualStorage vs) {
 		this.vs=vs;
@@ -58,6 +60,7 @@ public class ArticleView extends JFrame {
 	
 	/**
 	 * Wird aufgerufen beim Doppelklick auf Artikel in der Tabelle, mit UID als parameter. Über diese Methode wird das gesamte Fenster angezeigt.
+	 * @param UID, UID des Eintrages
 	 */
 	public void ShowArticleView(int UID) {
 		setContentPane(new JPanel());
@@ -333,8 +336,8 @@ public class ArticleView extends JFrame {
         setContentPane(pane);
 	}
 
-	/**
-	 * 
+	/**Hilfsmethode, um Kategorie zu SelectionItems zu machen
+	 * @return Kategorien als SelectionItem für die BoxOptions
 	 */
 	private SelectionItem[] categoriesToItem() {
 		List<Category> categories = vs.getAllCategories();

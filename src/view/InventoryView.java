@@ -60,6 +60,8 @@ public class InventoryView extends JFrame {
 	/**
 	 * Konstruktor der InventoryView
 	 * Hier wird das gesamte Layout festgelegt und die Funktionen aller features.
+	 * 
+	 * @param vs, der MainVirtualStorage
 	 */
 	public InventoryView(VirtualStorage vs) {
 		this.vs=vs;
@@ -81,7 +83,7 @@ public class InventoryView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				vs.loadVirtualStorage();
 				vs.loadCategoryStorage();
-				newArticleView.setFrameVisible(true);
+				newArticleView.setVisible(true);
 			}
 		});
 		
@@ -295,19 +297,25 @@ public class InventoryView extends JFrame {
 		return;
 	}
 
-	/**
-	 * setter für newarticleview
+	/**Verlinkt diesen Frame zur newArticleView
+	 * 
+	 * @param newArticleView der zu verlinkende Frame
 	 */
-	public void setNewArticleView(NewArticleView articleView) {
-		newArticleView = articleView;
+	public void setNewArticleView(NewArticleView newArticleView) {
+		this.newArticleView = newArticleView;
 	}
-	/**
-	 * setter für articleview
+	/**Verlinkt diesen Frame zur articleView
+	 * 
+	 * @param articleView der zu verlinkende Frame
 	 */
 	public void setArticleView(ArticleView articleView) {
 		this.articleView = articleView;
 	}
 	
+	/**Verlinkt diesen Frame zur categoriesView
+	 * 
+	 * @param categoriesView der zu verlinkende Frame
+	 */
 	public void setCategoriesView(CategoriesView categoriesView) {
 		this.categoriesView = categoriesView;
 	}

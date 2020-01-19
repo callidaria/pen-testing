@@ -45,6 +45,7 @@ public class NewArticleView extends JFrame {
 
 	/**
 	 * Konstruktor der NewArticleView, nimmt einen neuen VirtualStorage eintrag als Parameter um diesen nach Beendigung hinzuzufügen
+	 * @param vs, der MainVirtualStorage
 	 */
 	public NewArticleView(VirtualStorage vs) {
 		this.vs=vs;
@@ -187,15 +188,18 @@ public class NewArticleView extends JFrame {
 		pack();
 	}
 
-	/**
-	 * setter für inventoryView
+	/** Verlinkt diesen Frame zur inventoryView
+	 * 
+	 * @param inventoryView der zu verlinkende Frame
 	 */
 	public void setInventoryView(InventoryView inventoryView) {
 		this.inventoryView = inventoryView;
 	}
-	public void setFrameVisible(boolean b) {
-		setVisible(b);
-	}
+
+	/**Konvertiert Kategorien für die JComboBox (Selector) in ein SelectionItem
+	 * 
+	 * @return Kategorien als SelectionItem
+	 */
 	private SelectionItem[] categoriesToItem() {
 		List<Category> categories = vs.getAllCategories();
 		List<SelectionItem> categoryNames = new ArrayList<SelectionItem>();
