@@ -60,13 +60,11 @@ public class InventoryView extends JFrame {
 
 	public InventoryView()
 	{
-		
-		
 		setContentPane(new JPanel());
 		setTitle("Bestandsübersicht");
 		setSize(1280,720);
 		setLocationRelativeTo(null);
-		//setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		
 		//Button
@@ -81,7 +79,6 @@ public class InventoryView extends JFrame {
 		});
 		
 		JButton bSearch = new JButton ("Los!");
-		JButton bRefresh = new JButton ("Aktualisieren");
 		//Label
 		JLabel lSearch = new JLabel("Suchen:");
 		
@@ -95,7 +92,6 @@ public class InventoryView extends JFrame {
 		    public void actionPerformed(ActionEvent e)
 		    {
 		        System.out.println("Search ("+selectedSearch+"):"+taSearch.getText());
-		        //vs.search(mode,string);
 		        refresh();
 		    }
 		};
@@ -168,6 +164,7 @@ public class InventoryView extends JFrame {
 		JMenu menu = new JMenu("Menü");
 		//JMenu submenu = new JMenu("Submenü");
 		JMenuItem menuCategory = new JMenuItem("Kategorien");
+		JMenuItem menuRefresh = new JMenuItem("Aktualisieren");
 		JMenuItem menuSave = new JMenuItem("Speichern");
 		JMenuItem menuValidate = new JMenuItem("DB Validieren");
 		menuCategory.addActionListener(new ActionListener() { 
@@ -177,6 +174,12 @@ public class InventoryView extends JFrame {
 				categoriesView.setVisible(true);
 			}
 			
+		});
+		menuRefresh.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				refresh();
+			}
 		});
 		menuSave.addActionListener(new ActionListener() {
 			
@@ -199,28 +202,24 @@ public class InventoryView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(),"Das Validieren ist für den Administrator gemacht. Achtung! Das Validieren der Datenbank kann bei einem großen Datensatz sehr lange dauern. Wir reden von ca einer Stunde bei einer vollen Datenbank!","Datenbankvalidierung gestartet", JOptionPane.INFORMATION_MESSAGE);
-				boolean valide=false;
-				try {
-					valide = vs.validateDatabase();
-				} catch (SAXException e1) {
-					JOptionPane.showMessageDialog(getContentPane(),"Datenbank nicht valide und eventuell korrumpiert. Bitte wenden Sie sich an einen Admin. Fehlermeldung:\n"+e1.getMessage(),"DB Validierungsstatus", JOptionPane.INFORMATION_MESSAGE);
+				int yna = JOptionPane.showConfirmDialog(getContentPane(),"Das Validieren ist für den Administrator gedacht. Achtung! Das Validieren der Datenbank kann bei einem großen Datensatz sehr lange dauern. Wir reden von ca. einer Stunde bei einer vollen Datenbank! Fortfahren?","Achtung!", JOptionPane.YES_NO_OPTION);
+				if (yna==0) {
+					boolean valide=false;
+					try {
+						valide = vs.validateDatabase();
+					} catch (SAXException e1) {
+						JOptionPane.showMessageDialog(getContentPane(),"Datenbank nicht valide und eventuell korrumpiert. Bitte wenden Sie sich an einen Admin. Fehlermeldung:\n"+e1.getMessage(),"DB Validierungsstatus", JOptionPane.INFORMATION_MESSAGE);
+					}
+					JOptionPane.showMessageDialog(getContentPane(),"Datenbank Validierungsstatus: "+valide,"DB Validierungsstatus", JOptionPane.INFORMATION_MESSAGE);
 				}
-				JOptionPane.showMessageDialog(getContentPane(),"Datenbank Validierungsstatus: "+valide,"DB Validierungsstatus", JOptionPane.INFORMATION_MESSAGE);
 			}
 			
-		});
-		
-		bRefresh.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				refresh();
-			}
 		});
 		
 		//submenu.add(zwei);
 		menu.add(menuCategory);
+		menu.addSeparator();
+		menu.add(menuRefresh);
 		menu.addSeparator();
 		menu.add(menuSave);
 		menu.addSeparator();
@@ -247,7 +246,6 @@ public class InventoryView extends JFrame {
 		
 		JPanel rightPanel = new JPanel();
 		rightPanel.setPreferredSize(new Dimension(100, 100));
-		rightPanel.add(bRefresh);
 		
 		JPanel leftPanel = new JPanel();
 		leftPanel.setPreferredSize(new Dimension(100, 100));

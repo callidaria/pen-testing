@@ -38,11 +38,7 @@ public class CategoryView extends JFrame {
 		setSize(400,150);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-		
-		
-		
-		
+		setResizable(false);
 	}
 	public void showCategoryView(int UID){
 		setContentPane(new JPanel());
@@ -51,8 +47,6 @@ public class CategoryView extends JFrame {
 		JLabel lid = new JLabel("Akuteller Kategoriename:");
 		JLabel loldname = new JLabel(thisCategory.getName());
 		JLabel lnewname = new JLabel("Neuer Kategoriename:");
-		
-		//Textarea
 
 		JTextArea taname = new JTextArea(1,10);
 		taname.setText(thisCategory.getName());

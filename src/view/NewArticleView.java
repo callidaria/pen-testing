@@ -40,6 +40,7 @@ public class NewArticleView extends JFrame {
 		//GUI
 		setTitle("Neuer Artikel");
 		setSize(500,100);
+		setResizable(false);
 		setLocationRelativeTo(null);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
@@ -78,28 +79,24 @@ public class NewArticleView extends JFrame {
 				int kategorie = Integer.parseInt(skategorie);
                 try {
 					int adding=vs.addProduct(id, produkt, anzahl, gewicht, preis, kategorie);
-					if(adding==0) {
-						JOptionPane.showMessageDialog(getContentPane(),"Erfolgreich","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
+					if (adding==0) {
+						JOptionPane.showMessageDialog(getContentPane(),"Eintrag wurde hinzugefügt","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 						inventoryView.refresh();
 						setVisible(false);
-					}else {
-						JOptionPane.showMessageDialog(getContentPane(),"Fehler","Fehler", JOptionPane.INFORMATION_MESSAGE);
-						
+					} else if (adding==-1) {
+						JOptionPane.showMessageDialog(getContentPane(),"Produktname bereits vergeben","Fehler", JOptionPane.INFORMATION_MESSAGE);
+					} else if (adding==-2) {
+						JOptionPane.showMessageDialog(getContentPane(),"ID bereits vergeben oder unzulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(getContentPane(),"keine negativen Werte zulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
 					}
-					
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
 		
-
-		
 		Container pane = getContentPane();
-		
-		
-		
 		pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(10,5,0,5);

@@ -40,6 +40,7 @@ public class ArticleView extends JFrame {
 		setSize(480,360);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setResizable(false);
 		setTitle("Artikeldetailansicht");
 	}
 	
@@ -49,9 +50,6 @@ public class ArticleView extends JFrame {
 		
 		//GUI
 		setTitle(thisArticle.product.getName());
-		
-		
-		
 		
 		//TextArea
 		JTextField taplatz = new JTextField(thisArticle.getStringifiedUID(),20);
@@ -73,8 +71,6 @@ public class ArticleView extends JFrame {
 		JTextField tagewicht = new JTextField(Integer.toString(thisArticle.product.getWeight()),5);
 		JTextField taproduct = new JTextField(thisArticle.product.getName(),5);
 		
-		
-		
 		//Label
 		JLabel lgewicht = new JLabel("Gewicht in 1/10 gramm:");
 		JLabel lpreis = new JLabel("Preis:");
@@ -90,8 +86,7 @@ public class ArticleView extends JFrame {
 		JButton bdelete = new JButton ("Artikel Löschen");
 		JButton bsave = new JButton ("Änderungen Speichern");
 		
-		bdelete.addActionListener(new ActionListener() { 
-			
+		bdelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int confirme = JOptionPane.showConfirmDialog(getContentPane(), "Bestätigen","Artikel löschen",JOptionPane.YES_NO_OPTION);
@@ -103,19 +98,12 @@ public class ArticleView extends JFrame {
 						inventoryView.refresh();
 						dispose();
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(getContentPane(),"Hier könnte ihre Nachricht stehen:"+e1.getMessage(),"Artikel gelöscht", JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
-				
-				
 			}
-			
-			
 		});
-		
-		badd.addActionListener(new ActionListener() { 
-			
+		badd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String eins = taadd.getText();
@@ -128,15 +116,13 @@ public class ArticleView extends JFrame {
 				taanzahl.setText(Integer.toString(sum));
 				try {
 					vs.changeAmountBy(UID, add);
+					inventoryView.refresh();
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
-			
 		});
-		
-		bsubtract.addActionListener(new ActionListener() { 
+		bsubtract.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -151,17 +137,14 @@ public class ArticleView extends JFrame {
 				taanzahl.setText(Integer.toString(sum));
 				try {
 					vs.changeAmountBy(UID, -add);
-					
+					inventoryView.refresh();
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 			
 		});
-		
-		bsave.addActionListener(new ActionListener() { 
-			
+		bsave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String suid = taplatz.getText();
@@ -183,39 +166,20 @@ public class ArticleView extends JFrame {
 				String name =taproduct.getText();
 				
 				InventoryEntry editedIE = new InventoryEntry(uid, new Product(name, anzahl, gewicht, preis, kategorie_id));
-				
-				if (anzahl<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Anzahl eingeben","", JOptionPane.INFORMATION_MESSAGE);
-			
-			
-			
-			
-			
-				if (preis<0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Preis eingeben","", JOptionPane.INFORMATION_MESSAGE);
-			
-			
-			
-			
-				if (gewicht < 0) JOptionPane.showMessageDialog(getContentPane(),"Bitte eine positive Zahl eingeben als Gewicht eingeben","", JOptionPane.INFORMATION_MESSAGE); 
-				try {
-					vs.replaceInventoryEntry(thisArticle.getUID(),editedIE);
-					int close = JOptionPane.showConfirmDialog(getContentPane(), "Änderung gespeichert.\n Schließen?","Änderung gespeichert",JOptionPane.YES_NO_OPTION);
-					if (close==0) {
-						inventoryView.refresh();
-						setVisible(false);
-						dispose();
-					}
-				}catch (Exception e1) {
-					e1.printStackTrace();
-					JOptionPane.showMessageDialog(getContentPane(),"Fehler: "+e1.getMessage(),"Fehler", JOptionPane.INFORMATION_MESSAGE);
+
+				int err_code=vs.replaceInventoryEntry(thisArticle.getUID(),uid,name,anzahl,gewicht,preis,kategorie_id);
+				if (err_code==-1) JOptionPane.showMessageDialog(getContentPane(),"Keine negativen Zahlen als Anzahl, Gewicht oder Preis zulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				else if (err_code==-2) JOptionPane.showMessageDialog(getContentPane(),"ID bereits vergeben oder unzulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				else if (err_code==-3) JOptionPane.showMessageDialog(getContentPane(),"Name bereits vergeben","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				else {
+					inventoryView.refresh();
+					JOptionPane.showMessageDialog(getContentPane(),"Eintrag wurde erfolgreich geändert","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
+					setVisible(false);
+					dispose();
 				}
-				
-				
 			}
-			
-				
-			
 		});
-		
+
 		//Layout
 		//Container pane = getContentPane();
 		//pane.setLayout(new GridLayout(2,4));

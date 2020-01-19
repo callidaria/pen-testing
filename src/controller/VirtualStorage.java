@@ -13,8 +13,8 @@ import model.Category;
 
 
 public class VirtualStorage {
-	List<InventoryEntry> invEntry;
-	List<Category> cathEntry;
+	List<InventoryEntry> inventoryEntry;
+	List<Category> categoryEntry;
 	public boolean loaded;
 	
 	public VirtualStorage() {
@@ -24,9 +24,9 @@ public class VirtualStorage {
 	//TODO ALL: delete from list ??optimize
 	//TODO : javadoc
 	public InventoryEntry getEntryByUID(int id) {
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getUID()==id)
-				return invEntry.get(i);
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getUID()==id)
+				return inventoryEntry.get(i);
 		} return null;
 	}
 	public void getEntriesByLevinson(String search) {
@@ -34,81 +34,68 @@ public class VirtualStorage {
 	}
 	public void filterByID(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getUID()>=from&&invEntry.get(i).getUID()<=to) nie.add(invEntry.get(i));
-		} invEntry = nie;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getUID()>=from&&inventoryEntry.get(i).getUID()<=to) nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public void filterBySection(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getShelfSection()>=from&&invEntry.get(i).getShelfSection()<=to) nie.add(invEntry.get(i));
-		} invEntry = nie;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getShelfSection()>=from&&inventoryEntry.get(i).getShelfSection()<=to) nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public void filterByPlace(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getShelfPlace()>=from&&invEntry.get(i).getShelfPlace()<=to) nie.add(invEntry.get(i));
-		} invEntry = nie;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getShelfPlace()>=from&&inventoryEntry.get(i).getShelfPlace()<=to) nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public void filterByCount(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getProduct().getCount()>=from&&invEntry.get(i).getProduct().getCount()<=to)
-				nie.add(invEntry.get(i));
-		} invEntry = nie;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getProduct().getCount()>=from&&inventoryEntry.get(i).getProduct().getCount()<=to)
+				nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public void filterByWeight(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getProduct().getWeight()>=from&&invEntry.get(i).getProduct().getWeight()<=to)
-				nie.add(invEntry.get(i));
-		} invEntry = nie;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getProduct().getWeight()>=from&&inventoryEntry.get(i).getProduct().getWeight()<=to)
+				nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public void filterByPrize(int from, int to) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getProduct().getWeight()>=from&&invEntry.get(i).getProduct().getWeight()<=to)
-				nie.add(invEntry.get(i));
-		} invEntry = nie;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getProduct().getWeight()>=from&&inventoryEntry.get(i).getProduct().getWeight()<=to)
+				nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public void filterByCathegory(Category cath) {
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getProduct().getCategoryID()==cath.getUID()) nie.add(invEntry.get(i));
-		} invEntry = nie;
-	}
-	public void sortByID(boolean down) {
-		//TODO
-	}
-	public void sortByName(boolean down) {
-		//TODO
-	}
-	public void sortByCount(boolean down) {
-		//TODO
-	}
-	public void sortByWeight(boolean down) {
-		//TODO
-	}
-	public void sortByPrize(boolean down) {
-		//TODO
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getProduct().getCategoryID()==cath.getUID()) nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public int changeAmountBy(int id,int val) throws Exception {
 		int nVal = getEntryByUID(id).getProduct().getCount()+val;
 		return setAmount(id,nVal);
 	}
 	public void loadVirtualStorage() {
-		invEntry = Database.retrieveInventoryEntriesWithCategory(Database.retrieveCategories());
+		inventoryEntry = Database.retrieveInventoryEntriesWithCategory(Database.retrieveCategories());
 		loaded=true;
 	}
 	public void loadCathegoryStorage() {
-		cathEntry = Database.retrieveCategories();
+		categoryEntry = Database.retrieveCategories();
 	}
     public int addProduct(int UID, String name, int count, int weight, int prize, int categoryID) throws Exception {
         int section = InventoryEntry.uidToSectionPlace(UID)[0];
         int place = InventoryEntry.uidToSectionPlace(UID)[1];
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getProduct().getName()==name) return -1;
-			else if (section==invEntry.get(i).getShelfSection()&&place==invEntry.get(i).getShelfPlace()) return -2;
+        if (UID<0||UID>999999) return -2;
+        else if (count<0||weight<0||prize<0) return -3;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getProduct().getName().compareTo(name)==0) return -1;
+			else if (inventoryEntry.get(i).getUID()==UID) return -2;
 		} Database.addInventoryEntry(new InventoryEntry(section,place,new Product(name,count,weight,prize,categoryID)));
 		loadVirtualStorage();
 		return 0;
@@ -117,59 +104,41 @@ public class VirtualStorage {
 		Database.deleteInventoryEntry(id, true);
 		loadVirtualStorage();
 	}
-	//TODO : rename
-	public int addCathegory(int id,String name) throws Exception {
-		for (int i=0;i<cathEntry.size();i++) {
-			if (cathEntry.get(i).getName()==name||cathEntry.get(i).getUID()==id) return -1; // ??id handler by fe
+	public int addCategory(int id,String name) throws Exception {
+		for (int i=0;i<categoryEntry.size();i++) {
+			if (categoryEntry.get(i).getName()==name||categoryEntry.get(i).getUID()==id) return -1; // ??id handler by fe
 		} Database.addCategory(new Category(id,name));
 		loadCathegoryStorage();
 		return 0;
 	}
-	public int renameCathegory(int id, String newName) {
-		for (int i=0;i<cathEntry.size();i++) {
-			if (cathEntry.get(i).getName()==newName) return -1;
+	public int renameCategory(int id, String newName) {
+		for (int i=0;i<categoryEntry.size();i++) {
+			if (categoryEntry.get(i).getName()==newName) return -1;
 		} Database.renameCategory(id, newName);
 		loadCathegoryStorage();
 		return 0;
 	}
-	public void removeCathegory(int id) throws Exception{
+	public void removeCategory(int id) throws Exception{
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getProduct().getCategoryID()!=id) nie.add(invEntry.get(i));
-		} invEntry = nie;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getProduct().getCategoryID()!=id) nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 		Database.deleteCategory(id);
 	}
 
-	public int setName(int id,String name) throws Exception {
-		for (int i=0;i<invEntry.size();i++) {
-			if (invEntry.get(i).getProduct().getName().equals(name)) return -1;
-		}
-		Database.editAttributeOfInventoryEntry(id,"name",name);
-		loadVirtualStorage();
-		return 0;
-	}
-	public int setAmount(int id,int amount) throws Exception {
+	public int setAmount(int id,int amount) {
 		if (amount<0) return -1;
-		Database.editAttributeOfInventoryEntry(id,"count",String.valueOf(amount));
-		loadVirtualStorage();
-		return 0;
-	}
-	public int setWeight(int id,int weight) throws Exception {
-		if (weight<0) return -1;
-		Database.editAttributeOfInventoryEntry(id,"weight",String.valueOf(weight));
-		loadVirtualStorage();
-		return 0;
-	}
-	public int setPrize(int id,int prize) throws Exception {
-		if (prize<0) return -1;
-		Database.editAttributeOfInventoryEntry(id,"prize",String.valueOf(prize));
+		try {
+			Database.editAttributeOfInventoryEntry(id,"count",String.valueOf(amount));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		loadVirtualStorage();
 		return 0;
 	}
 
-	public List<InventoryEntry> getAllEntries() { return invEntry; }
-
-	public List<Category> getAllCategories(){return cathEntry;}
+	public List<InventoryEntry> getAllEntries() { return inventoryEntry; }
+	public List<Category> getAllCategories(){return categoryEntry;}
     
     public Object[][] getInventoryEntryObjectArray() {
         List <InventoryEntry> ie = getAllEntries();
@@ -185,7 +154,7 @@ public class VirtualStorage {
         return objectArray;
     }
     public Object[][] getCategoryObjectArray() {
-        List <Category> categories = cathEntry;
+        List <Category> categories = categoryEntry;
         System.out.println(categories.get(0));
         List<Object[]> arrayList = new ArrayList<Object[]>();
         for(int i=0;categories.size()>i;i++) {
@@ -198,10 +167,15 @@ public class VirtualStorage {
         }
         return objectArray;
     }
-	public void replaceInventoryEntry(int uid, InventoryEntry editedIE) throws Exception{
-		
-		Database.replaceInventoryEntry(uid, editedIE);
+	public int replaceInventoryEntry(int ouid, int nuid, String name, int amount, int weight, int prize, int cat_id) {
+		if (amount<0||weight<0||prize<0) return -1;
+		if (nuid<0||nuid>999999) return -2;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getUID()==nuid&&ouid!=nuid) return -2;
+			if (inventoryEntry.get(i).getProduct().getName().compareTo(name)==0&&inventoryEntry.get(i).getUID()!=ouid) return -3;
+		} Database.replaceInventoryEntry(ouid,new InventoryEntry(nuid,new Product(name,amount,weight,prize,cat_id)));
 		loadVirtualStorage();
+		return 0;
 	}
 	
 	public void manualSave() {

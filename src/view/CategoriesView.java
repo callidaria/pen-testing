@@ -39,25 +39,10 @@ public class CategoriesView extends JFrame {
 		setSize(500,600);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setResizable(false);
 	}
 	public void showCategoriesView(){
 		//GUI
-		
-		
-		//Menubar
-		JMenuBar menu = new JMenuBar();
-		JMenu datei = new JMenu("Menü");
-		JMenuItem bestand = new JMenuItem("Bestand");
-		
-			bestand.addActionListener(new ActionListener() { 
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				InventoryView bestand = new InventoryView();
-				bestand.setVisible(true);
-			
-			}	
-		});	
 		
 		//Button
 		JButton button = new JButton ("Neue Kategorie erstellen");
@@ -82,7 +67,7 @@ public class CategoriesView extends JFrame {
 		String[] columnNames = {"ID",
                 "Kategorie"};
 			
-		Object[][] data = vs.getCategoryObjectArray();	
+		Object[][] data = vs.getCategoryObjectArray();
 		tableModel = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column)
@@ -140,15 +125,6 @@ public class CategoriesView extends JFrame {
 		container.add(scrollPane,BorderLayout.CENTER);
 		container.add(rightPanel,BorderLayout.LINE_END);
 		container.add(bottomPanel,BorderLayout.PAGE_END);
-		
-		
-		menu.add(datei);
-		datei.add(bestand);
-		setJMenuBar (menu);
-		
-		
-		
-		
 	}
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;

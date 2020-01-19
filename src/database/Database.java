@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Random;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -267,7 +268,8 @@ public class Database{
 				while (place.length()<3) {
 					place="0"+place;
 				}
-				Product newProduct = new Product("Produkt "+area+place,1,1,100,0);
+				Random tr = new Random();
+				Product newProduct = new Product("Produkt "+area+place,tr.nextInt(1001),tr.nextInt(1001),tr.nextInt(1001),1);
 				InventoryEntry newIE = new InventoryEntry(i,n,newProduct);
 				/*
 				if(validate) {

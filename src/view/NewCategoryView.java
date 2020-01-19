@@ -34,6 +34,7 @@ public class NewCategoryView extends JFrame {
 		setTitle("Neue Kategorie erstellen");
 		setSize(400,150);
 		setLocationRelativeTo(null);
+		setResizable(false);
 				
 				
 				
