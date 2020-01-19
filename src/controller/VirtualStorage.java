@@ -194,12 +194,12 @@ public class VirtualStorage {
 		Database.deleteInventoryEntry(id, true);
 		loadVirtualStorage();
 	}
-	public int addCategory(int id,String name) {
+	public int addCategory(String name) {
 		if (name.length()>255) return -1;
 		for (int i=0;i<categoryEntry.size();i++) {
 			if (categoryEntry.get(i).getName().compareTo(name)==0) return -1;
 		} try {
-			Database.addCategory(new Category(0,name));
+			Database.addCategory(name);
 			loadCategoryStorage();
 			return 0;
 		} catch (Exception e) {
@@ -214,18 +214,15 @@ public class VirtualStorage {
 		loadCategoryStorage();
 		return 0;
 	}
-	public void removeCategory(int id) {
-		/*List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+	public int removeCategory(int id) {
 		for (int i=0;i<inventoryEntry.size();i++) {
-			if (inventoryEntry.get(i).getProduct().getCategoryID()!=id) nie.add(inventoryEntry.get(i));
-		} inventoryEntry = nie;*/
-		for (int i=0;i<categoryEntry.size();i++) {
-			if (id==categoryEntry.get(i).getUID()) System.out.println("sync");
+			if (inventoryEntry.get(i).getProduct().getCategoryID()==id) return -1;
 		} try {
 			Database.deleteCategory(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} loadCategoryStorage();
+		return 0;
 	}
 	public int setAmount(int id,int amount) {
 		if (amount<0) return -1;
@@ -238,7 +235,15 @@ public class VirtualStorage {
 		return 0;
 	}
 	public List<InventoryEntry> getAllEntries() { return inventoryEntry; }
-	public List<Category> getAllCategories() { return categoryEntry; }
+	public List<Category> getAllCategories(){return categoryEntry;}
+    
+	public Category getCategoryByUID(int id) {
+		for (int i=0;i<categoryEntry.size();i++) {
+			if (categoryEntry.get(i).getUID()==id)
+				return categoryEntry.get(i);
+		} return null;
+	}
+	
     public Object[][] getInventoryEntryObjectArray() {
         List <InventoryEntry> ie = getAllEntries();
         
@@ -254,7 +259,6 @@ public class VirtualStorage {
     }
     public Object[][] getCategoryObjectArray() {
         List <Category> categories = categoryEntry;
-        System.out.println(categories.get(0));
         List<Object[]> arrayList = new ArrayList<Object[]>();
         for(int i=0;categories.size()>i;i++) {
             arrayList.add(categories.get(i).toObjectArray());

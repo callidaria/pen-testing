@@ -52,7 +52,7 @@ public class Product {
 	 * @return Gewicht mit Einheit als String
 	 */
 	public String getStringifiedWeight() {
-		if(weight<1000) {
+		if(weight<1000||true) {
 			float fWeight = (float)this.weight/10.0f;
 
 			return String.valueOf(fWeight)+"g";
@@ -91,10 +91,19 @@ public class Product {
 	 * @return Preis mit Einheit als String
 	 */
 	public String getStringifiedPrize() {
-		if(this.prize<100) {
-			return String.valueOf(prize)+"c";
-		}
+				
 		float fPrize = (float) this.prize/100;
+				
+		String text = Float.toString(fPrize);
+		int integerPlaces = text.indexOf('.');
+		int decimalPlaces = text.length() - integerPlaces - 1;
+				
+		if(decimalPlaces<2) {
+			return String.valueOf(fPrize)+"0€";
+		}
+		
+		System.out.println();
+		
 		return String.valueOf(fPrize)+"€";
 	}
 	

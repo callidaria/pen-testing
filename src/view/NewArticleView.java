@@ -33,7 +33,10 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-
+/**
+ * wird aufgerufen, wenn in der InventoryView auf den Button neuen Eintrag erstellen geklickt wird.
+ * Nachdem alle Felder ausgefüllt sind und auf den speicherbutton geklickt wurde, wird der neue Eintrag der datenbank hinzugefügt
+ */
 
 public class NewArticleView extends JFrame {
 	
@@ -74,17 +77,19 @@ public class NewArticleView extends JFrame {
 			}
 		});
 		
-		//Button
+		//Button hier wird der neue Eintrag erstellt und die Daten an die Datenbank weitergeleitet
 		JButton bAdd = new JButton ("Hinzufügen");
 		bAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Auslesen aller Textareas als Strings
 				String produkt = tName.getText();
 				String sanzahl = tAnzahl.getText();
 				String sgewicht = tGewicht.getText();
 				String spreis = tPreis.getText();
 				String sid = tUid.getText();
 				
+				//Konvertieren in Integer
 				int anzahl = Integer.parseInt(sanzahl);
 				int gewicht = Integer.parseInt(sgewicht);
 				int preis = Integer.parseInt(spreis);
@@ -107,6 +112,9 @@ public class NewArticleView extends JFrame {
 				}
 			}
 		});
+		
+
+		//Layout Hier wird die Reihenfolge aller Labels, Textareas und Buttons festgelegt
 		
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());
@@ -170,6 +178,9 @@ public class NewArticleView extends JFrame {
 		pack();
 	}
 
+	/**
+	 * setter für inventoryView
+	 */
 	public void setInventoryView(InventoryView inventoryView) {
 		this.inventoryView = inventoryView;
 	}

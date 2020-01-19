@@ -7,7 +7,6 @@ import controller.VirtualStorage;
 
 public class SplashView extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private VirtualStorage vs;
 	private InventoryView inventoryView;
 
 	public SplashView() {
@@ -17,12 +16,8 @@ public class SplashView extends JFrame {
 	}
 	public void LoadingViewHide() {
 		setVisible(false);
+		dispose();
 		inventoryView.setVisible(true);
-	}
-
-	public void setVirtualStorage(VirtualStorage mainVirtualStorage) {
-		this.vs=mainVirtualStorage;
-		
 	}
 
 	public void setInventoryView(InventoryView inventoryView) {

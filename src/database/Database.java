@@ -1,9 +1,11 @@
 package database;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +54,7 @@ import basic.Product;
 public class Database{
 	
 	//**Der relative Pfad von root zu den Datenbankdateien
-	static final String DBPATH="data/xml/";
+	static final String DBPATH="data/";
 	
 	//Dateiname von Inventareinträgen	
 	static final String DBPATH_IE="inventoryEntries.xml";
@@ -125,7 +127,7 @@ public class Database{
 	/**Aktiviert/deaktiviert das Transformieren bei jeder Interaktion mit der Datenbank.
 	 * Wenn die Datenbank voll ist können durch das Deaktivieren des Autosaves, bis zu 5 Sekunden pro Interaktion gespart werden. 
 	 */
-	private static final boolean AUTOSAVE=false;
+	private static final boolean AUTOSAVE=true;
 	
 	/**Abfragen aller Inventareinträge aus der XML Datei unter DBPATH_IE
 	 *  
@@ -157,8 +159,7 @@ public class Database{
 				InventoryEntry position = new InventoryEntry(shelfSection,shelfPlace,product);
 				inventoryEntries.add(position);
 			}
-		
-		System.out.println("Retrieved Inventory Entries");
+	
 		return inventoryEntries;
 	}
 	
@@ -170,15 +171,20 @@ public class Database{
 	 */
 	public static ArrayList<InventoryEntry> retrieveInventoryEntriesWithCategory(ArrayList<Category> categories){
 		ArrayList<InventoryEntry> inventoryEntries = Database.retrieveInventoryEntries();
-		Category defaultCategory = new Category(0, "Keine Kategorie");
+		Category defaultCategory = new Category(-1, "Kategorie existiert nicht");
 		for(int i=0;i < inventoryEntries.size();i++) {
+			boolean found=false;
 			int categoryID = inventoryEntries.get(i).product.getCategoryID();
-			inventoryEntries.get(i).product.setCategory(defaultCategory);
+			
 			for(int n =0;n < categories.size();n++) {
 				if(categoryID==categories.get(n).getUID()) {
 					inventoryEntries.get(i).product.setCategory(categories.get(n));
+					found=true;
 					break;
 				}
+			}
+			if(!found) {
+				inventoryEntries.get(i).product.setCategory(defaultCategory);
 			}
 			
 		}	
@@ -212,12 +218,15 @@ public class Database{
 
 			// Get the root element
 			Node entries = doc.getFirstChild();
+			
+			//Erstellt neuen Eintrag alls Element
 			Element newEntry = doc.createElement("entry");
 			
+			//Setzt attribute
 			newEntry.setAttribute("area",Integer.toString(newIE.getShelfSection()));
 			newEntry.setAttribute("place",Integer.toString(newIE.getShelfPlace()));
 			
-			
+			//Setzte Elemente
 			Element newName = doc.createElement("name");
 			Element newCount = doc.createElement("count");
 			Element newWeight = doc.createElement("weight");
@@ -234,13 +243,14 @@ public class Database{
 			
 			newCategoryId.appendChild(doc.createTextNode(Integer.toString(newIE.product.category.getUID())));
 			
-			
+			//Fügt die Elemente zum Eintrag hinzu
 			newEntry.appendChild(newName);
 			newEntry.appendChild(newCount);
 			newEntry.appendChild(newWeight);
 			newEntry.appendChild(newPrize);
 			newEntry.appendChild(newCategoryId);
 			
+			//Fügt den Eintrag zu den Einträgen hinzu
 			entries.appendChild(newEntry);
 
 			// write the content into xml file
@@ -271,23 +281,8 @@ public class Database{
 				Random tr = new Random();
 				Product newProduct = new Product("Produkt "+area+place,tr.nextInt(1001),tr.nextInt(1001),tr.nextInt(1001),1);
 				InventoryEntry newIE = new InventoryEntry(i,n,newProduct);
-				/*
-				if(validate) {
-					if(!newIE.validate()) {
-						throw new CodedException(errorPreamble+DatabaseErrors.inventoryEntryFailedValidation,1);
-					}
-					
-					if(Database.uidExists(newIE.getUID())){
-						throw new Exception(errorPreamble+DatabaseErrors.uidTaken(newIE.getUID()));
-					}
-					
-					if (Database.nameExists(newIE.product.getName()) != -1) {
-						throw new Exception(errorPreamble+DatabaseErrors.nameTaken(newIE.product.getName()));
-					}
-				}
-				*/
 				
-				
+				//copy pasta von addInventoryEntry.
 				Element newEntry = doc.createElement("entry");
 				
 				newEntry.setAttribute("area",Integer.toString(newIE.getShelfSection()));
@@ -333,21 +328,13 @@ public class Database{
 	
 	
 	/** Ersetzt den Inventareintrag an UID durch newIE.
-	 * 
-	 * Eine der wenigen Funktionen die kein XPath benutzt, sondern alle Elemente im Dokument durchgeht.
+	 * Dabei wird erst der veränderte Eintrag hinzugefügt und dann der Eintrag an der Stelle UID gelöscht.
+	 * Sollte das Löschen nicht erfolgreich sein, wird der veränderte Eintrag wieder entfernt.
 	 * 
 	 * @param UID Bestimmt den Inventareintrag, der ersetzt werden soll.
 	 * @param newIE der Inventareintrag der an der ausgewählten Stelle eingefügt wird.
 	 * 
-	 * Pre:
-	 * newIE muss validieren.
-	 * an UID muss ein Eintrag existieren.
-	 * 
-	 * Post:
-	 * 
-	 * Der Eintrag an UID ist ersetzt durch newIE.
-	 * 
-	 * @return Gibt den newIE zurück. (warum?)
+	 * @return Gibt den newIE zurück.
 	 */
 	public static InventoryEntry replaceInventoryEntry(int UID,InventoryEntry newIE){
 		
@@ -364,6 +351,8 @@ public class Database{
 			e.printStackTrace();
 		}
 		/*
+		 * 
+		 **** Unterschiedliche Lösung für das selbe Problem ***
 		Document doc = Database.IE_DOC;
 		int[] sectionPlace = InventoryEntry.uidToSectionPlace(UID);
         int section=sectionPlace[0];
@@ -432,17 +421,15 @@ public class Database{
 	}
 
 	/** Ändert einen Attribut eines Inventareintrages.
+	 * Wird nicht viel benutzt, da weniger performant als replaceInventoryEntry().
 	 * 
 	 * @param UID bestimmt den Inventareintrag, der bearbeitet wird.
 	 * @param attribute bestimmt welchen Attribute (z.B. Gewicht, Menge oder Name)
 	 * @param newValue neuer Wert eines Attributes von UID.
 	 * 
-	 * Prüft Restriktionen der Datenbank.
+	 * Prüft keine Restriktionen der Datenbank.
 	 * 
 	 * @throws Exception - wenn der Attribute nicht in der Databankdefinition existiert {@link DatabaseSchema}.
-	 * @throws Exception - wenn der Attribute den newValue nicht annehmen darf.
-	 * @throws Exception - wenn die neue UID bereits belegt ist.
-	 * @throws Exception - wenn der neue Name bereits benutzt wird.
 	 */
 	public static void editAttributeOfInventoryEntry(int UID, String attribute, String newValue) throws Exception{
 		boolean inElements = Arrays.stream(DatabaseSchema.elements).anyMatch(attribute::equals);
@@ -450,23 +437,6 @@ public class Database{
 		if(!inElements&&!inAttributes) {
 			throw new Exception("@editAttributeOfInventoryEntry Attribute doesn't exist. Internal Error.");
 		}
-		/*
-		if(DB_VALIDATE) {
-			if(attribute=="UID") {
-				if(Database.uidExists(Integer.parseInt(newValue))) {
-					throw new Exception("Der Platz ("+newValue+") ist belegt.");
-				}
-			}
-			if(attribute=="name") {
-				if(Database.nameExists(newValue)!=-1) {
-					throw new Exception("Der Name ("+newValue+") wird bereits benutzt.");
-				}
-			}
-			if(!uidExists(UID)) {
-				throw new Exception("Die UID ("+UID+") exsitiert nicht."+DatabaseErrors.internalWarning);
-			}
-		}
-		*/
 		
 		
 		Element node;
@@ -477,6 +447,7 @@ public class Database{
 
 			node = (Element) Database.xpathNode(Database.IE_DOC,"/entries/entry[@area="+section+" and @place="+place+"]");
 			NodeList nodeChilds = node.getChildNodes();
+			//Wenn ein XML Element
 			if(inElements) {
 				for (int i = 0; i < nodeChilds.getLength(); i++) {
 				   Node subNode = nodeChilds.item(i);
@@ -487,6 +458,7 @@ public class Database{
 				   }
 			   }
 			}
+			//Wenn ein XML Attribut
 			if(inAttributes) {
 				node.setAttribute(attribute, newValue);
 			}
@@ -508,7 +480,7 @@ public class Database{
 	/** Löscht einen Inventareintrag mit der passenden UID, wenn die Menge bereits 0 ist.
 	 * @param UID bestimmt den Inventareintrag.
 	 * @param force wenn wahr, ignoriert Menge des Inventareintrages.
-	 * @throws Exception unterschiedliche Exception mit lesbaren Nachrichten, die dem Nutzer direkt angezeigt werden können.
+	 * @throws Exception Wenn force=false und der Eintrag noch nicht Anzahl=0 hat.
 	 */
 	public static void deleteInventoryEntry(int UID, Boolean force) throws Exception{
 		Element node = null;
@@ -553,7 +525,8 @@ public class Database{
 		return;
 	}
 
-	/** 	 
+	/**Gibt alle Kategorien aus.
+	 * 
 	 * @return alle Kategorien aus der Datenbank als ArrayList. Die ArrayList ist unsortiert.
 	 */
 	public static ArrayList<Category> retrieveCategories() {
@@ -571,19 +544,21 @@ public class Database{
 			Category category = new Category(uid,name);
 			categories.add(category);
 		}
-		System.out.println("Retrieved Categories");
 		return categories;
 	}
-	public static int addCategory(Category category) throws Exception {
-		System.out.println("WARNING METHODE: addCategory IS WORK IN PROGRESS!\nYour database might become corrupted!");
-		String errorPreamble="Fehler beim Hinzufügen eines Inventareintrages.\n";
+	
+	/** Fügt eine neue Kategorie hinzu.
+	 * 
+	 * @param name der Name der neuen Kategorie
+	 * @return die UID der neuen Kategorie
+	 */
+	public static int addCategory(String name) {
+
 		int freeUID=-1;
-		if(!category.validate()) {
-			throw new Exception(errorPreamble+"New Category failed validation.");
-		}
 		
 		
 		Document doc = CAT_DOC;
+		
 		freeUID = Database.freeCategoryUID();
 		// Get the root element
 		Node entries = doc.getFirstChild();
@@ -594,7 +569,7 @@ public class Database{
 		
 		Element newName = doc.createElement("name");
 		
-		newName.appendChild(doc.createTextNode(category.getName()));			
+		newName.appendChild(doc.createTextNode(name));			
 
 		newCategory.appendChild(newName);
 		
@@ -610,7 +585,13 @@ public class Database{
 	 */
 	public static int freeCategoryUID() {
 		// TODO Auto-generated method stub
-		Category lastCategory=Database.retrieveCategories().get(Database.retrieveCategories().size() -1);
+		Category lastCategory = null;
+		if(Database.retrieveCategories().size()>0) {
+			lastCategory=Database.retrieveCategories().get(Database.retrieveCategories().size() -1);	
+		}
+		else {
+			return 0;
+		}
 		return lastCategory.getUID()+1;
 	}
 
@@ -634,11 +615,13 @@ public class Database{
 			e.printStackTrace();
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-		} 
+		}
+		transformCategories();
 		return;
 	}
 	
 	public static void deleteCategory(int UID) throws Exception {
+
 		Document doc = CAT_DOC;
 		Element node;
 		try {
@@ -913,6 +896,7 @@ public class Database{
 	    }
 	    catch (IOException e) {
 			e.printStackTrace();
+			recreate(-1);
 	    	return false;
 		}
 	}
@@ -976,14 +960,43 @@ public class Database{
 				Database.recreate(mode);
 			}
 		}
+		if(mode==1) {
+			try {
+				Database.buildDocument(DBPATH_CAT);
+			} catch (SAXException e) {
+				try {
+				docBuilder=docFactory.newDocumentBuilder();
+				Document newDoc = docBuilder.newDocument();
+				Element mainRootElement = newDoc.createElement("categories");
+				mainRootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+				mainRootElement.setAttribute("xsi:noNamespaceSchemaLocation", "categories.xsd");
+				newDoc.appendChild(mainRootElement);
+				Transformer transform = TransformerFactory.newInstance().newTransformer();
+				transform.transform(new DOMSource(newDoc), new StreamResult(new File(DBPATH+DBPATH_CAT)));
+				} catch (TransformerException | ParserConfigurationException | TransformerFactoryConfigurationError e1) {
+					System.out.println("Fatal error. Recover failed. The Database is now bricked. Contact the developer.");
+					e1.printStackTrace();
+				}
+				
+			} catch (IOException e) {
+				Database.recreate(mode);
+			}
+		}
 		
 	}
 
-	/**Erstellt die Datenbankdatei neu, wenn sie nicht existiert.
+	/**Erstellt die Datenbankdatei neu, wenn sie nicht existiert. Und erstellt die XSD Datein neu, wenn sie nicht existieren.
 	 * 
 	 * @param mode, 0:Inventareinträge 1: Kategorien
 	 */
 	private static void recreate(int mode) {
+		File directory = new File(DBPATH);
+	    if (! directory.exists()){
+	        directory.mkdirs();
+	    }
+
+		
+		
 		String filePath = DBPATH_IE;
 		if(mode==0) {
 			filePath=DBPATH_IE;
@@ -994,17 +1007,46 @@ public class Database{
 		else {
 			return;
 		}
-		File file = new File(DBPATH+filePath);
-		if(file.exists()==false) {
+		File databaseFile = new File(DBPATH+filePath);
+		if(databaseFile.exists()==false) {
 			try {
-				file.createNewFile();
+				databaseFile.createNewFile();
 				@SuppressWarnings({ "resource", "unused" })
-				FileOutputStream outFile = new FileOutputStream(file, false); 
+				FileOutputStream outFile = new FileOutputStream(databaseFile, false); 
 				Database.recover(mode);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		
+		File categoriesXSD = new File(DBPATH+DBPATH_CAT_XSD);
+		
+		if(categoriesXSD.exists()==false) {
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter(categoriesXSD));
+				writer.write(DatabaseSchema.inventoryEntriesXSD);
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		File inventoryEntriesXSD = new File(DBPATH+DBPATH_IE_XSD);
+		
+		if(inventoryEntriesXSD.exists()==false) {
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter(inventoryEntriesXSD));
+				writer.write(DatabaseSchema.inventoryEntriesXSD);
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
 		
 		
 	}

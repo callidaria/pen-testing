@@ -1,5 +1,7 @@
 package view;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -7,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import controller.VirtualStorage;
@@ -21,6 +24,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Hier wird die Tabelle der Kategorien angezeigt, von hier aus werden die Änderungen verschiedenster Kategorien aufgerufen.
+ * Gleiches Prinzip wie beim Inventory View.
+ * Es gibt wieder eine Menubar, über welche der Bestand aufgerufen werden kann.
+ */
+
 public class CategoriesView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private VirtualStorage vs;
@@ -28,35 +37,57 @@ public class CategoriesView extends JFrame {
 	private DefaultTableModel tableModel;
 	private String[] columnNames;
 	private JTable table;
-	public CategoriesView() {
+	private NewCategoryView newCategoryView;
+	public CategoriesView(VirtualStorage vs) {
+		this.vs=vs;
 		setTitle("Kategorien");
 		setSize(500,600);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
+		showCategoriesView();
 	}
 	public void showCategoriesView() {
 		//Button
-		JButton button = new JButton ("Neue Kategorie erstellen");
-		CategoriesView tp = this;
-		button.addActionListener(new ActionListener() { 
+		JButton bAddCategory = new JButton ("Neue Kategorie erstellen");
+		//CategoriesView tp = this;
+		bAddCategory.addActionListener(new ActionListener() { 
 		
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				vs.loadCategoryStorage();
-				NewCategoryView neu = new NewCategoryView(vs,tp);
-				neu.setVisible(true);
+				newCategoryView.setVisible(true);
 			}
 		});
-		JButton bsuch = new JButton ("Los!");
+		JButton bSearch = new JButton ("Los!");
 		
 		//Textarea
-		JTextArea tasuchen = new JTextArea(1,15);
+		JTextField tfSearch = new JTextField(15);
 		
 		//Label
-		JLabel lsuchen = new JLabel("Suchen:");
+		JLabel lSearch = new JLabel("Suchen:");
 		
-		//Table
+		Action startSearch = new AbstractAction()
+		{
+		    /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+		    public void actionPerformed(ActionEvent e)
+		    {
+		    	if (tfSearch.getText()!="") {
+		    		 vs.searchCategoriesByName(tfSearch.getText());
+		    	}
+		    	else vs.loadVirtualStorage();
+		        refresh();
+		    }
+		};
+		bSearch.addActionListener(startSearch);
+		tfSearch.addActionListener(startSearch);
+		
+		//Table wird hier mit Elementen aus der Datenbank gefüllt
 		columnNames = new String[]{"ID","Kategorie"};
 			
 		Object[][] data = vs.getCategoryObjectArray();
@@ -76,6 +107,7 @@ public class CategoriesView extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);	
 		
+		//Durch doppelklick öffnet sich ein einzelnes Fenster einer Kategorie, in welcher diese verändert werden kann
 		table.addMouseListener(new MouseAdapter(){
 			 public void mousePressed(MouseEvent mouseEvent) {
 			        JTable table =(JTable) mouseEvent.getSource();
@@ -91,7 +123,8 @@ public class CategoriesView extends JFrame {
 			        }
 			 }
 		});
-		//Layout
+			
+		//Layout wird hier festgelegt, Reihenfolge wie die Elemente angezeigt werden
 		Container container = getContentPane();
 		
 		container.setLayout(new BorderLayout());
@@ -99,9 +132,9 @@ public class CategoriesView extends JFrame {
 		
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new FlowLayout());
-		topPanel.add(lsuchen);
-		topPanel.add(tasuchen);
-		topPanel.add(bsuch);
+		topPanel.add(lSearch);
+		topPanel.add(tfSearch);
+		topPanel.add(bSearch);
 		
 		JPanel rightPanel = new JPanel();
 		rightPanel.setPreferredSize(new Dimension(100, 100));
@@ -111,7 +144,7 @@ public class CategoriesView extends JFrame {
 		
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new FlowLayout());
-		bottomPanel.add(button);
+		bottomPanel.add(bAddCategory);
 		
 		container.add(topPanel,BorderLayout.PAGE_START);
 		container.add(leftPanel,BorderLayout.LINE_START);
@@ -119,16 +152,17 @@ public class CategoriesView extends JFrame {
 		container.add(rightPanel,BorderLayout.LINE_END);
 		container.add(bottomPanel,BorderLayout.PAGE_END);
 	}
-	public void setVirtualStorage(VirtualStorage vs) {
-		this.vs = vs;
-		showCategoriesView();
-	}
 	public void setCategoryView(CategoryView categoryView) {
 		this.categoryView=categoryView;
 	}
 	public void refresh() {
 	 	tableModel.setDataVector(vs.getCategoryObjectArray(),columnNames);
 		tableModel.fireTableDataChanged();
+		table.removeColumn(table.getColumnModel().getColumn(0));
 		//table.removeColumn(table.getColumnModel().getColumn(0));
+	}
+	public void setNewCategoriesView(NewCategoryView newCategoryView) {
+		this.newCategoryView = newCategoryView;
+		
 	}
 }

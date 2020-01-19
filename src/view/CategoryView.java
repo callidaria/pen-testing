@@ -6,6 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import basic.Category;
 import controller.VirtualStorage;
@@ -16,10 +17,17 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Wird angezeigt beim Doppelklick auf die Kategorientabellen
+ * hier wird der Kategoriename einer bestehenden Kategorie verändert.
+ */
+
 public class CategoryView extends JFrame {
 	
 	private VirtualStorage vs;
-	public CategoryView() {
+	private CategoriesView categoriesView;
+	public CategoryView(VirtualStorage vs) {
+		this.vs=vs;
 		//GUI
 		setTitle("Kategorie Ansicht");
 		setSize(400,150);
@@ -29,21 +37,36 @@ public class CategoryView extends JFrame {
 	}
 	public void showCategoryView(int UID) {
 		setContentPane(new JPanel());
+		Category thisCategory = vs.getCategoryByUID(UID);
 		//Label
-		Category thisCategory = new Category(1,"Keine Kategorie");
-		JLabel lid = new JLabel("Akuteller Kategoriename:");
-		JLabel loldname = new JLabel(thisCategory.getName());
-		JLabel lnewname = new JLabel("Neuer Kategoriename:");
+		JLabel lSelected = new JLabel("Ausgewählte Kategorie:");
+		JLabel lOldName = new JLabel(thisCategory.getName());
+		JLabel lNewName = new JLabel("Neuer Kategoriename:");
 
-		JTextArea taname = new JTextArea(1,10);
-		taname.setText(thisCategory.getName());
-		
+		JTextField tfName = new JTextField(10);
+		tfName.setText(thisCategory.getName());
 		//Button
 		JButton bSave = new JButton ("Speichern");
-		bSave.addActionListener(new ActionListener() {
+		bSave.addActionListener(new ActionListener() { 
+			//Nach Buttonklick werden die Änderungen gespeichert.
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = taname.getText();
+				vs.loadCategoryStorage();
+				vs.loadVirtualStorage();
+				String newName = tfName.getText();
+				int success=vs.renameCategory(UID, newName);
+				if(success==0) {
+					JOptionPane.showMessageDialog(getContentPane(),"Kategorie umbennant","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
+					setVisible(false);
+					dispose();
+					categoriesView.refresh();
+				}else if(success==-1){
+					JOptionPane.showMessageDialog(getContentPane(),"Dieser Name existiert bereits.","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				}
+				else {
+					JOptionPane.showMessageDialog(getContentPane(),"Unbekannter Fehler","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				}
+				
 			}
 		});
 		JButton bDelete = new JButton ("Löschen");
@@ -51,20 +74,20 @@ public class CategoryView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (JOptionPane.showConfirmDialog(getContentPane(), "Kategorie Löschen?","Bestätigen",JOptionPane.YES_NO_OPTION)==0) {
-					//try {
-						vs.removeCategory(UID);
+					
+					int err_code = vs.removeCategory(UID);
+					if (err_code==0) {
 						JOptionPane.showMessageDialog(getContentPane(),"Kategorie gelöscht","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 						setVisible(false);
-					/*} catch (Exception e1) {
-						JOptionPane.showMessageDialog(getContentPane(),"Unbekannter Fehler beim Löschen. Wenden sie sich bitte an den Entwickler!","Fehler", JOptionPane.INFORMATION_MESSAGE);
-						e1.printStackTrace();
-						System.out.println(e1.getMessage());
-					}*/
+						dispose();
+						categoriesView.refresh();
+					} else JOptionPane.showMessageDialog(getContentPane(),"Kategorie konnte nicht gelöscht werden. Es sind noch Einträge enthalten","Fehler", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
 		
-		//Layout
+		//Layout Hier wird die Reihenfolge der vorher deklarierten Elemente festgelegt, und ob sie überhaupt dargestellt sind.
+		
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -73,19 +96,19 @@ public class CategoryView extends JFrame {
         }
         c.gridx = 0;
         c.gridy = 1;
-		pane.add(lid,c);
+		pane.add(lSelected,c);
 		
 		c.gridx = 1;
         c.gridy = 1;
-		pane.add(loldname,c);
+		pane.add(lOldName,c);
 		
 		c.gridx = 0;
         c.gridy = 2;
-		pane.add(lnewname,c);
+		pane.add(lNewName,c);
 		
 		c.gridx = 1;
         c.gridy = 2;
-		pane.add(taname,c);
+		pane.add(tfName,c);
 		
 		c.gridx = 0;
         c.gridy = 4;
@@ -95,7 +118,7 @@ public class CategoryView extends JFrame {
         c.gridy = 4;
 		pane.add(bSave,c);
 	}
-	public void setVirtualStorage(VirtualStorage vs) {
-		this.vs = vs;
+	public void setCategoriesView(CategoriesView categoriesView) {
+		this.categoriesView = categoriesView;
 	}
 }

@@ -11,10 +11,16 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Erstellt eine neue kategorie und fügt sie der Datenbank hinzu
+ * wird über den Button neue Kategorie erstellen aufgerufen
+ */
+
 public class NewCategoryView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private VirtualStorage vs;
-	public NewCategoryView(VirtualStorage vs,CategoriesView cv) {
+	private CategoriesView categoriesView;
+	public NewCategoryView(VirtualStorage vs) {
 		this.vs=vs;
 		//GUI
 		setTitle("Neue Kategorie erstellen");
@@ -23,22 +29,24 @@ public class NewCategoryView extends JFrame {
 		setResizable(false);
 				
 		//Label
-		JLabel lname = new JLabel("Kategoriename");
-			
-		//Text area
-		JTextField taname = new JTextField(15);
+		JLabel lName = new JLabel("Kategoriename");
+
+		//Textfeld zum eintragen des namens
+		JTextField tfName = new JTextField(15);
 				
-		//Button
-		JButton bsave = new JButton ("Save");
-		bsave.addActionListener(new ActionListener() {
+		//Button wird hier erstellt und an die Datenbank weitergeleitet
+		JButton bSave = new JButton ("Save");
+		bSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = taname.getText();
-				int err_code = vs.addCategory(vs.getAllCategories().size(),name); //breakable
+				String name = tfName.getText();
+				vs.loadCategoryStorage();
+				int err_code = vs.addCategory(name); //breakable
 				if (err_code==0) {
 					JOptionPane.showMessageDialog(getContentPane(),"Kategorie wurde hinzugefügt","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
-					cv.refresh();
+					categoriesView.refresh();
 					setVisible(false);
+					dispose();
 				}
 				else if (err_code==-1) JOptionPane.showMessageDialog(getContentPane(),"Kategoriename bereits vergeben oder zu lang","Fehler", JOptionPane.INFORMATION_MESSAGE);
 				else JOptionPane.showMessageDialog(getContentPane(),"Unbekannter Fehler. Bitte wenden Sie sich an den Entwickler!","Fehler", JOptionPane.INFORMATION_MESSAGE);
@@ -48,9 +56,13 @@ public class NewCategoryView extends JFrame {
 		//Layout
 		Container pane = getContentPane();
 		pane.setLayout(new FlowLayout());
-		pane.add(lname);
-		pane.add(taname);
-		pane.add(bsave);
+		pane.add(lName);
+		pane.add(tfName);
+		pane.add(bSave);
 	
 	}
+	public void setCategoriesView(CategoriesView categoriesView) {
+		this.categoriesView = categoriesView;
+	}
+	
 }
