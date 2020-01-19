@@ -25,36 +25,71 @@ public class VirtualStorage {
 		} return null;
 	}
 	public void searchEntries(String search) {
-		
-	}
-	public void searchEntriesByID(String search) {
-		
-	}
-	public void searchEntriesByName(String search) {
-		loadVirtualStorage();
 		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
-			if (inventoryEntry.get(i).getProduct().getName().contains(search))
+			InventoryEntry proc = inventoryEntry.get(i);
+			if (proc.getStringifiedUID().contains(search)
+					||proc.getProduct().getName().toLowerCase().contains(search.toLowerCase())
+					||Integer.toString(proc.getProduct().getCount()).contains(search)
+					||Integer.toString(proc.getProduct().getWeight()).contains(search)
+					||Integer.toString(proc.getProduct().getPrize()).contains(search)
+					||getCategoryNameByID(proc.getProduct().getCategoryID()).toLowerCase().contains(search.toLowerCase()))
+				nie.add(proc);
+		} inventoryEntry = nie;
+	}
+	public void searchEntriesByID(String search) {
+		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getStringifiedUID().contains(search))
+				nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
+	}
+	public void searchEntriesByName(String search) {
+		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getProduct().getName().toLowerCase().contains(search.toLowerCase()))
 				nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;
 	}
 	public void searchEntriesByAmount(String search) {
-		
+		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (Integer.toString(inventoryEntry.get(i).getProduct().getCount()).contains(search))
+				nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public void searchEntriesByWeight(String search) {
-		
+		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (Integer.toString(inventoryEntry.get(i).getProduct().getWeight()).contains(search))
+				nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public void searchEntriesByPrize(String search) {
-		
+		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (Integer.toString(inventoryEntry.get(i).getProduct().getPrize()).contains(search))
+				nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
 	}
 	public void searchEntriesByCategory(String search) {
-		
+		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (getCategoryNameByID(inventoryEntry.get(i).getProduct().getCategoryID()).toLowerCase().contains(search.toLowerCase()))
+				nie.add(inventoryEntry.get(i));
+		} inventoryEntry = nie;
+	}
+	private String getCategoryNameByID(int ID) {
+		for (int i=0;i<categoryEntry.size();i++) {
+			if (categoryEntry.get(i).getUID()==ID) return categoryEntry.get(i).getName();
+		}
+		return null;
 	}
 	public void searchCategoriesByName(String search) {
 		loadCategoryStorage();
 		List<Category> nce = new ArrayList<Category>();
 		for (int i=0;i<categoryEntry.size();i++) {
-			if (categoryEntry.get(i).getName().contains(search))
+			if (categoryEntry.get(i).getName().toLowerCase().contains(search.toLowerCase()))
 				nce.add(categoryEntry.get(i));
 		} categoryEntry = nce;
 	}
@@ -145,8 +180,9 @@ public class VirtualStorage {
     public int addProduct(int UID, String name, int count, int weight, int prize, int categoryID) throws Exception {
         int section = InventoryEntry.uidToSectionPlace(UID)[0];
         int place = InventoryEntry.uidToSectionPlace(UID)[1];
+        if (name.length()>255) return -1;
         if (UID<0||UID>999999) return -2;
-        else if (count<0||weight<0||prize<0) return -3;
+        if (count<0||weight<0||prize<0) return -3;
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getProduct().getName().compareTo(name)==0) return -1;
 			else if (inventoryEntry.get(i).getUID()==UID) return -2;
@@ -159,6 +195,7 @@ public class VirtualStorage {
 		loadVirtualStorage();
 	}
 	public int addCategory(String name) {
+		if (name.length()>255) return -1;
 		for (int i=0;i<categoryEntry.size();i++) {
 			if (categoryEntry.get(i).getName().compareTo(name)==0) return -1;
 		} try {
@@ -172,7 +209,7 @@ public class VirtualStorage {
 	}
 	public int renameCategory(int id, String newName) {
 		for (int i=0;i<categoryEntry.size();i++) {
-			if (categoryEntry.get(i).getName()==newName) return -1;
+			if (categoryEntry.get(i).getName().compareTo(newName)==0) return -1;
 		} Database.renameCategory(id, newName);
 		loadCategoryStorage();
 		return 0;
@@ -182,17 +219,13 @@ public class VirtualStorage {
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getProduct().getCategoryID()!=id) nie.add(inventoryEntry.get(i));
 		} inventoryEntry = nie;*/
-		System.out.println(categoryEntry.size());
 		for (int i=0;i<categoryEntry.size();i++) {
-			System.out.println(categoryEntry.get(i).getUID());
 			if (id==categoryEntry.get(i).getUID()) System.out.println("sync");
-		}
-		try {
+		} try {
 			Database.deleteCategory(id);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		loadCategoryStorage();
+		} loadCategoryStorage();
 	}
 	public int setAmount(int id,int amount) {
 		if (amount<0) return -1;
@@ -204,7 +237,6 @@ public class VirtualStorage {
 		loadVirtualStorage();
 		return 0;
 	}
-
 	public List<InventoryEntry> getAllEntries() { return inventoryEntry; }
 	public List<Category> getAllCategories(){return categoryEntry;}
     
@@ -242,6 +274,7 @@ public class VirtualStorage {
         return objectArray;
     }
 	public int replaceInventoryEntry(int ouid, int nuid, String name, int amount, int weight, int prize, int cat_id) {
+		if (name.length()>255) return -3;
 		if (amount<0||weight<0||prize<0) return -1;
 		if (nuid<0||nuid>999999) return -2;
 		for (int i=0;i<inventoryEntry.size();i++) {
@@ -251,7 +284,6 @@ public class VirtualStorage {
 		loadVirtualStorage();
 		return 0;
 	}
-	
 	public void manualSave() {
 		Database.transformCategories();
 		Database.transformInventoryEntries();

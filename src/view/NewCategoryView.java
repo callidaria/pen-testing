@@ -48,7 +48,7 @@ public class NewCategoryView extends JFrame {
 					setVisible(false);
 					dispose();
 				}
-				else if (err_code==-1) JOptionPane.showMessageDialog(getContentPane(),"Kategoriename bereits vergeben","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				else if (err_code==-1) JOptionPane.showMessageDialog(getContentPane(),"Kategoriename bereits vergeben oder zu lang","Fehler", JOptionPane.INFORMATION_MESSAGE);
 				else JOptionPane.showMessageDialog(getContentPane(),"Unbekannter Fehler. Bitte wenden Sie sich an den Entwickler!","Fehler", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
