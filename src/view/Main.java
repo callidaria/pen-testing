@@ -22,7 +22,7 @@ public class Main {
 		ArticleView articleView = new ArticleView();
 		CategoriesView categoriesView = new CategoriesView();
 		CategoryView categoryView = new CategoryView();
-		NewCategoryView newCategoryView = new NewCategoryView();
+		//NewCategoryView newCategoryView = new NewCategoryView(MainVirtualStorage);
 		
 		loadingView.setVisible(true);
 		
@@ -30,7 +30,6 @@ public class Main {
 		inventoryView.setVirtualStorage(MainVirtualStorage);
 		articleView.setVirtualStorage(MainVirtualStorage);
 		categoriesView.setVirtualStorage(MainVirtualStorage);
-		newCategoryView.setVirtualStorage(MainVirtualStorage);
 		
 		loadingView.setInventoryView(inventoryView);
 		inventoryView.setNewArticleView(newArticleView);
@@ -39,11 +38,6 @@ public class Main {
 		articleView.setInventoryView(inventoryView);
 		newArticleView.setInventoryView(inventoryView);
 		categoriesView.setCategoryView(categoryView);
-		
-		
-
-		
-		
 	}
 	
 }

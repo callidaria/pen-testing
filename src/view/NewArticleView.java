@@ -77,10 +77,9 @@ public class NewArticleView extends JFrame {
 		
 		//Button
 		JButton bAdd = new JButton ("Hinzufügen");
-		bAdd.addActionListener(new ActionListener() { 
+		bAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//String skategorie = tKategorie.getText();
 				String produkt = tName.getText();
 				String sanzahl = tAnzahl.getText();
 				String sgewicht = tGewicht.getText();
@@ -91,9 +90,6 @@ public class NewArticleView extends JFrame {
 				int gewicht = Integer.parseInt(sgewicht);
 				int preis = Integer.parseInt(spreis);
 				int id = Integer.parseInt(sid);
-				//int kategorie = Integer.parseInt(skategorie);
-				//SelectionItem skategorie = (SelectionItem) takategorie.getSelectedItem();
-				//int kategorie = (Integer)skategorie.getId();
                 try {
 					int adding=vs.addProduct(id, produkt, anzahl, gewicht, preis, ((SelectionItem)takategorie.getSelectedItem()).getId());
 					if (adding==0) {

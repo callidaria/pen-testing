@@ -104,12 +104,17 @@ public class VirtualStorage {
 		Database.deleteInventoryEntry(id, true);
 		loadVirtualStorage();
 	}
-	public int addCategory(int id,String name) throws Exception {
+	public int addCategory(int id,String name) {
 		for (int i=0;i<categoryEntry.size();i++) {
-			if (categoryEntry.get(i).getName()==name||categoryEntry.get(i).getUID()==id) return -1; // ??id handler by fe
-		} Database.addCategory(new Category(id,name));
-		loadCathegoryStorage();
-		return 0;
+			if (categoryEntry.get(i).getName().compareTo(name)==0) return -1;
+		} try {
+			Database.addCategory(new Category(0,name));
+			loadCathegoryStorage();
+			return 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -2;
+		}
 	}
 	public int renameCategory(int id, String newName) {
 		for (int i=0;i<categoryEntry.size();i++) {
@@ -118,12 +123,22 @@ public class VirtualStorage {
 		loadCathegoryStorage();
 		return 0;
 	}
-	public void removeCategory(int id) throws Exception{
-		List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
+	public void removeCategory(int id) {
+		/*List<InventoryEntry> nie = new ArrayList<InventoryEntry>();
 		for (int i=0;i<inventoryEntry.size();i++) {
 			if (inventoryEntry.get(i).getProduct().getCategoryID()!=id) nie.add(inventoryEntry.get(i));
-		} inventoryEntry = nie;
-		Database.deleteCategory(id);
+		} inventoryEntry = nie;*/
+		System.out.println(categoryEntry.size());
+		for (int i=0;i<categoryEntry.size();i++) {
+			System.out.println(categoryEntry.get(i).getUID());
+			if (id==categoryEntry.get(i).getUID()) System.out.println("sync");
+		}
+		try {
+			Database.deleteCategory(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		loadCathegoryStorage();
 	}
 	public int setAmount(int id,int amount) {
 		if (amount<0) return -1;

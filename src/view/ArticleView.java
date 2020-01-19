@@ -98,7 +98,7 @@ public class ArticleView extends JFrame {
 						inventoryView.refresh();
 						dispose();
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(getContentPane(),"Hier könnte ihre Nachricht stehen:"+e1.getMessage(),"Artikel gelöscht", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(getContentPane(),"Unbekannter Fehler","Artikel gelöscht", JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
 			}

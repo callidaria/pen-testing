@@ -26,8 +26,10 @@ public class CategoriesView extends JFrame {
 	private VirtualStorage vs;
 	private CategoryView categoryView;
 	private DefaultTableModel tableModel;
+	private String[] columnNames;
+	private JTable table;
 	public CategoriesView() {
-		setTitle("Kategorie");
+		setTitle("Kategorien");
 		setSize(500,600);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -36,11 +38,12 @@ public class CategoriesView extends JFrame {
 	public void showCategoriesView(){
 		//Button
 		JButton button = new JButton ("Neue Kategorie erstellen");
+		CategoriesView tp = this;
 		button.addActionListener(new ActionListener() { 
 		
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				NewCategoryView neu = new NewCategoryView();
+				NewCategoryView neu = new NewCategoryView(vs,tp);
 				neu.setVisible(true);
 			}
 		});
@@ -53,18 +56,18 @@ public class CategoriesView extends JFrame {
 		JLabel lsuchen = new JLabel("Suchen:");
 		
 		//Table
-		String[] columnNames = {"ID",
-                "Kategorie"};
+		columnNames = new String[]{"ID","Kategorie"};
 			
 		Object[][] data = vs.getCategoryObjectArray();
 		tableModel = new DefaultTableModel(data, columnNames) {
-            @Override
+			private static final long serialVersionUID = 1L;
+			@Override
             public boolean isCellEditable(int row, int column)
             {
                 return false;
             }
         };
-		JTable table = new JTable(tableModel);
+		table = new JTable(tableModel);
 
 		table.removeColumn(table.getColumnModel().getColumn(0));
 		table.getColumnModel().getColumn(0).setPreferredWidth(0);
@@ -81,10 +84,10 @@ public class CategoriesView extends JFrame {
 			        	int column = 0;
 			        	Integer UID = (Integer) table.getModel().getValueAt(row, column);
 			        	System.out.println(UID);
-			        	categoryView.showCategoryView(0);
+			        	categoryView.showCategoryView(UID);
 						categoryView.setVisible(true);
 			        }
-			    }	
+			 }	
 		});
 			
 		//Layout
@@ -119,9 +122,12 @@ public class CategoriesView extends JFrame {
 		this.vs = vs;
 		showCategoriesView();
 	}
-	
 	public void setCategoryView(CategoryView categoryView) {
 		this.categoryView=categoryView;
 	}
-	
+	public void refresh() {
+	 	tableModel.setDataVector(vs.getCategoryObjectArray(),columnNames);
+		tableModel.fireTableDataChanged();
+		//table.removeColumn(table.getColumnModel().getColumn(0));
+	}
 }

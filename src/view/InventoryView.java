@@ -85,7 +85,6 @@ public class InventoryView extends JFrame {
 		//Textarea
 		JTextField taSearch = new JTextField(40);
 		taSearch.setPreferredSize(new Dimension(40,30));
-	
 		Action startSearch = new AbstractAction()
 		{
 		    @Override
@@ -95,15 +94,11 @@ public class InventoryView extends JFrame {
 		        refresh();
 		    }
 		};
-		
 		taSearch.addActionListener(startSearch);
 		bSearch.addActionListener(startSearch);
 		
-		
-        
         data = vs.getInventoryEntryObjectArray();
-        
-       tableModel = new DefaultTableModel(data, columnNames) {
+        tableModel = new DefaultTableModel(data, columnNames) {
 		private static final long serialVersionUID = 1L;
 			@Override
             public boolean isCellEditable(int row, int column)
@@ -263,28 +258,21 @@ public class InventoryView extends JFrame {
 	}
 	
 	public void refresh() {
-		//vs.loadVirtualStorage();
 	 	tableModel.setDataVector(vs.getInventoryEntryObjectArray(),columnNames);
 		tableModel.fireTableDataChanged();
 		table.getRowSorter().toggleSortOrder(0);
 		return;
 	}
-	
 	public void setNewArticleView(NewArticleView articleView) {
 		newArticleView = articleView;
 	}
-	
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
 	}
-
 	public void setArticleView(ArticleView articleView) {
 		this.articleView = articleView;
 	}
-
 	public void setCategoriesView(CategoriesView categoriesView) {
 		this.categoriesView = categoriesView;
 	}
-	
-	
 }

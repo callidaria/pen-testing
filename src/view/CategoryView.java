@@ -1,33 +1,20 @@
 package view;
 
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import controller.VirtualStorage;
 import model.Category;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class CategoryView extends JFrame {
 	
@@ -40,7 +27,7 @@ public class CategoryView extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 	}
-	public void showCategoryView(int UID){
+	public void showCategoryView(int UID) {
 		setContentPane(new JPanel());
 		//Label
 		Category thisCategory = new Category(1,"Keine Kategorie");
@@ -53,23 +40,36 @@ public class CategoryView extends JFrame {
 		
 		//Button
 		JButton bSave = new JButton ("Speichern");
-		bSave.addActionListener(new ActionListener() { 
+		bSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = taname.getText();
-		        System.out.println("contents = " + name);
+			}
+		});
+		System.out.println(UID);
+		JButton bDelete = new JButton ("Löschen");
+		bDelete.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (JOptionPane.showConfirmDialog(getContentPane(), "Kategorie Löschen?","Bestätigen",JOptionPane.YES_NO_OPTION)==0) {
+					//try {
+						vs.removeCategory(UID);
+						JOptionPane.showMessageDialog(getContentPane(),"Kategorie gelöscht","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
+						setVisible(false);
+					/*} catch (Exception e1) {
+						JOptionPane.showMessageDialog(getContentPane(),"Unbekannter Fehler beim Löschen. Wenden sie sich bitte an den Entwickler!","Fehler", JOptionPane.INFORMATION_MESSAGE);
+						e1.printStackTrace();
+						System.out.println(e1.getMessage());
+					}*/
+				}
 			}
 		});
 		
-		JButton bDelete = new JButton ("Löschen");
-		
 		//Layout
-		
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         if (true) {
-            //natural height, maximum width
             c.fill = GridBagConstraints.HORIZONTAL;
         }
         c.gridx = 0;
@@ -99,5 +99,4 @@ public class CategoryView extends JFrame {
 	public void setVirtualStorage(VirtualStorage vs) {
 		this.vs = vs;
 	}
-
 }

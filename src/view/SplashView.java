@@ -5,7 +5,8 @@ import javax.swing.JPanel;
 
 import controller.VirtualStorage;
 
-public class SplashView extends JFrame{
+public class SplashView extends JFrame {
+	private static final long serialVersionUID = 1L;
 	private VirtualStorage vs;
 	private InventoryView inventoryView;
 

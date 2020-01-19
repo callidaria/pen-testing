@@ -558,24 +558,18 @@ public class Database{
 	 */
 	public static ArrayList<Category> retrieveCategories() {
 		ArrayList<Category> categories = new ArrayList<Category>();
-		try {
-			Document doc = Database.buildDocument(DBPATH_CAT);
-			NodeList nList = doc.getElementsByTagName("category");
-			//System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
-			//System.out.println("Stored categories: "+nList.getLength());
-			for(int i = 0; i < nList.getLength();i++) {
-				Element node = (Element) nList.item(i);
-	
-				int uid = Database.getAttributes(node,"uid");
-	
-				String name = Database.getElementTextContent(node,"name");
-				Category category = new Category(uid,name);
-				categories.add(category);
-			}
-		}
-		catch(SAXException | IOException e) {
-			System.out.println(e.getMessage());
-			return null;
+		Document doc = CAT_DOC;
+		NodeList nList = doc.getElementsByTagName("category");
+		//System.out.println("Root element:" + doc.getDocumentElement().getNodeName());
+		//System.out.println("Stored categories: "+nList.getLength());
+		for(int i = 0; i < nList.getLength();i++) {
+			Element node = (Element) nList.item(i);
+
+			int uid = Database.getAttributes(node,"uid");
+
+			String name = Database.getElementTextContent(node,"name");
+			Category category = new Category(uid,name);
+			categories.add(category);
 		}
 		System.out.println("Retrieved Categories");
 		return categories;
@@ -589,29 +583,24 @@ public class Database{
 		}
 		
 		
-		try {
-			Document doc = Database.buildDocument(DBPATH_CAT);
-			freeUID = Database.freeCategoryUID();
-			// Get the root element
-			Node entries = doc.getFirstChild();
-			Element newCategory = doc.createElement("category");
-			
-			newCategory.setAttribute("uid",Integer.toString(freeUID));
-			
-			
-			Element newName = doc.createElement("name");
-			
-			newName.appendChild(doc.createTextNode(category.getName()));			
-	
-			newCategory.appendChild(newName);
-			
-			entries.appendChild(newCategory);
+		Document doc = CAT_DOC;
+		freeUID = Database.freeCategoryUID();
+		// Get the root element
+		Node entries = doc.getFirstChild();
+		Element newCategory = doc.createElement("category");
+		
+		newCategory.setAttribute("uid",Integer.toString(freeUID));
+		
+		
+		Element newName = doc.createElement("name");
+		
+		newName.appendChild(doc.createTextNode(category.getName()));			
 
-			Database.transformCategories();
-			
-		   } catch (IOException|SAXException e) {
-			System.out.println(e.getMessage());
-		   }
+		newCategory.appendChild(newName);
+		
+		entries.appendChild(newCategory);
+
+		Database.transformCategories();
 		return freeUID;
 	}
 	
@@ -650,7 +639,7 @@ public class Database{
 	}
 	
 	public static void deleteCategory(int UID) throws Exception {
-		Document doc = Database.CAT_DOC;
+		Document doc = CAT_DOC;
 		Element node;
 		try {
 			node = (Element) Database.xpathNode(doc,"/categories/category[@uid="+UID+"]");
@@ -660,11 +649,11 @@ public class Database{
 			node.getParentNode().removeChild(node);
 			if(AUTOSAVE) Database.transformInventoryEntries();
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new Exception("Internal Error.");
 		}
 		System.out.println("Category ("+UID+"): deleted");
+		transformCategories();
 		return;
 	}
 
