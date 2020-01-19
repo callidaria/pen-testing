@@ -180,6 +180,8 @@ public class VirtualStorage {
     public int addProduct(int UID, String name, int count, int weight, int prize, int categoryID) throws Exception {
         int section = InventoryEntry.uidToSectionPlace(UID)[0];
         int place = InventoryEntry.uidToSectionPlace(UID)[1];
+        int sw = getCurrentShelfWeight(UID/(int)1000);
+        if (sw+count*weight>100000000) return -4;
         if (name.length()>255) return -1;
         if (UID<0||UID>999999) return -2;
         if (count<0||weight<0||prize<0) return -3;
@@ -271,6 +273,8 @@ public class VirtualStorage {
         return objectArray;
     }
 	public int replaceInventoryEntry(int ouid, int nuid, String name, int amount, int weight, int prize, int cat_id) {
+		int sw = getCurrentShelfWeight((nuid)/(int)1000);
+		if (sw+amount*weight>100000000) return -4;
 		if (name.length()>255) return -3;
 		if (amount<0||weight<0||prize<0) return -1;
 		if (nuid<0||nuid>999999) return -2;
@@ -280,6 +284,13 @@ public class VirtualStorage {
 		} Database.replaceInventoryEntry(ouid,new InventoryEntry(nuid,new Product(name,amount,weight,prize,cat_id)));
 		loadVirtualStorage();
 		return 0;
+	}
+	private int getCurrentShelfWeight(int shelf) {
+		int result = 0;
+		for (int i=0;i<inventoryEntry.size();i++) {
+			if (inventoryEntry.get(i).getShelfSection()==shelf)
+				result+=inventoryEntry.get(i).getProduct().getCount()*inventoryEntry.get(i).getProduct().getWeight();
+		} return result;
 	}
 	public void manualSave() {
 		Database.transformCategories();

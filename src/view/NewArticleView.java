@@ -111,8 +111,10 @@ public class NewArticleView extends JFrame {
 						JOptionPane.showMessageDialog(getContentPane(),"Produktname bereits vergeben oder zu lang","Fehler", JOptionPane.INFORMATION_MESSAGE);
 					} else if (adding==-2) {
 						JOptionPane.showMessageDialog(getContentPane(),"ID bereits vergeben oder unzulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
-					} else {
+					} else if (adding==-3) {
 						JOptionPane.showMessageDialog(getContentPane(),"keine negativen Werte zulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(getContentPane(),"Hinzufügen nicht möglich. Dadurch wird das Regal überlastet","Fehler", JOptionPane.INFORMATION_MESSAGE);
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
