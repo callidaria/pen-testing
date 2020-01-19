@@ -101,7 +101,7 @@ public class ArticleView extends JFrame {
 		
 		//Labels zur beschriftung der Textfields
 		JLabel lWeight = new JLabel("Gewicht in 1/10 gramm:");
-		JLabel lPrize = new JLabel("Preis:");
+		JLabel lPrize = new JLabel("Preis in cent:");
 		JLabel lCategory = new JLabel("Kategorie:");
 		JLabel lPlace = new JLabel("Platznummer:");
 		JLabel lCount = new JLabel("Anzahl:");
