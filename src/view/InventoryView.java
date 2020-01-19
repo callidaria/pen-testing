@@ -126,7 +126,9 @@ public class InventoryView extends JFrame {
 		    		else if (searchSelector.getSelectedIndex()==5) vs.searchEntriesByPrize(tfSearch.getText());
 		    		else vs.searchEntriesByCategory(tfSearch.getText());
 		    	}
+		    	vs.loadVirtualStorage();
 		        refresh();
+		        
 		    }
 		};
 		tfSearch.addActionListener(startSearch);

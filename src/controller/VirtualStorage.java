@@ -243,7 +243,7 @@ public class VirtualStorage {
 		for (int i=0;i<categoryEntry.size();i++) {
 			if (categoryEntry.get(i).getUID()==id)
 				return categoryEntry.get(i);
-		} return null;
+		} return new Category(-1, "Kategorie existiert nicht.");
 	}
 	
     public Object[][] getInventoryEntryObjectArray() {
