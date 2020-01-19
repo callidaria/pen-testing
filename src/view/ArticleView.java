@@ -35,8 +35,8 @@ public class ArticleView extends JFrame {
 	private VirtualStorage vs;
 	private InventoryView inventoryView;
 	
-	public ArticleView() {
-		
+	public ArticleView(VirtualStorage vs) {
+		this.vs=vs;
 		setSize(480,360);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -52,9 +52,9 @@ public class ArticleView extends JFrame {
 		setTitle(thisArticle.product.getName());
 		
 		//TextArea
-		JTextField taplatz = new JTextField(thisArticle.getStringifiedUID(),20);
-		JTextField taanzahl = new JTextField(Integer.toString(thisArticle.product.getCount()),5);
-		JTextField taadd = new JTextField("0",5);
+		JTextField tfPlace = new JTextField(thisArticle.getStringifiedUID(),20);
+		JTextField tfCount = new JTextField(Integer.toString(thisArticle.product.getCount()),5);
+		JTextField tfAddRemove = new JTextField("0",5);
 		
 		SelectionItem[] searchSelectables = categoriesToItem();
 
@@ -67,26 +67,26 @@ public class ArticleView extends JFrame {
 				System.out.println(item.getId()+":"+item.getName());
 			}
 		});
-		JTextField tapreis = new JTextField(Integer.toString(thisArticle.product.getPrize()),5);
-		JTextField tagewicht = new JTextField(Integer.toString(thisArticle.product.getWeight()),5);
-		JTextField taproduct = new JTextField(thisArticle.product.getName(),5);
+		JTextField tfPrize = new JTextField(Integer.toString(thisArticle.product.getPrize()),5);
+		JTextField tfWeight = new JTextField(Integer.toString(thisArticle.product.getWeight()),5);
+		JTextField tfName = new JTextField(thisArticle.product.getName(),5);
 		
 		//Label
-		JLabel lgewicht = new JLabel("Gewicht in 1/10 gramm:");
-		JLabel lpreis = new JLabel("Preis:");
-		JLabel lkategorie = new JLabel("Kategorie:");
-		JLabel lplatz = new JLabel("Platznummer:");
-		JLabel lanzahl = new JLabel("Anzahl:");
-		JLabel ladd = new JLabel("+/˗:");
-		JLabel product = new JLabel("Name:");
+		JLabel lWeight = new JLabel("Gewicht in 1/10 gramm:");
+		JLabel lPrize = new JLabel("Preis:");
+		JLabel lCategory = new JLabel("Kategorie:");
+		JLabel lPlace = new JLabel("Platznummer:");
+		JLabel lCount = new JLabel("Anzahl:");
+		JLabel lAdd = new JLabel("+/˗:");
+		JLabel lName = new JLabel("Name:");
 		
 		//button
-		JButton badd = new JButton ("＋");
-		JButton bsubtract = new JButton ("˗");
-		JButton bdelete = new JButton ("Artikel Löschen");
-		JButton bsave = new JButton ("Änderungen Speichern");
+		JButton bAdd = new JButton ("＋");
+		JButton bSubtract = new JButton ("˗");
+		JButton bDelete = new JButton ("Artikel Löschen");
+		JButton bSave = new JButton ("Änderungen Speichern");
 		
-		bdelete.addActionListener(new ActionListener() {
+		bDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int confirme = JOptionPane.showConfirmDialog(getContentPane(), "Bestätigen","Artikel löschen",JOptionPane.YES_NO_OPTION);
@@ -103,17 +103,17 @@ public class ArticleView extends JFrame {
 				}
 			}
 		});
-		badd.addActionListener(new ActionListener() {
+		bAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String eins = taadd.getText();
-				String zwei = taanzahl.getText();
+				String eins = tfAddRemove.getText();
+				String zwei = tfCount.getText();
 				int add = Integer.parseInt(eins);
 				int anzahl = Integer.parseInt(zwei);
 				int sum = add+anzahl;
 				
-				taadd.setText("0");
-				taanzahl.setText(Integer.toString(sum));
+				tfAddRemove.setText("0");
+				tfCount.setText(Integer.toString(sum));
 				try {
 					vs.changeAmountBy(UID, add);
 					inventoryView.refresh();
@@ -122,19 +122,19 @@ public class ArticleView extends JFrame {
 				}
 			}
 		});
-		bsubtract.addActionListener(new ActionListener() {
+		bSubtract.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				String eins = taadd.getText();
-				String zwei = taanzahl.getText();
+				String eins = tfAddRemove.getText();
+				String zwei = tfCount.getText();
 				int add = Integer.parseInt(eins);
 				int anzahl = Integer.parseInt(zwei);
 				int sum = anzahl-add;
 				
-				taadd.setText("0");
-				taanzahl.setText(Integer.toString(sum));
+				tfAddRemove.setText("0");
+				tfCount.setText(Integer.toString(sum));
 				try {
 					vs.changeAmountBy(UID, -add);
 					inventoryView.refresh();
@@ -144,26 +144,26 @@ public class ArticleView extends JFrame {
 			}
 			
 		});
-		bsave.addActionListener(new ActionListener() {
+		bSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String suid = taplatz.getText();
+				String suid = tfPlace.getText();
 				int uid = Integer.parseInt(suid);
 				
-				String splatz = taplatz.getText();
+				String splatz = tfPlace.getText();
 				int platz = Integer.parseInt(splatz);
 				
-				String sanzahl = taanzahl.getText();
+				String sanzahl = tfCount.getText();
 				int anzahl = Integer.parseInt(sanzahl);
 				
 				SelectionItem skategorie = (SelectionItem) takategorie.getSelectedItem();
 				int kategorie_id = skategorie.getId();
 				
-				String spreis = tapreis.getText();
+				String spreis = tfPrize.getText();
 				int preis = Integer.parseInt(spreis);
-				String sgewicht = tagewicht.getText();
+				String sgewicht = tfWeight.getText();
 				int gewicht = Integer.parseInt(sgewicht);
-				String name =taproduct.getText();
+				String name =tfName.getText();
 				
 				InventoryEntry editedIE = new InventoryEntry(uid, new Product(name, anzahl, gewicht, preis, kategorie_id));
 
@@ -197,63 +197,63 @@ public class ArticleView extends JFrame {
        
         c.gridx = 0;
         c.gridy = 1;
-        pane.add(product, c);
+        pane.add(lName, c);
         
         c.gridx = 0;
         c.gridy = 2;
-        pane.add(taproduct, c);
+        pane.add(tfName, c);
               
         c.gridx = 1;
         c.gridy = 1;
-        pane.add(lplatz, c);
+        pane.add(lPlace, c);
         
         c.gridx = 1;
         c.gridy = 2;
-        pane.add(taplatz, c);
+        pane.add(tfPlace, c);
         
         c.gridx = 0;
         c.gridy = 3;
-        pane.add(lanzahl, c);
+        pane.add(lCount, c);
         
         c.ipady = 40;
         c.gridheight = 2;
         c.gridx = 0;
         c.gridy = 4;
-        pane.add(taanzahl, c);
+        pane.add(tfCount, c);
         c.ipady = 0;
         
         c.gridheight = 1;
         c.gridx = 1;
         c.gridy = 3;
-        pane.add(ladd, c);        
+        pane.add(lAdd, c);        
         
         c.gridheight = 2;
         c.gridx = 1;
         c.gridy = 4;
         c.ipady = 40;
-        pane.add(taadd, c);
+        pane.add(tfAddRemove, c);
         c.gridheight = 1;
         c.ipady = 0;
         
         c.gridx = 2;
         c.gridy = 4;
-        pane.add(badd, c);
+        pane.add(bAdd, c);
         
         c.gridx = 2;
         c.gridy = 5;
-        pane.add(bsubtract, c);
+        pane.add(bSubtract, c);
         
         c.gridx = 0;
         c.gridy = 6;
-        pane.add(lkategorie, c);
+        pane.add(lCategory, c);
         
         c.gridx = 1;
         c.gridy = 6;
-        pane.add(lpreis, c);
+        pane.add(lPrize, c);
         
         c.gridx = 2;
         c.gridy = 6;
-        pane.add(lgewicht, c);
+        pane.add(lWeight, c);
         
         c.gridx = 0;
         c.gridy = 7;
@@ -261,11 +261,11 @@ public class ArticleView extends JFrame {
         
         c.gridx = 1;
         c.gridy = 7;
-        pane.add(tapreis, c);
+        pane.add(tfPrize, c);
         
         c.gridx = 2;
         c.gridy = 7;
-        pane.add(tagewicht, c);
+        pane.add(tfWeight, c);
         
         c.ipady = 0;       //reset to default
         c.weighty = 1.0;   //request any extra vertical space
@@ -273,12 +273,12 @@ public class ArticleView extends JFrame {
         //c.insets = new Insets(10,0,0,0);  //top padding
         c.gridx = 2;        
         c.gridy = 8;       
-        pane.add(bdelete, c);
+        pane.add(bDelete, c);
 		
         c.gridwidth = 2;   //2 columns wide
         c.gridx = 0;
         c.gridy = 8;
-        pane.add(bsave, c);
+        pane.add(bSave, c);
         setContentPane(pane);
 	}
 
@@ -291,9 +291,7 @@ public class ArticleView extends JFrame {
 		SelectionItem[] searchSelectables = categoryNames.toArray(new SelectionItem[categories.size()]);
 		return searchSelectables;
 	}
-	public void setVirtualStorage(VirtualStorage vs) {
-		this.vs = vs;
-	}
+
 	public void setInventoryView(InventoryView inventoryView) {
 		this.inventoryView = inventoryView;
 	}

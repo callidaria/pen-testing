@@ -6,6 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import basic.Category;
 import controller.VirtualStorage;
@@ -19,7 +20,9 @@ import java.awt.event.ActionListener;
 public class CategoryView extends JFrame {
 	
 	private VirtualStorage vs;
-	public CategoryView() {
+	private CategoriesView categoriesView;
+	public CategoryView(VirtualStorage vs) {
+		this.vs=vs;
 		//GUI
 		setTitle("Kategorie Ansicht");
 		setSize(400,150);
@@ -29,21 +32,31 @@ public class CategoryView extends JFrame {
 	}
 	public void showCategoryView(int UID) {
 		setContentPane(new JPanel());
+		Category thisCategory = vs.getCategoryByUID(UID);
 		//Label
-		Category thisCategory = new Category(1,"Keine Kategorie");
-		JLabel lid = new JLabel("Akuteller Kategoriename:");
-		JLabel loldname = new JLabel(thisCategory.getName());
-		JLabel lnewname = new JLabel("Neuer Kategoriename:");
+		JLabel lSelected = new JLabel("Ausgewählte Kategorie:");
+		JLabel lOldName = new JLabel(thisCategory.getName());
+		JLabel lNewName = new JLabel("Neuer Kategoriename:");
 
-		JTextArea taname = new JTextArea(1,10);
-		taname.setText(thisCategory.getName());
-		
+		JTextField tfName = new JTextField(10);
+		tfName.setText(thisCategory.getName());
 		//Button
 		JButton bSave = new JButton ("Speichern");
 		bSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = taname.getText();
+				
+				String newName = tfName.getText();
+				int success=vs.renameCategory(UID, newName);
+				if(success>=0) {
+					JOptionPane.showMessageDialog(getContentPane(),"Kategorie umbennant","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
+					setVisible(false);
+					dispose();
+					categoriesView.refresh();
+				}else {
+					JOptionPane.showMessageDialog(getContentPane(),"Fehler","Fehler", JOptionPane.INFORMATION_MESSAGE);
+				}
+				
 			}
 		});
 		JButton bDelete = new JButton ("Löschen");
@@ -55,6 +68,8 @@ public class CategoryView extends JFrame {
 						vs.removeCategory(UID);
 						JOptionPane.showMessageDialog(getContentPane(),"Kategorie gelöscht","Erfolgreich", JOptionPane.INFORMATION_MESSAGE);
 						setVisible(false);
+						dispose();
+						categoriesView.refresh();
 					/*} catch (Exception e1) {
 						JOptionPane.showMessageDialog(getContentPane(),"Unbekannter Fehler beim Löschen. Wenden sie sich bitte an den Entwickler!","Fehler", JOptionPane.INFORMATION_MESSAGE);
 						e1.printStackTrace();
@@ -73,19 +88,19 @@ public class CategoryView extends JFrame {
         }
         c.gridx = 0;
         c.gridy = 1;
-		pane.add(lid,c);
+		pane.add(lSelected,c);
 		
 		c.gridx = 1;
         c.gridy = 1;
-		pane.add(loldname,c);
+		pane.add(lOldName,c);
 		
 		c.gridx = 0;
         c.gridy = 2;
-		pane.add(lnewname,c);
+		pane.add(lNewName,c);
 		
 		c.gridx = 1;
         c.gridy = 2;
-		pane.add(taname,c);
+		pane.add(tfName,c);
 		
 		c.gridx = 0;
         c.gridy = 4;
@@ -95,7 +110,7 @@ public class CategoryView extends JFrame {
         c.gridy = 4;
 		pane.add(bSave,c);
 	}
-	public void setVirtualStorage(VirtualStorage vs) {
-		this.vs = vs;
+	public void setCategoriesView(CategoriesView categoriesView) {
+		this.categoriesView = categoriesView;
 	}
 }

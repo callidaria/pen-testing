@@ -57,8 +57,9 @@ public class InventoryView extends JFrame {
 	
 	private int selectedSearch=0;
 
-	public InventoryView()
+	public InventoryView(VirtualStorage vs)
 	{
+		this.vs=vs;
 		setContentPane(new JPanel());
 		setTitle("Bestandsübersicht");
 		setSize(1280,720);
@@ -66,8 +67,8 @@ public class InventoryView extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		//Button
-		JButton bNewIE = new JButton ("Neuen Inventareintrag erstellen");
-		bNewIE.addActionListener(new ActionListener() {
+		JButton bAddEntry = new JButton ("Neuen Inventareintrag erstellen");
+		bAddEntry.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				vs.loadVirtualStorage();
@@ -80,19 +81,19 @@ public class InventoryView extends JFrame {
 		//Label
 		JLabel lSearch = new JLabel("Suchen:");
 		//Textarea
-		JTextField taSearch = new JTextField(40);
-		taSearch.setPreferredSize(new Dimension(40,30));
+		JTextField tfSearch = new JTextField(40);
+		tfSearch.setPreferredSize(new Dimension(40,30));
 		Action startSearch = new AbstractAction()
 		{
 		    @Override
 		    public void actionPerformed(ActionEvent e)
 		    {
-		    	if (taSearch.getText()!="") vs.searchEntriesByName(taSearch.getText());
+		    	if (tfSearch.getText()!="") vs.searchEntriesByName(tfSearch.getText());
 		    	else vs.loadVirtualStorage();
 		        refresh();
 		    }
 		};
-		taSearch.addActionListener(startSearch);
+		tfSearch.addActionListener(startSearch);
 		bSearch.addActionListener(startSearch);
 		
         data = vs.getInventoryEntryObjectArray();
@@ -223,9 +224,9 @@ public class InventoryView extends JFrame {
 		topPanel.setLayout(new FlowLayout());
 		topPanel.add(lSearch);
 		topPanel.add(searchSelector);
-		topPanel.add(bNewIE);
+		topPanel.add(bAddEntry);
 		
-		topPanel.add(taSearch);
+		topPanel.add(tfSearch);
 		topPanel.add(bSearch);
 		
 		JPanel rightPanel = new JPanel();
@@ -237,7 +238,7 @@ public class InventoryView extends JFrame {
 		
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new FlowLayout());
-		bottomPanel.add(bNewIE);
+		bottomPanel.add(bAddEntry);
 		
 		container.add(topPanel,BorderLayout.PAGE_START);
 		container.add(leftPanel,BorderLayout.LINE_START);
@@ -255,9 +256,7 @@ public class InventoryView extends JFrame {
 	public void setNewArticleView(NewArticleView articleView) {
 		newArticleView = articleView;
 	}
-	public void setVirtualStorage(VirtualStorage vs) {
-		this.vs = vs;
-	}
+
 	public void setArticleView(ArticleView articleView) {
 		this.articleView = articleView;
 	}
