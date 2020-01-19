@@ -96,6 +96,9 @@ public class ArticleView extends JFrame {
 			}
 			selectedIndex++;
 		}
+		if (selectedIndex>=searchSelectables.length) {
+			selectedIndex=0;
+		}
 		System.out.println(selectedIndex);
 		selectorCategory.setSelectedIndex(selectedIndex);
 		JTextField tfPrize = new JTextField(Integer.toString(thisArticle.product.getPrize()),5);
@@ -347,6 +350,9 @@ public class ArticleView extends JFrame {
 			categoryNames.add(new SelectionItem(categories.get(i).getUID(), categories.get(i).getName()));
 		}
 		SelectionItem[] searchSelectables = categoryNames.toArray(new SelectionItem[categories.size()]);
+		if(vs.getAllCategories().size()==0) {
+			//return new SelectionItem[] {(-1,"Erstelle zu erst Kategorien")};
+		}
 		return searchSelectables;
 	}
 	public void setInventoryView(InventoryView inventoryView) {
