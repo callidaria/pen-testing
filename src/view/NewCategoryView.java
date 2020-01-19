@@ -11,6 +11,11 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Erstellt eine neue kategorie und fügt sie der Datenbank hinzu
+ * wird über den Button neue Kategorie erstellen aufgerufen
+ */
+
 public class NewCategoryView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private VirtualStorage vs;
@@ -26,10 +31,10 @@ public class NewCategoryView extends JFrame {
 		//Label
 		JLabel lName = new JLabel("Kategoriename");
 			
-		//Text area
+		//Textfeld zum eintragen des namens
 		JTextField tfName = new JTextField(15);
 				
-		//Button
+		//Button wird hier erstellt und an die Datenbank weitergeleitet
 		JButton bSave = new JButton ("Save");
 		bSave.addActionListener(new ActionListener() {
 			@Override

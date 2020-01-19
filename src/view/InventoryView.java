@@ -38,8 +38,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+/**
+ * Die Hauptansicht der Datenbank.
+ * Hier werden alle Inhalte des Bestandes angezeigt
+ * Von hier aus kommt man zu den Klassen, die die Daten manipulieren können.
+ * Es gibt eine Tabelle des gesamten Bestandes. Doppelklick auf einen Artikel in der Tabelle öffnet eine einzelansicht des Artikels
+ * Klick auf den Button neuen eintrag erstellen öffnet ein Fenster, in welchem ein neuer Eintrag erstellt werden kann.
+ * Durch die menubar gelangt man zur kategorieansicht
+ * Durch klicken auf aktualisieren wird die Datenbank aktualisiert und änderungen werden angezeigt
+ */
+
 
 public class InventoryView extends JFrame {
+
 	private static final long serialVersionUID = 1L;
 	private NewArticleView newArticleView;
 	private Object[][] data;
@@ -55,19 +66,26 @@ public class InventoryView extends JFrame {
             "Kategories"};
 	private CategoriesView categoriesView;
 	
-
+	/**
+	 * Konstruktor der InventoryView
+	 * Hier wird das gesamte Layout festgelegt und die Funktionen aller features.
+	 */
 	public InventoryView(VirtualStorage vs)
-	{
 		this.vs=vs;
+		//GUI Aufruf des sichtbaren Fensters
 		setContentPane(new JPanel());
 		setTitle("Bestandsübersicht");
 		setSize(1280,720);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		//Button
+
+		
+		//Buttons alle Buttons werden hier deklariert
 		JButton bAddEntry = new JButton ("Neuen Inventareintrag erstellen");
 		bAddEntry.addActionListener(new ActionListener() {
+			//Aufruf des Fensters für einen neuen Artikel durch buttonklick
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				vs.loadVirtualStorage();
@@ -77,9 +95,10 @@ public class InventoryView extends JFrame {
 		});
 		
 		JButton bSearch = new JButton ("Los!");
-		//Label
+
+		//Label Alle Labels werden hier deklariert
 		JLabel lSearch = new JLabel("Suchen:");
-		//Textarea
+		//Textarea alle Textareas werden hier deklariert
 		JTextField tfSearch = new JTextField(40);
 		tfSearch.setPreferredSize(new Dimension(40,30));
 		Action startSearch = new AbstractAction()
@@ -100,7 +119,10 @@ public class InventoryView extends JFrame {
 		tfSearch.addActionListener(startSearch);
 		bSearch.addActionListener(startSearch);
 		
+
+        //Table hier wird die Tabelle deklariert und mit den Einträgen der Datenbank gefüllt und die Funktionen festgelegt
         data = vs.getInventoryEntryObjectArray();
+
         tableModel = new DefaultTableModel(data, columnNames) {
 		private static final long serialVersionUID = 1L;
 			@Override
@@ -117,17 +139,17 @@ public class InventoryView extends JFrame {
                 }
             }
         };
+        
+        //Diverse Einstellungen der Tabelle
 		table = new JTable(tableModel);
 		table.setAutoCreateRowSorter(true);
-		
 		table.getTableHeader().setReorderingAllowed(false);
-		//table.removeColumn(table.getColumnModel().getColumn(5));
 		JScrollPane scrollPane = new JScrollPane(table);
-		//scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		table.setFillsViewportHeight(true);
 		table.setRowHeight(26);
 		table.getRowSorter().toggleSortOrder(0);
 		
+		//Aufruf der ArtikelView, also der einzelansicht nach doppelklick auf einen Artikel der Tabelle
 		table.addMouseListener(new MouseAdapter(){
 			public void mousePressed(MouseEvent mouseEvent) {
 			        JTable table =(JTable) mouseEvent.getSource();
@@ -150,23 +172,27 @@ public class InventoryView extends JFrame {
 			 }
 		});
 		
-		//Menubar
+
+		//Menubar hier wird das Menu mit allen funktionen festgelegt
+
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menu = new JMenu("Menü");
-		//JMenu submenu = new JMenu("Submenü");
+		
 		JMenuItem menuCategory = new JMenuItem("Kategorien");
 		JMenuItem menuRefresh = new JMenuItem("Aktualisieren");
 		JMenuItem menuSave = new JMenuItem("Manuel Speichern");
 		JMenuItem menuValidate = new JMenuItem("DB Validieren");
 		menuCategory.addActionListener(new ActionListener() { 
-			
+			//Hiermit gelangt man zur Kategorie
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				categoriesView.setVisible(true);
 			}
 			
 		});
+
 		menuRefresh.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				refresh();
@@ -200,6 +226,7 @@ public class InventoryView extends JFrame {
 			}
 			
 		});
+
 		menu.add(menuCategory);
 		menu.addSeparator();
 		menu.add(menuRefresh);
@@ -212,7 +239,7 @@ public class InventoryView extends JFrame {
 		setJMenuBar (menuBar);
 		
 		
-		//Layout
+		//Layout Hier werden alle Elemente auf das sichtbare Fenster hinzugefügt
 		Container container = getContentPane();
 		
 		container.setLayout(new BorderLayout());
@@ -245,19 +272,31 @@ public class InventoryView extends JFrame {
 		container.add(bottomPanel,BorderLayout.PAGE_END);	
 	}
 	
+	/**
+	 * Der refresh Button wird hier aufgerufen, sodass die Tabelle mit allen Einträgen aktualisiert werden kann
+	 * ohne das programm neu aufzurufen
+	 */
+	
 	public void refresh() {
 	 	tableModel.setDataVector(vs.getInventoryEntryObjectArray(),columnNames);
 		tableModel.fireTableDataChanged();
 		table.getRowSorter().toggleSortOrder(0);
 		return;
 	}
+
+	/**
+	 * setter für newarticleview
+	 */
 	public void setNewArticleView(NewArticleView articleView) {
 		newArticleView = articleView;
 	}
-
+	/**
+	 * setter für articleview
+	 */
 	public void setArticleView(ArticleView articleView) {
 		this.articleView = articleView;
 	}
+	
 	public void setCategoriesView(CategoriesView categoriesView) {
 		this.categoriesView = categoriesView;
 	}

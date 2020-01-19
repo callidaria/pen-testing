@@ -30,6 +30,12 @@ import basic.Product;
 import controller.VirtualStorage;
 import view.components.SelectionItem;
 
+/**
+ * In der Klasse ArticleView wird ein ausgewählter Artikel genauer betrachtet.
+ * Alles über diesen Artikel kann hier verändert werden und er kann gelöscht werden. Dies geschieht über Textareas die einfach editiert werden.
+ * Oder durch hinzuaddieren bei der Anzahl.
+ * Am Ende müssen die Änderungen gespeichert werden.
+ */
 public class ArticleView extends JFrame {
 	
 	final static boolean shouldFill = true;
@@ -38,6 +44,9 @@ public class ArticleView extends JFrame {
 	private VirtualStorage vs;
 	private InventoryView inventoryView;
 	public JComboBox<SelectionItem> selectorCategory;
+	/**
+	 * Konstruktor der ArticleView
+	 */
 	public ArticleView(VirtualStorage vs) {
 		this.vs=vs;
 		setSize(480,360);
@@ -47,6 +56,9 @@ public class ArticleView extends JFrame {
 		setTitle("Artikeldetailansicht");
 	}
 	
+	/**
+	 * Wird aufgerufen beim Doppelklick auf Artikel in der Tabelle, mit UID als parameter. Über diese Methode wird das gesamte Fenster angezeigt.
+	 */
 	public void ShowArticleView(int UID) {
 		setContentPane(new JPanel());
 		InventoryEntry thisArticle = vs.getEntryByUID(UID);
@@ -87,7 +99,7 @@ public class ArticleView extends JFrame {
 		JTextField tfWeight = new JTextField(Integer.toString(thisArticle.product.getWeight()),5);
 		JTextField tfName = new JTextField(thisArticle.product.getName(),5);
 		
-		//Label
+		//Labels zur beschriftung der Textfields
 		JLabel lWeight = new JLabel("Gewicht in 1/10 gramm:");
 		JLabel lPrize = new JLabel("Preis:");
 		JLabel lCategory = new JLabel("Kategorie:");
@@ -96,12 +108,12 @@ public class ArticleView extends JFrame {
 		JLabel lAdd = new JLabel("+/˗:");
 		JLabel lName = new JLabel("Name:");
 		
-		//button
+		//buttons zum löschen des Artikels und Speichern der Änderungen, und addieren/subtrahieren der Anzahl
 		JButton bAdd = new JButton ("＋");
 		JButton bSubtract = new JButton ("˗");
 		JButton bDelete = new JButton ("Artikel Löschen");
 		JButton bSave = new JButton ("Änderungen Speichern");
-		
+		// Button zum Löschen eines Artikels, geschieht nach klicken des Buttons über eine Methode im VirtualStorage
 		bDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -120,6 +132,7 @@ public class ArticleView extends JFrame {
 			}
 		});
 		bAdd.addActionListener(new ActionListener() {
+			// Nach klicken des Buttons wird die Zahl die eingegeben wurde drauf addiert auf die Anzahl.	
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String eins = tfAddRemove.getText();
@@ -130,6 +143,7 @@ public class ArticleView extends JFrame {
 				
 				tfAddRemove.setText("0");
 				tfCount.setText(Integer.toString(sum));
+				//Aufruf der Changeamout methode aus dem VirtualStorage
 				try {
 					vs.changeAmountBy(UID, add);
 					inventoryView.refresh();
@@ -139,7 +153,7 @@ public class ArticleView extends JFrame {
 			}
 		});
 		bSubtract.addActionListener(new ActionListener() {
-			
+			// Nach Buttonklick wird die zahl weg subtrahiert von der Anzahl
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
@@ -147,10 +161,14 @@ public class ArticleView extends JFrame {
 				String zwei = tfCount.getText();
 				int add = Integer.parseInt(eins);
 				int anzahl = Integer.parseInt(zwei);
+				
+				//Berechnung des Ergebnisses für das Textfield
 				int sum = anzahl-add;
 				
 				tfAddRemove.setText("0");
 				tfCount.setText(Integer.toString(sum));
+				//aufruf der changeamount methode aus dem VirtualStorage
+				
 				try {
 					vs.changeAmountBy(UID, -add);
 					inventoryView.refresh();
@@ -161,8 +179,10 @@ public class ArticleView extends JFrame {
 			
 		});
 		bSave.addActionListener(new ActionListener() {
+			// Durch den Buttonklick werden die Änderungen am artikel gespeichert, dies geschieht über eine Methode des VirtualStorage
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Jedes Textfield wird ausgelesen und wenn nötig in Integer umgewandelt
 				String suid = tfPlace.getText();
 				int uid = Integer.parseInt(suid);
 				
@@ -182,8 +202,9 @@ public class ArticleView extends JFrame {
 				String name =tfName.getText();
 				
 				InventoryEntry editedIE = new InventoryEntry(uid, new Product(name, anzahl, gewicht, preis, kategorie_id));
-
+				//Methode zum ändern des Artikels wird aufgerufen
 				int err_code=vs.replaceInventoryEntry(thisArticle.getUID(),uid,name,anzahl,gewicht,preis,kategorie_id);
+				//Fehlerabfragen
 				if (err_code==-1) JOptionPane.showMessageDialog(getContentPane(),"Keine negativen Zahlen als Anzahl, Gewicht oder Preis zulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
 				else if (err_code==-2) JOptionPane.showMessageDialog(getContentPane(),"ID bereits vergeben oder unzulässig","Fehler", JOptionPane.INFORMATION_MESSAGE);
 				else if (err_code==-3) JOptionPane.showMessageDialog(getContentPane(),"Name bereits vergeben","Fehler", JOptionPane.INFORMATION_MESSAGE);
@@ -195,6 +216,9 @@ public class ArticleView extends JFrame {
 				}
 			}
 		});
+		
+		//Layout wird hier festgelegt. Reihenfolge alle Elemente
+		
 		Container pane = getContentPane();
 		
 		if (RIGHT_TO_LEFT) {
@@ -299,6 +323,9 @@ public class ArticleView extends JFrame {
         setContentPane(pane);
 	}
 
+	/**
+	 * 
+	 */
 	private SelectionItem[] categoriesToItem() {
 		List<Category> categories = vs.getAllCategories();
 		List<SelectionItem> categoryNames = new ArrayList<SelectionItem>();
@@ -308,7 +335,6 @@ public class ArticleView extends JFrame {
 		SelectionItem[] searchSelectables = categoryNames.toArray(new SelectionItem[categories.size()]);
 		return searchSelectables;
 	}
-
 	public void setInventoryView(InventoryView inventoryView) {
 		this.inventoryView = inventoryView;
 	}

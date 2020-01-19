@@ -17,6 +17,11 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Wird angezeigt beim Doppelklick auf die Kategorientabellen
+ * hier wird der Kategoriename einer bestehenden Kategorie verändert.
+ */
+
 public class CategoryView extends JFrame {
 	
 	private VirtualStorage vs;
@@ -42,7 +47,8 @@ public class CategoryView extends JFrame {
 		tfName.setText(thisCategory.getName());
 		//Button
 		JButton bSave = new JButton ("Speichern");
-		bSave.addActionListener(new ActionListener() {
+		bSave.addActionListener(new ActionListener() { 
+			//Nach Buttonklick werden die Änderungen gespeichert.
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				vs.loadCategoryStorage();
@@ -83,7 +89,8 @@ public class CategoryView extends JFrame {
 			}
 		});
 		
-		//Layout
+		//Layout Hier wird die Reihenfolge der vorher deklarierten Elemente festgelegt, und ob sie überhaupt dargestellt sind.
+		
 		Container pane = getContentPane();
 		pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();

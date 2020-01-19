@@ -24,6 +24,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Hier wird die Tabelle der Kategorien angezeigt, von hier aus werden die Änderungen verschiedenster Kategorien aufgerufen.
+ * Gleiches Prinzip wie beim Inventory View.
+ * Es gibt wieder eine Menubar, über welche der Bestand aufgerufen werden kann.
+ */
+
 public class CategoriesView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private VirtualStorage vs;
@@ -81,7 +87,7 @@ public class CategoriesView extends JFrame {
 		bSearch.addActionListener(startSearch);
 		tfSearch.addActionListener(startSearch);
 		
-		//Table
+		//Table wird hier mit Elementen aus der Datenbank gefüllt
 		columnNames = new String[]{"ID","Kategorie"};
 			
 		Object[][] data = vs.getCategoryObjectArray();
@@ -101,6 +107,7 @@ public class CategoriesView extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);	
 		
+		//Durch doppelklick öffnet sich ein einzelnes Fenster einer Kategorie, in welcher diese verändert werden kann
 		table.addMouseListener(new MouseAdapter(){
 			 public void mousePressed(MouseEvent mouseEvent) {
 			        JTable table =(JTable) mouseEvent.getSource();
@@ -116,7 +123,8 @@ public class CategoriesView extends JFrame {
 			        }
 			 }
 		});
-		//Layout
+			
+		//Layout wird hier festgelegt, Reihenfolge wie die Elemente angezeigt werden
 		Container container = getContentPane();
 		
 		container.setLayout(new BorderLayout());
@@ -144,7 +152,6 @@ public class CategoriesView extends JFrame {
 		container.add(rightPanel,BorderLayout.LINE_END);
 		container.add(bottomPanel,BorderLayout.PAGE_END);
 	}
-
 	public void setCategoryView(CategoryView categoryView) {
 		this.categoryView=categoryView;
 	}
