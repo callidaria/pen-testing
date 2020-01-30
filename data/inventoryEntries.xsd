@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="entries">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="entry">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="name" type="xs:string"/>
+                            <xs:element name="count" type="xs:nonNegativeInteger"/>
+                            <xs:element name="weight" type="xs:nonNegativeInteger"/>
+							<xs:element name="prize" type="xs:nonNegativeInteger"/>
+							<xs:element name="category_id" type="xs:nonNegativeInteger"/>
+                        </xs:sequence>
+						<xs:attribute name="area" type="shelfInt" />
+						<xs:attribute name="place" type="shelfInt" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="nameMustBeUnique">
+			<xs:selector xpath="entry/name"/>
+            <xs:field xpath="." />
+		</xs:unique>
+        <xs:unique name="areaPlaceMustBeUnique">
+			<xs:selector xpath="entry" />
+			<xs:field xpath="@area" />
+            <xs:field xpath="@place" />
+        </xs:unique>
+    </xs:element>
+    <xs:simpleType name="shelfInt">
+        <xs:restriction base="xs:nonNegativeInteger">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="999"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema> 
