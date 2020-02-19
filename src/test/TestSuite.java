@@ -6,12 +6,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 
 @Suite.SuiteClasses({
-Validierungstests.class,
-MyClassTest.class,
+	Validierungstests.class,
+	Fehlertests.class,
+	MyClassTest.class
 })
 
-public class TestSuite {
-	public TestSuite() {
-		
-	}
-}
+public class TestSuite { }

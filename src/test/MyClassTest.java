@@ -1,21 +1,12 @@
 package test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-class MyClassTest {
-
-	@BeforeEach
-	void setUp() throws Exception {
-		//nothing
-		/* Ich hab bei validate die nicht genutzten Parameter entfernt und benutze nur den Konstruktor
-		 */
-	}
-
+public class MyClassTest {
 	@Test
-	void test1() {
+	public void test1() {
 		int l,s,e;
 		l=-1;
 		s=0;
@@ -30,7 +21,7 @@ class MyClassTest {
 		assertEquals(0, myClass.e);
 	}
 	@Test
-	void test2() {
+	public void test2() {
 		int l,s,e;
 		l=10;
 		s=400;
@@ -45,7 +36,7 @@ class MyClassTest {
 		assertEquals(100, myClass.e);
 	}
 	@Test
-	void test3() {
+	public void test3() {
 		int l,s,e;
 		l=10;
 		s=300;
@@ -60,7 +51,7 @@ class MyClassTest {
 		assertEquals(30, myClass.e);
 	}
 	@Test
-	void test4() {
+	public void test4() {
 		int l,s,e;
 		l=10;
 		s=300;
@@ -74,6 +65,4 @@ class MyClassTest {
 		assertEquals(300, myClass.s);
 		assertEquals(60, myClass.e);
 	}
-	
-
 }
