@@ -37,6 +37,9 @@ public class Fehlertests {
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 	
+	/**
+	 * Dieser Test schlägt fehl.
+	 */
 	@Test
 	public void blackboxPartitioningNameTestLessOne() {
 		clearTestDatabase();
@@ -65,6 +68,9 @@ public class Fehlertests {
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 	
+	/**
+	 * Dieser Test schlägt fehl.
+	 */
 	@Test
 	public void blackboxPartitioningCategoryTestLessOne() {
 		clearTestDatabase();
